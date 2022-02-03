@@ -8,7 +8,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
-      - run: clang-format-12 $(find . -iname '*.cpp' -or -iname '*.c' -or -iname '*.h' -and -not -iname 'doctest.h')
+      - run: clang-format-12 -i $(find . -iname '*.cpp' -or -iname '*.c' -or -iname '*.h' -and -not -iname 'doctest.h')
       - run: |
           git add .
           git commit -m "Automatic code format done by clang-format" || echo "Nothing to commit"
