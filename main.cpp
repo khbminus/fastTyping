@@ -1,8 +1,8 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <vector>
 #include <thread>
+#include <vector>
 
 struct Dictionary {
     std::vector<std::string> words;
@@ -32,18 +32,15 @@ struct Inputter {
 };
 
 
-
 // 1. Загрузка словаря
 // 2. получить символ, получить по весь буфер
 // 3. проверить, что слово корректно
 // 4. вывести
 
-struct Parser { // В последствии + статистика по правильным буквам
+struct Parser {           // В последствии + статистика по правильным буквам
     Dictionary dictionary;// Dictionary
     virtual bool isCorrect(const std::string &inputWord) const;
-
 };
-
 
 
 struct ConstInputter : Inputter {
@@ -53,8 +50,8 @@ struct ConstInputter : Inputter {
     ConstInputter(std::string d) : data(std::move(d)) {}
 
     char getSymbol() override {
-if
-        buffer.push_back(data[cur]);
+        if buffer
+            .push_back(data[cur]);
         return data[cur++];
     }
 
@@ -73,11 +70,9 @@ if
 
 struct SimpleParser {
 
-    bool isCorrect(const std::string &inputWord, const std::string& dictionaryWord) const {
+    bool isCorrect(const std::string &inputWord, const std::string &dictionaryWord) const {
         return dictionaryWord == inputWord;
     }
-
-
 };
 
 struct FileDictionaryLoader : DictionaryLoader {
@@ -94,7 +89,8 @@ struct FileDictionaryLoader : DictionaryLoader {
 struct ConsoleOutputter : Outputter {
     inline static const std::string ESCAPE_CODE = "\x1b";
     ConsoleOutputter() {
-        std::cout << "\n" << ESCAPE_CODE << "[1A";
+        std::cout << "\n"
+                  << ESCAPE_CODE << "[1A";
     }
     std::size_t currentPosition = 0;
     void printSymbol(char i) override {
@@ -119,6 +115,7 @@ struct ConsoleOutputter : Outputter {
     ~ConsoleOutputter() {
         std::cout << ESCAPE_CODE << "[1B";
     }
+
 private:
     void moveCursorLeft(std::size_t x) {
         std::cout << ESCAPE_CODE + "[" << x << "D";
@@ -126,7 +123,6 @@ private:
     void moveCursorRight(std::size_t x) const {
         std::cout << ESCAPE_CODE + "[" << x << "C";
     }
-
 };
 
 
