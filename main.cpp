@@ -53,8 +53,9 @@ struct ConstInputter : Inputter {
     ConstInputter(std::string d) : data(std::move(d)) {}
 
     char getSymbol() override {
-if
-        buffer.push_back(data[cur]);
+        if (data[cur] != ' ') {
+            buffer.push_back(data[cur]);
+        }
         return data[cur++];
     }
 
@@ -144,9 +145,6 @@ int main(int argc, char *argv[]) {
     while (true) {
         char currentSymbol = inputter.getSymbol();
         if (currentSymbol == ' ' || inputter.endOfInput()) {
-            if (currentSymbol == ' ') {
-                inputter.buffer.pop_back();
-            }
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             if (!simpleParser.isCorrect(inputter.getBuffer(), dictionary.getCurrentWord())) {
                 outputter.highlightPositions(inputter.getBuffer().size());
