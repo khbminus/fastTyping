@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <vector>
 #include <thread>
 #include <vector>
 
@@ -31,7 +30,6 @@ struct Inputter {
     virtual void clearBuffer() = 0;
     virtual bool endOfInput() const = 0;
 };
-
 
 
 // 1. Загрузка словаря
