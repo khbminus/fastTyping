@@ -51,3 +51,7 @@ if(QT_VERSION_MAJOR EQUAL 6)
 endif()
 
 # -*-*- QT CMake end -*-*-
+
+add_executable(testClient main.cpp)
+target_include_directories(testClient PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(testClient ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS})
