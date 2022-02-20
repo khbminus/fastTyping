@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <vector>
 #include <thread>
 #include <vector>
 
@@ -20,6 +19,7 @@ struct Dictionary {
 struct DictionaryLoader {
     virtual Dictionary loadDictionary(const std::string &name) = 0;
 };
+
 struct Outputter {
     virtual void printSymbol(char) = 0;
     virtual void highlightError(std::size_t position) = 0;
@@ -31,7 +31,6 @@ struct Inputter {
     virtual void clearBuffer() = 0;
     virtual bool endOfInput() const = 0;
 };
-
 
 
 // 1. Загрузка словаря
@@ -136,7 +135,7 @@ int main(int argc, char *argv[]) {
     }
 
     Dictionary dictionary = FileDictionaryLoader().loadDictionary(argv[1]);
-    ConstInputter inputter("zajac loch, niet ty");
+    ConstInputter inputter("Lorem ipsum dolor sit amet");
     ConsoleOutputter outputter;
     SimpleParser simpleParser;
 

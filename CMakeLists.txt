@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.17)
 project(fastTyping VERSION 0.1 LANGUAGES CXX)
 
 # -*-*- QT CMake start -*-*-
@@ -37,7 +37,6 @@ else()
 endif()
 
 target_link_libraries(client PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-
 set_target_properties(client PROPERTIES
         MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
         MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -45,6 +44,8 @@ set_target_properties(client PROPERTIES
         MACOSX_BUNDLE TRUE
         WIN32_EXECUTABLE TRUE
         )
+
+target_include_directories(client PRIVATE client/include)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(client)
