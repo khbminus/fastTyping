@@ -4,9 +4,9 @@
 
 #ifndef FASTTYPING_ABC_H
 #define FASTTYPING_ABC_H
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 struct AbstractDictionary {
     [[nodiscard]] virtual std::string getCurrentWord() const;
