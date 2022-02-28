@@ -1,6 +1,6 @@
-#include <iostream>
 #include "rus.h"
 #include <fstream>
+#include <iostream>
 int main() {
     std::fstream out("out.txt", std::ios::out);
 
