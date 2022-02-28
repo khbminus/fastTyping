@@ -1,9 +1,9 @@
 #include "rus.h"
-#include <random>
+#include <algorithm>
 #include <ctime>
 #include <iostream>
+#include <random>
 #include <sstream>
-#include <algorithm>
 
 std::string Word::infinitive() const {
     return m_infinitive;
@@ -14,7 +14,7 @@ std::string Word::random_form() const {
     return m_forms[rnd() % m_forms.size()];
 }
 
-std::vector<std::string> const& Word::forms() const {
+std::vector<std::string> const &Word::forms() const {
     return m_forms;
 }
 
@@ -27,4 +27,3 @@ RusWord::RusWord(std::string &corpus_line) {
         m_forms.push_back(form);
     }
 }
-
