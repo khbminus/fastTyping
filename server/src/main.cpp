@@ -2,16 +2,16 @@
 #include "rus.h"
 #include <fstream>
 int main() {
-    std::fstream in("paradigms_rus");
     std::fstream out("out.txt", std::ios::out);
 
     std::string corpus_line;
 
     std::cout << "start" << std::endl;
 
-    while (std::getline(in, corpus_line)) {
-        RusWord word(corpus_line);
-        out << word.random_form() << std::endl;
+    RusLoader loader("paradigms_rus");
+
+    for (auto const& [infinitive, word] : loader.infinitive_to_word) {
+        out << infinitive << " " << word.random_form() << std::endl;
     }
 
     std::cout << "end" << std::endl;
