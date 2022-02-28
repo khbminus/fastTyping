@@ -10,7 +10,7 @@ int main() {
 
     RusLoader loader("paradigms_rus");
 
-    for (auto const& [infinitive, word] : loader.infinitive_to_word) {
+    for (auto const &[infinitive, word]: loader.infinitive_to_word) {
         out << infinitive << " " << word.random_form() << std::endl;
     }
 
