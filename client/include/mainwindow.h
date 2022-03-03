@@ -2,10 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QChar>
-#include <QKeyEvent>
-#include <QMainWindow>
-#include <QLabel>
 #include <QGridLayout>
+#include <QKeyEvent>
+#include <QLabel>
+#include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -24,8 +24,9 @@ private:
     Ui::MainWindow *ui;
     QLabel *userText;
     QGridLayout *layout;
-    
+
     QString curInput;
+
 protected:
     void keyPressEvent(QKeyEvent *event);
 
