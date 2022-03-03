@@ -4,6 +4,8 @@
 #include <QChar>
 #include <QKeyEvent>
 #include <QMainWindow>
+#include <QLabel>
+#include <QGridLayout>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,11 +22,15 @@ public:
 
 private:
     Ui::MainWindow *ui;
-
+    QLabel *userText;
+    QGridLayout *layout;
+    
+    QString curInput;
 protected:
     void keyPressEvent(QKeyEvent *event);
 
 private slots:
     void keyPressed(QChar key);
+    static QLabel *createLabel(const QString &text);
 };
 #endif// MAINWINDOW_H
