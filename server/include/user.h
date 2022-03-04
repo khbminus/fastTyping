@@ -33,13 +33,16 @@ namespace FastTyping::Server {
     };
 
     class AbstractUserStorage {
+    public:
+        AbstractUserStorage() = default;
         virtual User &get(int) = 0;
         virtual User &get(const std::string &) = 0;
     };
 
-    class MapUserStorage : AbstractUserStorage {
+    class MapUserStorage : public AbstractUserStorage {
         // Probably should be replaced with SQL user storage
     public:
+        MapUserStorage() = default;
         User &get(int id) override {
             return usersById.at(id);
         }

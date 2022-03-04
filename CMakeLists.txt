@@ -54,7 +54,7 @@ endif()
 # -*-*- QT CMake end -*-*-
 
 
-add_executable(server server/src/main.cpp)
+add_executable(server server/src/main.cpp server/src/server.cpp)
 target_include_directories(server PRIVATE ${Boost_INCLUDE_DIRS} server/include)
 target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS})
 
