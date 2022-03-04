@@ -53,7 +53,8 @@ namespace FastTyping::Server {
             User user(name);
 
             return usersById.emplace(user.getId(),
-                                     usersByName.insert({name, user}).first->second).first->second;
+                                     usersByName.insert({name, user}).first->second)
+                    .first->second;
         }
 
     private:

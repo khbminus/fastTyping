@@ -35,21 +35,21 @@ TEST_CASE("user from string") {
 }
 
 namespace {
-    bool operator==(const User& a, const User& b) {
+    bool operator==(const User &a, const User &b) {
         CHECK_LE(a.getId() == b.getId(), a.name() == b.name());
         return a.getId() == b.getId();
     }
-    bool operator!=(const User& a, const User& b) {
+    bool operator!=(const User &a, const User &b) {
         return !(a == b);
     }
-}
+}// namespace
 
 TEST_CASE("MapUserStorage") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
     MapUserStorage storage;
-    User& a = storage.get(name1);
-    User& b = storage.get(name2);
+    User &a = storage.get(name1);
+    User &b = storage.get(name2);
     CHECK(a.getId() + 1 == b.getId());
     CHECK(storage.get(name1) == a);
     CHECK(storage.get(name1) != b);

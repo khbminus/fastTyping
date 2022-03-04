@@ -43,8 +43,8 @@ namespace FastTyping::Server {
                     client << queryBody << '\n';
                 }
             }
-        } catch (nlohmann::detail::parse_error& e) {
-            std::cerr << e.what() << std::endl; // process error to client
+        } catch (nlohmann::detail::parse_error &e) {
+            std::cerr << e.what() << std::endl;// process error to client
         }
 
         std::cout << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;

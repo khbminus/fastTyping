@@ -2,14 +2,14 @@
 #define FASTTYPING_SERVER_H
 #include "user.h"
 #include <boost/asio.hpp>
-#include <string>
 #include <memory>
+#include <string>
 namespace FastTyping::Server {
     using boost::asio::ip::tcp;
 
     struct Server {
     public:
-        static Server& getInstance() {
+        static Server &getInstance() {
             static Server server;
             return server;
         }
@@ -24,7 +24,6 @@ namespace FastTyping::Server {
         std::unique_ptr<AbstractUserStorage> storage;
 
         void parseQuery(tcp::socket);
-
     };
 }// namespace FastTyping::Server
 
