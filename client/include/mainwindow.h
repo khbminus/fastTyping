@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QScopedPointer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -15,6 +16,8 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+public slots:
+    void onJoinClick();
 
 private:
     Ui::MainWindow *ui;
