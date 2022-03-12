@@ -14,7 +14,7 @@ namespace FastTyping {
     struct WindowController : QObject {
         Q_OBJECT
     public:
-        static WindowController& getInstance() {
+        static WindowController &getInstance() {
             static WindowController controller;
             return controller;
         }

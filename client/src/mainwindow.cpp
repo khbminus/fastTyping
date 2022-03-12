@@ -1,6 +1,6 @@
 #include "client/include/mainwindow.h"
-#include "windowcontroller.h"
 #include "ui_mainwindow.h"
+#include "windowcontroller.h"
 #include <QGridLayout>
 #include <QPushButton>
 
@@ -23,6 +23,6 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::onJoinClick() {
-    auto& controller = FastTyping::WindowController::getInstance();
+    auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("JoinWindow");
 }

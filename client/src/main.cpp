@@ -1,12 +1,12 @@
-#include "client/include/mainwindow.h"
 #include "client/include/joinwindow.h"
+#include "client/include/mainwindow.h"
+#include "windowcontroller.h"
 #include <QApplication>
 #include <QSharedPointer>
-#include "windowcontroller.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-    auto& controller = FastTyping::WindowController::getInstance();
+    auto &controller = FastTyping::WindowController::getInstance();
     auto mainWindow = QSharedPointer<QMainWindow>(new MainWindow());
     auto joinWindow = QSharedPointer<QMainWindow>(new JoinWindow());
     controller.registerWindow("MainWindow", mainWindow);
