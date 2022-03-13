@@ -1,6 +1,6 @@
+#include "client/include/gamewindow.h"
 #include "client/include/joinwindow.h"
 #include "client/include/mainwindow.h"
-#include "client/include/gamewindow.h"
 
 #include "windowcontroller.h"
 #include <QApplication>

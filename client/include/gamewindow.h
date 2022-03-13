@@ -20,6 +20,7 @@ public:
     ~GameWindow();
     void setError();
     void unsetError();
+
 private:
     Ui::GameWindow *ui;
     QString curInput;

@@ -7,9 +7,8 @@ namespace Ui {
     class JoinWindow;
 }
 
-class JoinWindow : public QMainWindow
-{
-Q_OBJECT
+class JoinWindow : public QMainWindow {
+    Q_OBJECT
 
 public:
     explicit JoinWindow(QWidget *parent = nullptr);
@@ -22,4 +21,4 @@ private:
     Ui::JoinWindow *ui;
 };
 
-#endif // JOINWINDOW_H
+#endif// JOINWINDOW_H

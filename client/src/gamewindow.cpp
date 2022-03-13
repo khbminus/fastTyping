@@ -3,10 +3,8 @@
 #include "windowcontroller.h"
 #include <iostream>
 
-GameWindow::GameWindow(QWidget *parent) :
-        QMainWindow(parent),
-        ui(new Ui::GameWindow)
-{
+GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
+                                          ui(new Ui::GameWindow) {
     ui->setupUi(this);
     palette = ui->userText->palette();
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
@@ -15,11 +13,10 @@ GameWindow::GameWindow(QWidget *parent) :
     ui->userText->setPalette(palette);
     ui->dictLabel->setAutoFillBackground(true);
     ui->dictLabel->setPalette(palette);
-}    
+}
 
 
-GameWindow::~GameWindow()
-{
+GameWindow::~GameWindow() {
     delete ui;
 }
 
@@ -56,7 +53,3 @@ void GameWindow::setError() {
 void GameWindow::unsetError() {
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
 }
-
-
-
-
