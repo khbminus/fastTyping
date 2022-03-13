@@ -24,6 +24,8 @@ set(PROJECT_SOURCES
         client/include/windowcontroller.h
         client/src/gamewindow.cpp
         client/include/gamewindow.h
+        client/src/gameLogic.cpp
+        client/include/gameLogic.h
         )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

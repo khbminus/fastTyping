@@ -1,7 +1,7 @@
 #ifndef FASTTYPING_CONSTGAME_H
 #define FASTTYPING_CONSTGAME_H
 
-#include "abc.h"
+#include "gameLogic.h"
 #include <fstream>
 #include <iostream>
 #include <memory>

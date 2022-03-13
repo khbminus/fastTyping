@@ -3,10 +3,8 @@
 #include "windowcontroller.h"
 #include <iostream>
 
-GameWindow::GameWindow(QWidget *parent) :
-        QMainWindow(parent),
-        ui(new Ui::GameWindow)
-{
+GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
+                                          ui(new Ui::GameWindow), game(new game::RaceGame) {
     ui->setupUi(this);
     palette = ui->userText->palette();
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
@@ -15,12 +13,13 @@ GameWindow::GameWindow(QWidget *parent) :
     ui->userText->setPalette(palette);
     ui->dictLabel->setAutoFillBackground(true);
     ui->dictLabel->setPalette(palette);
-}    
+    ui->dictLabel->setText("This is sample don't judge me");
+}
 
 
-GameWindow::~GameWindow()
-{
+GameWindow::~GameWindow() {
     delete ui;
+    delete game;
 }
 
 void GameWindow::keyPressEvent(QKeyEvent *event) {
@@ -32,21 +31,21 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
         return;
     }
     if (event->key() == Qt::Key_Backspace) {
-        // TODO parse backspace without KOSTYL'
-        if (curInput.size() != 0) {
-            std::cerr << "deleted\n";
-            curInput.chop(1);
-            ui->userText->setText(curInput);
-            return;
-        }
+        game->backspacePressed();
+        emit keyPressed();
+        return;
     }
+    game->keyPressed(keysCombination[0]);
 
-    emit keyPressed(keysCombination[0]);
+    emit keyPressed();
 }
 
-void GameWindow::keyPressed(QChar key) {
-    curInput += key;
-    ui->userText->setText(curInput);
+void GameWindow::keyPressed() {
+    ui->userText->setText(game->getBuffer());
+    if (game->getErrorStatus())
+        setError();
+    else
+        unsetError();
     ui->userText->setPalette(palette);
 }
 
@@ -56,7 +55,3 @@ void GameWindow::setError() {
 void GameWindow::unsetError() {
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
 }
-
-
-
-

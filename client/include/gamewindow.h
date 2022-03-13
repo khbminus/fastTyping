@@ -1,7 +1,8 @@
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
-#include <QChar>
+//#include <QChar>
+#include "gameLogic.h"
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <QLabel>
@@ -20,17 +21,18 @@ public:
     ~GameWindow();
     void setError();
     void unsetError();
+
 private:
     Ui::GameWindow *ui;
-    QString curInput;
     QPalette palette;
+    game::RaceGame *game;
 
 
 protected:
     void keyPressEvent(QKeyEvent *event);
 
 private slots:
-    void keyPressed(QChar key);
+    void keyPressed();
 };
 
 #endif// GAMEWINDOW_H
