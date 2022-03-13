@@ -14,53 +14,33 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>220</y>
-      <width>160</width>
-      <height>80</height>
+      <x>260</x>
+      <y>150</y>
+      <width>127</width>
+      <height>58</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLineEdit" name="idEdit"/>
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="text">
+        <string>Input session ID</string>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="submitButton">
+      <widget class="QPushButton" name="pushButton">
        <property name="text">
-        <string>Join</string>
+        <string>Connect!</string>
        </property>
       </widget>
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>720</x>
-      <y>530</y>
-      <width>80</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Return</string>
-    </property>
-   </widget>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

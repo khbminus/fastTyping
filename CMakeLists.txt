@@ -18,12 +18,12 @@ set(PROJECT_SOURCES
         client/src/main.cpp
         client/src/mainwindow.cpp
         client/include/mainwindow.h
-        client/src/mainwindow.ui
         client/src/joinwindow.cpp
         client/include/joinwindow.h
-        client/src/joinwindow.ui
         client/src/windowcontroller.cpp
         client/include/windowcontroller.h
+        client/src/gamewindow.cpp
+        client/include/gamewindow.h
         )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
