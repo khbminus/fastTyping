@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.0)
 project(fastTyping VERSION 0.1 LANGUAGES CXX)
 
 # -*-*- QT CMake start -*-*-

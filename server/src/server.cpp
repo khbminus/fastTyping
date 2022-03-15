@@ -20,27 +20,52 @@ namespace FastTyping::Server {
     void Server::parseQuery(tcp::socket s) {
         tcp::iostream client(std::move(s));
         std::cout << "New client: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
+        std::string line;
+        if (!std::getline(client, line)) {
+            std::cout << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
+            return;
+        }
+        json query;
+        std::string user_name;
+        try {
+            query = json::parse(line);
+            if (query["header"] != "hello") {
+                client << "BAD QUERY\n";
+                return;
+            }
+            user_name = query["body"]["name"].get<std::string>();
+
+        } catch (nlohmann::detail::parse_error &e) {
+            std::cerr << e.what() << '\n';
+            return;
+        }
+
+        User user = storage->get(user_name);
 
         try {
             while (client) {
-                std::string line;
                 if (!std::getline(client, line)) {
                     break;
                 }
-                json queryHeader = json::parse(line);
-
-                if (!std::getline(client, line)) {
-                    break;
+                query = json::parse(line);
+                if (!query.contains("header")) {
+                    client << "ERROR\n";// FIXME: make it better;
+                    continue;
                 }
+                if (!query.contains("body")) {
+                    client << "ANOTHER ERROR\n";// FIXME
+                    continue;
+                }
+                auto queryHeader = query["header"];
+                auto queryBody = query["body"];
 
-                json queryBody = json::parse(line);
-
-                std::string type = queryHeader["type"].get<std::string>();
+                auto type = queryHeader["type"].get<std::string>();
                 if (type == "exit") {
                     break;
                 }
+
                 if (type == "echo") {
-                    client << queryBody << '\n';
+                    echoQuery(client, user, queryBody);
                 }
             }
         } catch (nlohmann::detail::parse_error &e) {
@@ -48,5 +73,8 @@ namespace FastTyping::Server {
         }
 
         std::cout << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
+    }
+    void Server::echoQuery(tcp::iostream &client, User &user, json queryBody) {
+        client << queryBody << '\n';
     }
 }// namespace FastTyping::Server
