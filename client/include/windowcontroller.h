@@ -8,8 +8,8 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QString>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
 namespace FastTyping {
     struct WindowController : QObject {
