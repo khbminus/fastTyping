@@ -1,11 +1,8 @@
-//
-// Created by doktorkrab on 3/11/22.
-//
 #include "windowcontroller.h"
 
 #include <utility>
 namespace FastTyping {
-    void WindowController::setActiveWindow(const QString &windowName) {
+    void WindowController::setActiveWindow(const std::string &windowName) {
         if (activeWindow) {
             activeWindow->close();
         }
@@ -13,7 +10,7 @@ namespace FastTyping {
         activeWindow->show();
     }
 
-    void WindowController::registerWindow(const QString &windowName, QSharedPointer<QMainWindow> window) {
+    void WindowController::registerWindow(const std::string &windowName, QSharedPointer<QMainWindow> window) {
         windows[windowName] = std::move(window);
     }
 }// namespace FastTyping
