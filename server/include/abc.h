@@ -11,10 +11,12 @@ namespace FastTyping::Logic {
         [[nodiscard]] virtual std::size_t getWordCount() const = 0;
         [[nodiscard]] virtual std::string getLine(int index) const = 0;
         [[nodiscard]] virtual std::size_t getLinesCount() const = 0;
+        virtual ~AbstractDictionary() = default;
     };
 
     struct AbstractParser {
         [[nodiscard]] virtual bool isCorrect(const std::string &inputWord, const std::string &dictionaryWord) const = 0;
+        virtual ~AbstractParser() = default;
     };
 
 }// namespace FastTyping::Logic
