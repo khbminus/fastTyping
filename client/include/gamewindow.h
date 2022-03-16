@@ -33,6 +33,7 @@ protected:
 
 private slots:
     void keyPressed();
+    void on_ReturnButton_clicked();
 };
 
 #endif// GAMEWINDOW_H

@@ -9,7 +9,7 @@ GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
     palette = ui->userText->palette();
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
     palette.setColor(ui->userText->foregroundRole(), Qt::black);
-    ui->userText->setAutoFillBackground(true);
+    ui->userText->setAutoFillBackground(true); 
     ui->userText->setPalette(palette);
     ui->dictLabel->setAutoFillBackground(true);
     ui->dictLabel->setPalette(palette);
@@ -20,6 +20,12 @@ GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
 GameWindow::~GameWindow() {
     delete ui;
     delete game;
+}
+
+void GameWindow::on_ReturnButton_clicked()
+{
+    auto &controller = FastTyping::WindowController::getInstance();
+    controller.setActiveWindow("MainWindow");
 }
 
 void GameWindow::keyPressEvent(QKeyEvent *event) {
@@ -47,11 +53,17 @@ void GameWindow::keyPressed() {
     else
         unsetError();
     ui->userText->setPalette(palette);
+    if (game->isEnded()) {
+        auto &controller = FastTyping::WindowController::getInstance();
+        controller.setActiveWindow("StatWindow");
+    }
 }
 
 void GameWindow::setError() {
     palette.setColor(ui->userText->backgroundRole(), Qt::darkRed);
 }
+
 void GameWindow::unsetError() {
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
 }
+

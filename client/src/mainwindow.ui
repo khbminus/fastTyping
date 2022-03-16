@@ -14,18 +14,31 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>140</y>
-      <width>100</width>
-      <height>32</height>
+      <x>290</x>
+      <y>190</y>
+      <width>221</width>
+      <height>81</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Join</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="CreateButton">
+       <property name="text">
+        <string>Create a new game</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="JoinButton">
+       <property name="text">
+        <string>Join an existing game</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
  </widget>

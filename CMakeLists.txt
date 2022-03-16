@@ -20,10 +20,14 @@ set(PROJECT_SOURCES
         client/include/mainwindow.h
         client/src/joinwindow.cpp
         client/include/joinwindow.h
+        client/src/createwindow.cpp
+        client/include/createwindow.h
         client/src/windowcontroller.cpp
         client/include/windowcontroller.h
         client/src/gamewindow.cpp
         client/include/gamewindow.h
+        client/src/statwindow.cpp
+        client/include/statwindow.h
         client/src/gameLogic.cpp
         client/include/gameLogic.h
         )

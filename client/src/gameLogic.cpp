@@ -20,15 +20,16 @@ namespace game {
         errorState = false;
     }
 
-    RaceGame::RaceGame() : dictionary({"This", "is", "sample", "don't", "judge", "me"}), errorState(false){};
+    RaceGame::RaceGame() : dictionary({"This", "is", "sample", "don't", "judge", "me"}), errorState(false), endOfGame(false){};
 
     void RaceGame::keyPressed(QChar button) {
         if (button == ' ') {
             if (inputter.getBuffer() == dictionary.getCurrentWord()) {
                 inputter.clearBuffer();
                 if (!dictionary.nextWord()) {
-                    // TODO: end of game
-                    std::cout << "WINWIN";
+                    errorState = false;
+                    endOfGame = true;
+                    return;
                 }
             } else {
                 inputter.addSymbol(button);
@@ -46,6 +47,11 @@ namespace game {
     [[nodiscard]] bool RaceGame::getErrorStatus() const {
         return errorState;
     }
+
+    [[nodiscard]] bool RaceGame::isEnded() const {
+        return endOfGame;
+    }
+    
     [[nodiscard]] QString RaceGame::getBuffer() const {
         return inputter.getBuffer();
     }

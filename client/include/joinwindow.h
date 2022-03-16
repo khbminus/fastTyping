@@ -15,7 +15,8 @@ public:
     ~JoinWindow();
 
 private slots:
-    void on_pushButton_clicked();
+    void on_JoinButton_clicked();
+    void on_ReturnButton_clicked();
 
 private:
     Ui::JoinWindow *ui;

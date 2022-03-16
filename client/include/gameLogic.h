@@ -78,6 +78,7 @@ namespace game {
         ConstDictionary dictionary;
         Inputter inputter;
         bool errorState;
+        bool endOfGame;
 
         void checkPrefix(QString a, QString b);
 
@@ -85,8 +86,9 @@ namespace game {
         RaceGame();
         void keyPressed(QChar button);
         void backspacePressed();
-        bool getErrorStatus() const;
-        QString getBuffer() const;
+        [[nodiscard]] bool getErrorStatus() const;
+        [[nodiscard]] bool isEnded() const;
+        [[nodiscard]] QString getBuffer() const;
     };
 
 }// namespace game
