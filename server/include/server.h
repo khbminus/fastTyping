@@ -24,7 +24,7 @@ namespace FastTyping::Server {
         std::unique_ptr<AbstractUserStorage> storage;
 
         void parseQuery(tcp::socket);
-        void echoQuery(tcp::iostream& client, User& user, json queryBody);
+        void echoQuery(tcp::iostream &client, User &user, json queryBody);
     };
 }// namespace FastTyping::Server
 

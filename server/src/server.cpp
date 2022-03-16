@@ -63,26 +63,21 @@ namespace FastTyping::Server {
                 auto type = queryHeader["type"].get<std::string>();
                 if (type == "exit") {
                     break;
-                }
-                else if (currentGame) {
+                } else if (currentGame) {
                     if (type == "getNewLine") {
                         client << currentGame->getNewLine(user, queryBody) << '\n';
-                    }
-                    else if (type == "checkInput") {
+                    } else if (type == "checkInput") {
                         auto result = currentGame->checkInputAndProceed(user, queryBody);
                         client << result << '\n';
                         if (result["body"]["isCorrect"] == true && result["body"]["isEnd"] == true) {
                             currentGame = nullptr;
                         }
-                    }
-                    else {
+                    } else {
                         client << "unknown command\n";
                     }
-                }
-                else if (type == "echo") {
+                } else if (type == "echo") {
                     echoQuery(client, user, queryBody);
-                }
-                else if (type == "createGame") {
+                } else if (type == "createGame") {
                     currentGame = makeGame(user, queryBody);
                     json result = {{"header", {{"type", "gameCreated"}}}, {"body", {{"id", currentGame->getId()}, {"name", currentGame->getName()}}}};
                     client << result << '\n';

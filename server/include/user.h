@@ -1,11 +1,11 @@
 #ifndef FASTTYPING_USER_H
 #define FASTTYPING_USER_H
 #include <common/include/json.hpp>
+#include <mutex>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <utility>
-#include <thread>
-#include <mutex>
 
 using nlohmann::json;
 
@@ -53,7 +53,7 @@ namespace FastTyping::Server {
             if (auto it = usersByName.find(name); it != usersByName.end()) {
                 return it->second;
             }
-            User& user = usersByName.emplace(name, name).first->second;
+            User &user = usersByName.emplace(name, name).first->second;
             return usersById.emplace(user.getId(), user).first->second;
         }
 
