@@ -39,6 +39,7 @@ namespace FastTyping::Server {
         AbstractUserStorage() = default;
         virtual User &get(int) = 0;
         virtual User &get(const std::string &) = 0;
+        virtual ~AbstractUserStorage() = default;
     };
 
     class MapUserStorage : public AbstractUserStorage {
