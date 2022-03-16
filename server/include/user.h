@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <thread>
+#include <mutex>
 
 using nlohmann::json;
 
@@ -22,7 +24,7 @@ namespace FastTyping::Server {
             return userName;
         }
 
-        [[nodiscard]] int getId() const {
+        [[nodiscard]] int getId() const noexcept {
             return id;
         }
 
@@ -50,11 +52,8 @@ namespace FastTyping::Server {
             if (auto it = usersByName.find(name); it != usersByName.end()) {
                 return it->second;
             }
-            User user(name);
-
-            return usersById.emplace(user.getId(),
-                                     usersByName.insert({name, user}).first->second)
-                    .first->second;
+            User& user = usersByName.emplace(name, name).first->second;
+            return usersById.emplace(user.getId(), user).first->second;
         }
 
     private:

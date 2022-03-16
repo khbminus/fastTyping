@@ -40,7 +40,7 @@ namespace FastTyping::Server {
             return;
         }
 
-        User user = storage->get(user_name);
+        User &user = storage->get(user_name);
 
         try {
             while (client) {
