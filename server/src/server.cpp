@@ -1,4 +1,5 @@
 #include "server.h"
+#include "game.h"
 #include <iostream>
 #include <memory>
 #include <thread>
@@ -29,7 +30,7 @@ namespace FastTyping::Server {
         std::string user_name;
         try {
             query = json::parse(line);
-            if (query["header"] != "hello") {
+            if (query["header"]["type"] != "hello") {
                 client << "BAD QUERY\n";
                 return;
             }
@@ -41,7 +42,7 @@ namespace FastTyping::Server {
         }
 
         User &user = storage->get(user_name);
-
+        std::unique_ptr<Game> currentGame = nullptr;
         try {
             while (client) {
                 if (!std::getline(client, line)) {
@@ -63,9 +64,30 @@ namespace FastTyping::Server {
                 if (type == "exit") {
                     break;
                 }
-
-                if (type == "echo") {
+                else if (currentGame) {
+                    if (type == "getNewLine") {
+                        client << currentGame->getNewLine(user, queryBody) << '\n';
+                    }
+                    else if (type == "checkInput") {
+                        auto result = currentGame->checkInputAndProceed(user, queryBody);
+                        client << result << '\n';
+                        if (result["body"]["isCorrect"] == true && result["body"]["isEnd"] == true) {
+                            currentGame = nullptr;
+                        }
+                    }
+                    else {
+                        client << "unknown command\n";
+                    }
+                }
+                else if (type == "echo") {
                     echoQuery(client, user, queryBody);
+                }
+                else if (type == "createGame") {
+                    currentGame = makeGame(user, queryBody);
+                    json result = {{"header", {{"type", "gameCreated"}}}, {"body", {{"id", currentGame->getId()}, {"name", currentGame->getName()}}}};
+                    client << result << '\n';
+                } else {
+                    client << "unknown command\n";
                 }
             }
         } catch (nlohmann::detail::parse_error &e) {

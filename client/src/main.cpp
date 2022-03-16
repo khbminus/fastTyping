@@ -1,5 +1,5 @@
 #include "client/include/mainwindow.h"
-#include "constGame.h"
+#include "server/include/constGame.h"
 #include <QApplication>
 #include <memory>
 
