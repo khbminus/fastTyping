@@ -4,11 +4,10 @@
 #include <QMainWindow>
 
 namespace Ui {
-class CreateWindow;
+    class CreateWindow;
 }
 
-class CreateWindow : public QMainWindow
-{
+class CreateWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -23,4 +22,4 @@ private slots:
     void on_CreateButton_clicked();
 };
 
-#endif // CREATEWINDOW_H
+#endif// CREATEWINDOW_H

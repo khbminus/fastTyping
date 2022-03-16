@@ -51,7 +51,7 @@ namespace game {
     [[nodiscard]] bool RaceGame::isEnded() const {
         return endOfGame;
     }
-    
+
     [[nodiscard]] QString RaceGame::getBuffer() const {
         return inputter.getBuffer();
     }

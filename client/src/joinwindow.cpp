@@ -13,15 +13,13 @@ JoinWindow::~JoinWindow() {
 }
 
 
-void JoinWindow::on_JoinButton_clicked()
-{
+void JoinWindow::on_JoinButton_clicked() {
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("GameWindow");
 }
 
 
-void JoinWindow::on_ReturnButton_clicked()
-{
+void JoinWindow::on_ReturnButton_clicked() {
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("MainWindow");
 }
