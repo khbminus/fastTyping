@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QString>
+#include <string>
 #include <unordered_map>
 
 namespace FastTyping {
@@ -19,11 +20,11 @@ namespace FastTyping {
             return controller;
         }
 
-        void registerWindow(const QString &windowName, QSharedPointer<QMainWindow> window);
-        void setActiveWindow(const QString &windowName);
+        void registerWindow(const std::string &windowName, QSharedPointer<QMainWindow> window);
+        void setActiveWindow(const std::string &windowName);
 
     private:
-        std::unordered_map<QString, QSharedPointer<QMainWindow>> windows;
+        std::unordered_map<std::string, QSharedPointer<QMainWindow>> windows;
         QSharedPointer<QMainWindow> activeWindow;
 
         WindowController() = default;
