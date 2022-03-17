@@ -23,7 +23,7 @@ namespace FastTyping::Logic {
         }
         [[nodiscard]] std::string getLine(int index) const override {
             std::string result;
-            for (const std::string& s : words)
+            for (const std::string &s: words)
                 result += s;
             return result;
         }
