@@ -34,6 +34,8 @@ set(PROJECT_SOURCES
         client/include/gameLogic.h
         client/src/tcp_client.cpp
         client/include/tcp_client.h
+        client/src/gameClient.cpp
+        client/include/gameClient.h
         )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -73,7 +73,16 @@ namespace game {
         }
     };
 
-    struct RaceGame {
+    struct AbstractGameManager {
+        virtual void keyPressed(QChar key) = 0;
+        virtual void backspacePressed() = 0;
+        [[nodiscard]] virtual bool getErrorStatus() const = 0;
+        [[nodiscard]] virtual bool isEnded() const = 0;
+        [[nodiscard]] virtual QString getBuffer() const = 0;
+        virtual ~AbstractGameManager() {}
+    };
+
+    struct RaceGame : AbstractGameManager{
     private:
         ConstDictionary dictionary;
         Inputter inputter;
@@ -84,11 +93,11 @@ namespace game {
 
     public:
         RaceGame();
-        void keyPressed(QChar button);
-        void backspacePressed();
-        [[nodiscard]] bool getErrorStatus() const;
-        [[nodiscard]] bool isEnded() const;
-        [[nodiscard]] QString getBuffer() const;
+        void keyPressed(QChar button) override;
+        void backspacePressed() override;
+        [[nodiscard]] bool getErrorStatus() const  override;
+        [[nodiscard]] bool isEnded() const  override;
+        [[nodiscard]] QString getBuffer() const  override;
     };
 
 }// namespace game

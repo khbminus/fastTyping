@@ -4,8 +4,6 @@
 //#include "gamewindow.h"
 
 namespace game {
-
-
     void RaceGame::checkPrefix(QString a, QString b) {
         if (a.size() > b.size()) {
             errorState = true;

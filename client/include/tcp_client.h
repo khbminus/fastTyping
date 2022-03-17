@@ -15,10 +15,10 @@
 #include <QString>
 #include <QTcpSocket>
 
+namespace web {
 class WebClient : public QObject {
     Q_OBJECT
     QTcpSocket *socket;
-
 public:
     WebClient(QString ip, int port);
     ~WebClient();
@@ -26,6 +26,6 @@ public:
 public slots:
     void get();
 };
-
+}
 
 #endif

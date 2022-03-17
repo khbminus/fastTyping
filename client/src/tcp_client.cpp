@@ -1,6 +1,7 @@
 #include "client/include/tcp_client.h"
 #include <iostream>
 
+namespace web {
 WebClient::WebClient(QString ip, int port) {
     socket = new QTcpSocket(this);
     socket->connectToHost(ip, port);
@@ -30,4 +31,5 @@ void WebClient::get() {
 WebClient::~WebClient() {
     socket->close();
     std::cout << "Disconnected" << std::endl;
+}
 }

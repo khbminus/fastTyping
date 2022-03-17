@@ -4,7 +4,9 @@
 #include <iostream>
 
 GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
-                                          ui(new Ui::GameWindow), game(new game::RaceGame) {
+                                          ui(new Ui::GameWindow),
+                                          handlers{new game::RaceGame, new game::client::GameClient},
+                                          main_handler(handlers[0]) {
     ui->setupUi(this);
     palette = ui->userText->palette();
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
@@ -19,7 +21,9 @@ GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
 
 GameWindow::~GameWindow() {
     delete ui;
-    delete game;
+    for (auto handler : handlers) {
+        delete handler;
+    }
 }
 
 void GameWindow::on_ReturnButton_clicked() {
@@ -36,23 +40,27 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
         return;
     }
     if (event->key() == Qt::Key_Backspace) {
-        game->backspacePressed();
+        for (auto handler : handlers) {
+            handler->backspacePressed();
+        }
         emit keyPressed();
         return;
     }
-    game->keyPressed(keysCombination[0]);
 
+    for (auto handler : handlers) {
+        handler->keyPressed(keysCombination[0]);
+    }
     emit keyPressed();
 }
 
 void GameWindow::keyPressed() {
-    ui->userText->setText(game->getBuffer());
-    if (game->getErrorStatus())
+    ui->userText->setText(main_handler->getBuffer());
+    if (main_handler->getErrorStatus())
         setError();
     else
         unsetError();
     ui->userText->setPalette(palette);
-    if (game->isEnded()) {
+    if (main_handler->isEnded()) {
         auto &controller = FastTyping::WindowController::getInstance();
         controller.setActiveWindow("StatWindow");
     }
