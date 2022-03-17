@@ -44,7 +44,7 @@ namespace FastTyping::Server {
         std::unordered_map<int, AdditionalUserInfo> additionalInfo;
     };
 
-    std::unique_ptr<Game> makeGame(User& user, json body);
+    std::unique_ptr<Game> makeGame(User& user, json body, json& error);
 }// namespace FastTyping::Server
 
 

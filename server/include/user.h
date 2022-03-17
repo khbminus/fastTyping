@@ -1,6 +1,6 @@
 #ifndef FASTTYPING_USER_H
 #define FASTTYPING_USER_H
-#include <common/include/json.hpp>
+#include <json.hpp>
 #include <string>
 #include <unordered_map>
 #include <utility>

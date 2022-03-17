@@ -4,6 +4,7 @@
 #include <boost/asio.hpp>
 #include <memory>
 #include <string>
+#include <optional>
 namespace FastTyping::Server {
     using boost::asio::ip::tcp;
 
@@ -25,6 +26,8 @@ namespace FastTyping::Server {
 
         void parseQuery(tcp::socket);
         void echoQuery(tcp::iostream& client, User& user, json queryBody);
+
+        std::optional<json> checkQueryForErrors(const std::string &queryString);
     };
 }// namespace FastTyping::Server
 

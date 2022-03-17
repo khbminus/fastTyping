@@ -2,6 +2,7 @@
 #include "game.h"
 #include <iostream>
 #include <memory>
+#include <optional>
 #include <thread>
 
 namespace FastTyping::Server {
@@ -28,66 +29,67 @@ namespace FastTyping::Server {
         }
         json query;
         std::string user_name;
-        try {
-            query = json::parse(line);
-            if (query["header"]["type"] != "hello") {
-                client << "BAD QUERY\n";
-                return;
-            }
-            user_name = query["body"]["name"].get<std::string>();
-
-        } catch (nlohmann::detail::parse_error &e) {
-            std::cerr << e.what() << '\n';
+        auto errors = checkQueryForErrors(line);
+        if (errors) {
+            client << errors.value() << '\n';
             return;
         }
-
-        User &user = storage->get(user_name);
+        query = json::parse(line);
+        if (query["header"]["type"] != "hello") {
+            json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "first query should be hello"}}}};
+            client << result << '\n';
+            return;
+        }
+        if (!query["body"]["name"].is_string()) {
+            json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"name\""}}}};
+            client << result << '\n';
+        }
+        User &user = storage->get(query["body"]["name"].get<std::string>());
         std::unique_ptr<Game> currentGame = nullptr;
         try {
             while (client) {
                 if (!std::getline(client, line)) {
                     break;
                 }
+                errors = checkQueryForErrors(line);
+                if (errors) {
+                    client << errors.value() << '\n';
+                    continue;
+                }
                 query = json::parse(line);
-                if (!query.contains("header")) {
-                    client << "ERROR\n";// FIXME: make it better;
-                    continue;
-                }
-                if (!query.contains("body")) {
-                    client << "ANOTHER ERROR\n";// FIXME
-                    continue;
-                }
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
 
                 auto type = queryHeader["type"].get<std::string>();
                 if (type == "exit") {
                     break;
-                }
-                else if (currentGame) {
+                } else if (currentGame) {
                     if (type == "getNewLine") {
                         client << currentGame->getNewLine(user, queryBody) << '\n';
-                    }
-                    else if (type == "checkInput") {
+                    } else if (type == "checkInput") {
                         auto result = currentGame->checkInputAndProceed(user, queryBody);
                         client << result << '\n';
                         if (result["body"]["isCorrect"] == true && result["body"]["isEnd"] == true) {
                             currentGame = nullptr;
                         }
+                    } else {
+                        json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "unknown query"}}}};
+                        client << result << '\n';
                     }
-                    else {
-                        client << "unknown command\n";
-                    }
-                }
-                else if (type == "echo") {
+                } else if (type == "echo") {
                     echoQuery(client, user, queryBody);
-                }
-                else if (type == "createGame") {
-                    currentGame = makeGame(user, queryBody);
-                    json result = {{"header", {{"type", "gameCreated"}}}, {"body", {{"id", currentGame->getId()}, {"name", currentGame->getName()}}}};
-                    client << result << '\n';
+                } else if (type == "createGame") {
+                    json errors;
+                    currentGame = makeGame(user, queryBody, errors);
+                    if (currentGame == nullptr) {
+                        client << errors << '\n';
+                    } else {
+                        json result = {{"header", {{"type", "gameCreated"}}}, {"body", {{"id", currentGame->getId()}, {"name", currentGame->getName()}}}};
+                        client << result << '\n';
+                    }
                 } else {
-                    client << "unknown command\n";
+                    json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "unknown query"}}}};
+                    client << result << '\n';
                 }
             }
         } catch (nlohmann::detail::parse_error &e) {
@@ -98,5 +100,25 @@ namespace FastTyping::Server {
     }
     void Server::echoQuery(tcp::iostream &client, User &user, json queryBody) {
         client << queryBody << '\n';
+    }
+    std::optional<json> Server::checkQueryForErrors(const std::string &queryString) {
+        json query;
+        try {
+            query = json::parse(queryString);
+        } catch (nlohmann::detail::parse_error &e) {
+            return {{{"header", {{"type", "error"}}}, {"body", {{"text", "bad json"}}}}};
+        }
+        if (!query.contains("header") || !query["header"].is_object()) {
+            return {{{"header", {{"type", "error"}}}, {"body", {{"text", "can't find header"}}}}};
+        }
+        if (!query.contains("body") || !query["body"].is_object()) {
+            return {{{"header", {{"type", "error"}}}, {"body", {{"text", "can't find body"}}}}};
+        }
+
+        if (!query["header"]["type"].is_string()) {
+            return {{{"header", {{"type", "error"}}}, {"body", {{"text", "can't recognize type of query"}}}}};
+        }
+
+        return {};
     }
 }// namespace FastTyping::Server

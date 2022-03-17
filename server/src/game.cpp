@@ -23,9 +23,18 @@ namespace FastTyping::Server {
                 {"body", {{"line", line}}}};
     }
 
-    std::unique_ptr<Game> makeGame(User &user, json body) {
+    std::unique_ptr<Game> makeGame(User &user, json body, json &error) {
+        if (!body["dictionaryName"].is_string()) {
+            error = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"dictionaryName\""}}}};
+            return nullptr;
+        }
+
+        if (!body["parserName"].is_string()) {
+            error = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"parserName\""}}}};
+            return nullptr;
+        }
         if (body["dictionaryName"] != "const" || body["parserName"] != "simple") {
-            std::cerr << body["dictionaryName"] << " " << body["parserName"] << '\n';
+            error = {{"header", {{"type", "error"}}}, {"body", {{"text", "wrong parameters"}}}};
             return nullptr;
         }
         return std::make_unique<Game>(
