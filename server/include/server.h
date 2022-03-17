@@ -3,8 +3,8 @@
 #include "user.h"
 #include <boost/asio.hpp>
 #include <memory>
-#include <string>
 #include <optional>
+#include <string>
 namespace FastTyping::Server {
     using boost::asio::ip::tcp;
 
@@ -25,7 +25,7 @@ namespace FastTyping::Server {
         std::unique_ptr<AbstractUserStorage> storage;
 
         void parseQuery(tcp::socket);
-        void echoQuery(tcp::iostream& client, User& user, json queryBody);
+        void echoQuery(tcp::iostream &client, User &user, json queryBody);
 
         std::optional<json> checkQueryForErrors(const std::string &queryString);
     };
