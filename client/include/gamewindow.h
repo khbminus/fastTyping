@@ -2,8 +2,8 @@
 #define GAMEWINDOW_H
 
 //#include <QChar>
-#include "gameLogic.h"
 #include "gameClient.h"
+#include "gameLogic.h"
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <QLabel>
@@ -28,8 +28,9 @@ private:
     Ui::GameWindow *ui;
     QPalette palette;
 
-    std::vector<game::AbstractGameManager*> handlers;
-    game::AbstractGameManager* main_handler;
+    std::vector<game::AbstractGameManager *> handlers;
+    game::AbstractGameManager *main_handler;
+
 protected:
     void keyPressEvent(QKeyEvent *event);
 private slots:
