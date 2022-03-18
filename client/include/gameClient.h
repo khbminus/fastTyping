@@ -9,6 +9,7 @@ namespace game::client {
     private:
         web::WebClient socket_wrapper;
         Inputter local_buffer;
+
     public:
         GameClient(QString name);
         void keyPressed(QChar button) override;
