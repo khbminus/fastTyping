@@ -39,7 +39,7 @@ set(PROJECT_SOURCES
         common/include/json.hpp
         )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(client
             MANUAL_FINALIZATION
             ${PROJECT_SOURCES}
@@ -48,11 +48,11 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     #    set_property(TARGET client APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
     #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
     # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
+else ()
     add_executable(client
             ${PROJECT_SOURCES}
             )
-endif()
+endif ()
 
 target_link_libraries(client PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(client PRIVATE Qt${QT_VERSION_MAJOR}::Network)
@@ -67,11 +67,13 @@ set_target_properties(client PROPERTIES
 
 target_include_directories(client PRIVATE client/include)
 
-if(QT_VERSION_MAJOR EQUAL 6)
+if (QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(client)
-endif()
+endif ()
 
 # -*-*- QT CMake end -*-*-
+
+find_package(Boost 1.71 REQUIRED system)  # Required by Boost.DLL
 
 add_executable(server server/src/main.cpp server/src/server.cpp server/src/game.cpp server/include/user.h)
 target_include_directories(server PRIVATE ${Boost_INCLUDE_DIRS} server/include)
