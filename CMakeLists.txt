@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.0)
 project(fastTyping VERSION 0.1 LANGUAGES CXX)
 
 # -*-*- QT CMake start -*-*-
@@ -73,6 +73,13 @@ endif()
 
 # -*-*- QT CMake end -*-*-
 
-add_executable(testClient main.cpp)
-target_include_directories(testClient PRIVATE ${Boost_INCLUDE_DIRS})
-target_link_libraries(testClient ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS})
+add_executable(server server/src/main.cpp server/src/server.cpp server/src/game.cpp server/include/user.h)
+target_include_directories(server PRIVATE ${Boost_INCLUDE_DIRS} server/include)
+target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS})
+
+add_executable(server-tests server/src/doctest_main.cpp server/src/userTests.cpp)
+target_include_directories(server-tests PRIVATE ${Boost_INCLUDE_DIRS} server/include)
+target_link_libraries(server-tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS})
+
+
+include_directories(PUBLIC common/include)
