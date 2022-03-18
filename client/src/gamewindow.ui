@@ -49,6 +49,9 @@
       <height>32</height>
      </rect>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
     <property name="text">
      <string>return</string>
     </property>
