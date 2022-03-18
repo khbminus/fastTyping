@@ -3,19 +3,21 @@
 
 namespace FastTyping::Server {
     json Game::checkInputAndProceed(const User &user, json queryBody) {
+        std::unique_lock l{mutex};
         std::string userWord = queryBody["word"];
         std::string rightWord = dictionary->getWord(additionalInfo[user.getId()].currentWord);
         json result;
         result["header"] = {{"type", "checkResult"}};
         if (parser->isCorrect(userWord, rightWord)) {
             int currentWord = ++additionalInfo[user.getId()].currentWord;
-            result["body"] = {{"isCorrect", true}, {"isEnd", (currentWord == dictionary->getWordCount())}};
+            result["body"] = {{{"isCorrect", true}}, {{"isEnd", (currentWord == dictionary->getWordCount())}}};
             return result;
         }
         result["body"] = {{"isCorrect", false}, {"isEnd", nullptr}};
         return result;
     }
     json Game::getNewLine(const User &user, json) {
+        std::unique_lock l{mutex};
         int currentLine = additionalInfo[user.getId()].lineNumber++;
         std::string line = dictionary->getLine(currentLine);
         return {
@@ -23,7 +25,7 @@ namespace FastTyping::Server {
                 {"body", {{"line", line}}}};
     }
 
-    std::unique_ptr<Game> makeGame(User &user, json body, json &error) {
+    std::shared_ptr<Game> makeGame(User &user, json body, json &error) {
         if (!body["dictionaryName"].is_string()) {
             error = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"dictionaryName\""}}}};
             return nullptr;
@@ -42,5 +44,17 @@ namespace FastTyping::Server {
                 std::make_unique<FastTyping::Logic::Dictionary>(body["text"]));
     }
 
+    json Game::getStateOfUsers(const User &user, json) {
+        std::unique_lock l{mutex};
+        json result = {{"header", {{"type", "currentState"}}}};
+        json& userStates = result["body"]["userStates"];
+        for (const auto& [id, info] : additionalInfo) {
+            userStates.emplace_back();
+            userStates.back()["id"] = id;
+            userStates.back()["wordsTyped"] = info.currentWord;
+            userStates.back()["linesTyped"] = info.lineNumber;
+        }
+        return result;
+    }
 
 }// namespace FastTyping::Server

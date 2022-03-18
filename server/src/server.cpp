@@ -45,7 +45,6 @@ namespace FastTyping::Server {
             client << result << '\n';
         }
         User &user = storage->get(query["body"]["name"].get<std::string>());
-        std::unique_ptr<Game> currentGame = nullptr;
         try {
             while (client) {
                 if (!std::getline(client, line)) {
@@ -63,15 +62,17 @@ namespace FastTyping::Server {
                 auto type = queryHeader["type"].get<std::string>();
                 if (type == "exit") {
                     break;
-                } else if (currentGame) {
+                } else if (user.getGame()) {
                     if (type == "getNewLine") {
-                        client << currentGame->getNewLine(user, queryBody) << '\n';
+                        client << user.getGame()->getNewLine(user, queryBody) << '\n';
                     } else if (type == "checkInput") {
-                        auto result = currentGame->checkInputAndProceed(user, queryBody);
+                        auto result = user.getGame()->checkInputAndProceed(user, queryBody);
                         client << result << '\n';
                         if (result["body"]["isCorrect"] == true && result["body"]["isEnd"] == true) {
-                            currentGame = nullptr;
+                            user.setGame(nullptr);
                         }
+                    } else if (type == "getUserStates") {
+                        client << user.getGame()->getStateOfUsers(user, queryBody) << '\n';
                     } else {
                         json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "unknown query"}}}};
                         client << result << '\n';
@@ -80,11 +81,11 @@ namespace FastTyping::Server {
                     echoQuery(client, user, queryBody);
                 } else if (type == "createGame") {
                     json errors;
-                    currentGame = makeGame(user, queryBody, errors);
-                    if (currentGame == nullptr) {
+                    user.setGame(makeGame(user, queryBody, errors));
+                    if (user.getGame() == nullptr) {
                         client << errors << '\n';
                     } else {
-                        json result = {{"header", {{"type", "gameCreated"}}}, {"body", {{"id", currentGame->getId()}, {"name", currentGame->getName()}}}};
+                        json result = {{"header", {{"type", "gameCreated"}}}, {"body", {{"id", user.getGame()->getId()}, {"name", user.getGame()->getName()}}}};
                         client << result << '\n';
                     }
                 } else {

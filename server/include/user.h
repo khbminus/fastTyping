@@ -1,12 +1,12 @@
 #ifndef FASTTYPING_USER_H
 #define FASTTYPING_USER_H
+#include "game_fwd.h"
 #include <json.hpp>
 #include <mutex>
 #include <string>
 #include <thread>
 #include <unordered_map>
 #include <utility>
-#include "game_fwd.h"
 
 using nlohmann::json;
 
@@ -29,14 +29,20 @@ namespace FastTyping::Server {
         [[nodiscard]] int getId() const noexcept {
             return id;
         }
+        [[nodiscard]] Game *getGame() const noexcept {
+            return currentGame.get();
+        }
+        void setGame(std::shared_ptr<Game> game) noexcept {
+            currentGame = game;
+        }
 
     private:
         std::string userName;
         int id = 0;
         static inline int nextId = 0;
 
-        std::mutex mutex;
-        Game* current_game = nullptr;
+        mutable std::mutex mutex;
+        std::shared_ptr<Game> currentGame = nullptr;
     };
 
     class AbstractUserStorage {
@@ -52,9 +58,11 @@ namespace FastTyping::Server {
     public:
         MapUserStorage() = default;
         User &get(int id) override {
+            std::unique_lock l{mutex};
             return usersById.at(id);
         }
         User &get(const std::string &name) override {
+            std::unique_lock l{mutex};
             if (auto it = usersByName.find(name); it != usersByName.end()) {
                 return it->second;
             }
@@ -65,6 +73,7 @@ namespace FastTyping::Server {
     private:
         std::unordered_map<std::string, User> usersByName;
         std::unordered_map<int, User &> usersById;
+        mutable std::mutex mutex;
     };
 }// namespace FastTyping::Server
 #endif//FASTTYPING_USER_H

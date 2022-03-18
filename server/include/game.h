@@ -5,6 +5,7 @@
 #include <json.hpp>
 #include <memory>
 #include <string>
+#include <mutex>
 #include <unordered_map>
 
 using nlohmann::json;
@@ -26,6 +27,7 @@ namespace FastTyping::Server {
 
         json checkInputAndProceed(const User &user, json queryBody);
         json getNewLine(const User &user, json queryBody);
+        json getStateOfUsers(const User& user, json);
 
 
     private:
@@ -41,10 +43,11 @@ namespace FastTyping::Server {
             int lineNumber = 0;
         };
 
+        mutable std::mutex mutex;
         std::unordered_map<int, AdditionalUserInfo> additionalInfo;
     };
 
-    std::unique_ptr<Game> makeGame(User &user, json body, json &error);
+    std::shared_ptr<Game> makeGame(User &user, json body, json &error);
 }// namespace FastTyping::Server
 
 
