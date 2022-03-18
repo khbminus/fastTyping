@@ -11,7 +11,7 @@ namespace game::client {
         QString local_buffer;
 
     public:
-        GameClient();
+        GameClient(QString name);
         void keyPressed(QChar button) override;
         void backspacePressed() override;
         [[nodiscard]] bool getErrorStatus() const override;

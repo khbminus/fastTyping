@@ -5,7 +5,7 @@
 
 GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::GameWindow),
-                                          handlers{new game::RaceGame, new game::client::GameClient},
+                                          handlers{new game::RaceGame, new game::client::GameClient("aboba")},
                                           main_handler(handlers[0]) {
     ui->setupUi(this);
     palette = ui->userText->palette();

@@ -36,6 +36,7 @@ set(PROJECT_SOURCES
         client/include/tcp_client.h
         client/src/gameClient.cpp
         client/include/gameClient.h
+        common/include/json.hpp
         )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
