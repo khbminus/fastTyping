@@ -6,6 +6,7 @@
 #include <thread>
 #include <unordered_map>
 #include <utility>
+#include "game_fwd.h"
 
 using nlohmann::json;
 
@@ -21,6 +22,7 @@ namespace FastTyping::Server {
         }
 
         [[nodiscard]] const std::string &name() const {
+            std::unique_lock l{mutex};
             return userName;
         }
 
@@ -32,6 +34,9 @@ namespace FastTyping::Server {
         std::string userName;
         int id = 0;
         static inline int nextId = 0;
+
+        std::mutex mutex;
+        Game* current_game = nullptr;
     };
 
     class AbstractUserStorage {
