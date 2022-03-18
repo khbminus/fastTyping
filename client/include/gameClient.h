@@ -8,8 +8,7 @@ namespace game::client {
     struct GameClient : game::AbstractGameManager {
     private:
         web::WebClient socket_wrapper;
-        QString local_buffer;
-
+        Inputter local_buffer;
     public:
         GameClient(QString name);
         void keyPressed(QChar button) override;

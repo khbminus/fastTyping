@@ -37,15 +37,13 @@ namespace game::client {
 
     void GameClient::keyPressed(QChar button) {
         //socket_wrapper.sent(QString("add_symbol_%1\n").arg(button));
-        local_buffer += button;
-        socket_wrapper.sent(beautify(keyPressedRequest(local_buffer)));
+        local_buffer.addSymbol(button);
+        socket_wrapper.sent(beautify(keyPressedRequest(local_buffer.getBuffer())));
     }
 
     void GameClient::backspacePressed() {
         socket_wrapper.sent(QString("add_backspace\n"));
-        if (local_buffer.length() != 0) {
-            local_buffer.remove(local_buffer.length() - 1, 1);
-        }
+        local_buffer.deleteSymbol();
     }
 
     [[nodiscard]] bool GameClient::getErrorStatus() const {
@@ -55,6 +53,6 @@ namespace game::client {
         return false;
     }
     [[nodiscard]] QString GameClient::getBuffer() const {
-        return local_buffer;
+        return local_buffer.getBuffer();
     }
 }// namespace game::client

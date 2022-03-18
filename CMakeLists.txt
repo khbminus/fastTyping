@@ -72,16 +72,4 @@ if (QT_VERSION_MAJOR EQUAL 6)
 endif ()
 
 # -*-*- QT CMake end -*-*-
-
-find_package(Boost 1.71 REQUIRED system)  # Required by Boost.DLL
-
-add_executable(server server/src/main.cpp server/src/server.cpp server/src/game.cpp server/include/user.h)
-target_include_directories(server PRIVATE ${Boost_INCLUDE_DIRS} server/include)
-target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS})
-
-add_executable(server-tests server/src/doctest_main.cpp server/src/userTests.cpp)
-target_include_directories(server-tests PRIVATE ${Boost_INCLUDE_DIRS} server/include)
-target_link_libraries(server-tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS})
-
-
 include_directories(PUBLIC common/include)
