@@ -16,16 +16,17 @@
 #include <QTcpSocket>
 
 namespace web {
-class WebClient : public QObject {
-    Q_OBJECT
-    QTcpSocket *socket;
-public:
-    WebClient(QString ip, int port);
-    ~WebClient();
-    void sent(QString line);
-public slots:
-    void get();
-};
-}
+    class WebClient : public QObject {
+        Q_OBJECT
+        QTcpSocket *socket;
+
+    public:
+        WebClient(QString ip, int port);
+        ~WebClient();
+        void sent(QString line);
+    public slots:
+        void get();
+    };
+}// namespace web
 
 #endif

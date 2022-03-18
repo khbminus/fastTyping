@@ -82,7 +82,7 @@ namespace game {
         virtual ~AbstractGameManager() {}
     };
 
-    struct RaceGame : AbstractGameManager{
+    struct RaceGame : AbstractGameManager {
     private:
         ConstDictionary dictionary;
         Inputter inputter;
@@ -95,9 +95,9 @@ namespace game {
         RaceGame();
         void keyPressed(QChar button) override;
         void backspacePressed() override;
-        [[nodiscard]] bool getErrorStatus() const  override;
-        [[nodiscard]] bool isEnded() const  override;
-        [[nodiscard]] QString getBuffer() const  override;
+        [[nodiscard]] bool getErrorStatus() const override;
+        [[nodiscard]] bool isEnded() const override;
+        [[nodiscard]] QString getBuffer() const override;
     };
 
 }// namespace game

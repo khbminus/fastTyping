@@ -21,7 +21,7 @@ GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
 
 GameWindow::~GameWindow() {
     delete ui;
-    for (auto handler : handlers) {
+    for (auto handler: handlers) {
         delete handler;
     }
 }
@@ -40,14 +40,14 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
         return;
     }
     if (event->key() == Qt::Key_Backspace) {
-        for (auto handler : handlers) {
+        for (auto handler: handlers) {
             handler->backspacePressed();
         }
         emit keyPressed();
         return;
     }
 
-    for (auto handler : handlers) {
+    for (auto handler: handlers) {
         handler->keyPressed(keysCombination[0]);
     }
     emit keyPressed();
