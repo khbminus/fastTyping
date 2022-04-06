@@ -50,15 +50,15 @@ namespace FastTyping::Server {
     class AbstractGameStorage {
     public:
         AbstractGameStorage() = default;
-        virtual std::shared_ptr<Game> get(int id, json& errors) = 0;
-        virtual json createGame(const json& body) = 0;
+        virtual std::shared_ptr<Game> get(int id, json &errors) = 0;
+        virtual json createGame(const json &body) = 0;
         virtual ~AbstractGameStorage() = default;
     };
 
     class MapGameStorage final : public AbstractGameStorage {
     public:
-        std::shared_ptr<Game> get(int id, json& errors) override;
-        json createGame(const json& body) override;
+        std::shared_ptr<Game> get(int id, json &errors) override;
+        json createGame(const json &body) override;
 
     private:
         std::unordered_map<int, std::shared_ptr<Game>> games;

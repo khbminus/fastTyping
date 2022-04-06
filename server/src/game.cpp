@@ -38,7 +38,7 @@ namespace FastTyping::Server {
         return result;
     }
 
-    std::shared_ptr<Game> MapGameStorage::get(int id, json& errors) {
+    std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
         if (auto it = games.find(id); it != games.end())
             return it->second;
         errors = {{"header", {{"type", "error"}}}, {"body", {{"text", "Can't find game with specific id"}}}};
