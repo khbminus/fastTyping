@@ -25,36 +25,36 @@ namespace FastTyping::Server {
                 {"body", {{"line", line}}}};
     }
 
-    std::shared_ptr<Game> makeGame(User &user, json body, json &error) {
-        if (!body["dictionaryName"].is_string()) {
-            error = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"dictionaryName\""}}}};
-            return nullptr;
-        }
-
-        if (!body["parserName"].is_string()) {
-            error = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"parserName\""}}}};
-            return nullptr;
-        }
-        if (body["dictionaryName"] != "const" || body["parserName"] != "simple") {
-            error = {{"header", {{"type", "error"}}}, {"body", {{"text", "wrong parameters"}}}};
-            return nullptr;
-        }
-        return std::make_unique<Game>(
-                std::make_unique<FastTyping::Logic::SimpleParser>(),
-                std::make_unique<FastTyping::Logic::Dictionary>(body["text"]));
-    }
-
-    json Game::getStateOfUsers(const User &user, json) {
+    json Game::getStateOfUsers() {
         std::unique_lock l{mutex};
         json result = {{"header", {{"type", "currentState"}}}};
-        json& userStates = result["body"]["userStates"];
-        for (const auto& [id, info] : additionalInfo) {
+        json &userStates = result["body"]["userStates"];
+        for (const auto &[uid, info]: additionalInfo) {
             userStates.emplace_back();
-            userStates.back()["id"] = id;
+            userStates.back()["id"] = uid;
             userStates.back()["wordsTyped"] = info.currentWord;
             userStates.back()["linesTyped"] = info.lineNumber;
         }
         return result;
     }
 
+    std::shared_ptr<Game> MapGameStorage::get(int id, json& errors) {
+        if (auto it = games.find(id); it != games.end())
+            return it->second;
+        errors = {{"header", {{"type", "error"}}}, {"body", {{"text", "Can't find game with specific id"}}}};
+        return nullptr;
+    }
+    json MapGameStorage::createGame(const json &body) {
+        if (body["dictionaryName"] != "const" || body["parserName"] != "simple") {
+            return {{"header", {{"type", "error"}}}, {"body", {{"text", "wrong parameters"}}}};
+        }
+        if (!body["words"].is_array()) {
+            return {{"header", {{"type", "error"}}}, {"body", {{"text", "Can't find words"}}}};
+        }
+        std::shared_ptr<Game> game = std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
+                                                            std::make_unique<Logic::Dictionary>(
+                                                                    body["words"].get<std::vector<std::string>>()));
+        games[game->getId()] = game;
+        return {{"header", {{"type", "GameCreatedSuccessfully"}}}, {"body", {{"id", game->getId()}}}};
+    }
 }// namespace FastTyping::Server

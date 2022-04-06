@@ -5,6 +5,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include "game.h"
 namespace FastTyping::Server {
     using boost::asio::ip::tcp;
 
@@ -22,13 +23,19 @@ namespace FastTyping::Server {
         Server();
         boost::asio::io_context ioContext;
         tcp::acceptor acceptor;
-        std::unique_ptr<AbstractUserStorage> storage;
+        std::unique_ptr<AbstractUserStorage> userStorage;
+        std::unique_ptr<AbstractGameStorage> gameStorage;
+        std::unordered_map<std::string, std::function<json(const json&, User&)>> commonQueriesMap;
+        std::unordered_map<std::string, std::function<json(const json&, User&)>> gameQueriesMap;
 
         void parseQuery(tcp::socket);
         void echoQuery(tcp::iostream &client, User &user, json queryBody);
 
-        std::optional<json> checkQueryForErrors(const std::string &queryString);
+        std::optional<json> checkQueryCorrectness(const std::string &queryString);
     };
+
+
+
 }// namespace FastTyping::Server
 
 #endif//FASTTYPING_SERVER_H

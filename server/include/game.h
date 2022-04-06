@@ -4,8 +4,8 @@
 #include <abc.h>
 #include <json.hpp>
 #include <memory>
-#include <string>
 #include <mutex>
+#include <string>
 #include <unordered_map>
 
 using nlohmann::json;
@@ -27,7 +27,7 @@ namespace FastTyping::Server {
 
         json checkInputAndProceed(const User &user, json queryBody);
         json getNewLine(const User &user, json queryBody);
-        json getStateOfUsers(const User& user, json);
+        json getStateOfUsers();
 
 
     private:
@@ -47,7 +47,22 @@ namespace FastTyping::Server {
         std::unordered_map<int, AdditionalUserInfo> additionalInfo;
     };
 
-    std::shared_ptr<Game> makeGame(User &user, json body, json &error);
+    class AbstractGameStorage {
+    public:
+        AbstractGameStorage() = default;
+        virtual std::shared_ptr<Game> get(int id, json& errors) = 0;
+        virtual json createGame(const json& body) = 0;
+        virtual ~AbstractGameStorage() = default;
+    };
+
+    class MapGameStorage final : public AbstractGameStorage {
+    public:
+        std::shared_ptr<Game> get(int id, json& errors) override;
+        json createGame(const json& body) override;
+
+    private:
+        std::unordered_map<int, std::shared_ptr<Game>> games;
+    };
 }// namespace FastTyping::Server
 
 

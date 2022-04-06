@@ -6,8 +6,64 @@
 #include <thread>
 
 namespace FastTyping::Server {
-    Server::Server() : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)), storage(new MapUserStorage) {
+    Server::Server() : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)), userStorage(new MapUserStorage), gameStorage(new MapGameStorage) {
         std::cout << "Listening at " << acceptor.local_endpoint() << std::endl;
+        commonQueriesMap["echo"] = [&](const json &body, User &user) {
+            return body;
+        };
+        commonQueriesMap["createGame"] = [&](const json &body, User &user) -> json {
+            // basic checks
+            if (!body["dictionaryName"].is_string()) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"dictionaryName\""}}}};
+            }
+
+            if (!body["parserName"].is_string()) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"parserName\""}}}};
+            }
+            return gameStorage->createGame(body);
+        };
+        commonQueriesMap["joinGame"] = [&](const json &body, User &user) -> json {
+            if (!body["id"].is_number_unsigned()) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"id\""}}}};
+            }
+            json errors;
+            auto game = gameStorage->get(body["id"], errors);
+            if (game == nullptr) {
+                return errors;
+            }
+            user.setGame(game);
+            return {{"header", {{"type", "GameJoinedSuccessfully"}}}, {"body", {{"id", game->getId()}}}};
+        };
+
+        commonQueriesMap["getNewLine"] = [&](const json &body, User &user) -> json {
+            if (user.getGame() == nullptr) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+            }
+            return user.getGame()->getNewLine(user, body);
+        };
+
+        commonQueriesMap["checkInput"] = [&](const json &body, User &user) -> json {
+            if (user.getGame() == nullptr) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+            }
+            auto result = user.getGame()->checkInputAndProceed(user, body);
+            if (result["body"]["isCorrect"] == true && result["body"]["isEnd"] == true) {
+                user.setGame(nullptr);
+            }
+            return result;
+        };
+
+        commonQueriesMap["getStates"] = [&](const json &body, User &user) -> json {
+            if (user.getGame() == nullptr) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+            }
+            return user.getGame()->getStateOfUsers();
+        };
+
+        commonQueriesMap["exit"] = [&](const json &body, User &user) -> json {
+            user.setWillToExit();
+            return {};
+        };
     }
 
     [[noreturn]] void Server::polling() {
@@ -29,7 +85,7 @@ namespace FastTyping::Server {
         }
         json query;
         std::string user_name;
-        auto errors = checkQueryForErrors(line);
+        auto errors = checkQueryCorrectness(line);
         if (errors) {
             client << errors.value() << '\n';
             return;
@@ -44,13 +100,17 @@ namespace FastTyping::Server {
             json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"name\""}}}};
             client << result << '\n';
         }
-        User &user = storage->get(query["body"]["name"].get<std::string>());
+
+        User &user = userStorage->get(query["body"]["name"].get<std::string>());
+        json result = {{"header", {{"type", "loginSuccessfully"}}}, {"body", {{"name", user.name()}}}};
+        client << result << '\n';
+
         try {
             while (client) {
                 if (!std::getline(client, line)) {
                     break;
                 }
-                errors = checkQueryForErrors(line);
+                errors = checkQueryCorrectness(line);
                 if (errors) {
                     client << errors.value() << '\n';
                     continue;
@@ -58,38 +118,12 @@ namespace FastTyping::Server {
                 query = json::parse(line);
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
-
-                auto type = queryHeader["type"].get<std::string>();
-                if (type == "exit") {
-                    break;
-                } else if (user.getGame()) {
-                    if (type == "getNewLine") {
-                        client << user.getGame()->getNewLine(user, queryBody) << '\n';
-                    } else if (type == "checkInput") {
-                        auto result = user.getGame()->checkInputAndProceed(user, queryBody);
-                        client << result << '\n';
-                        if (result["body"]["isCorrect"] == true && result["body"]["isEnd"] == true) {
-                            user.setGame(nullptr);
-                        }
-                    } else if (type == "getUserStates") {
-                        client << user.getGame()->getStateOfUsers(user, queryBody) << '\n';
-                    } else {
-                        json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "unknown query"}}}};
-                        client << result << '\n';
+                if (auto it = commonQueriesMap.find(queryHeader["name"]); it != commonQueriesMap.end()) {
+                    result = it->second(queryBody, user);
+                    if (user.isWantToExit()) {
+                        user.clearWillToExit();
+                        break;
                     }
-                } else if (type == "echo") {
-                    echoQuery(client, user, queryBody);
-                } else if (type == "createGame") {
-                    json errors;
-                    user.setGame(makeGame(user, queryBody, errors));
-                    if (user.getGame() == nullptr) {
-                        client << errors << '\n';
-                    } else {
-                        json result = {{"header", {{"type", "gameCreated"}}}, {"body", {{"id", user.getGame()->getId()}, {"name", user.getGame()->getName()}}}};
-                        client << result << '\n';
-                    }
-                } else {
-                    json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "unknown query"}}}};
                     client << result << '\n';
                 }
             }
@@ -99,10 +133,7 @@ namespace FastTyping::Server {
 
         std::cout << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
     }
-    void Server::echoQuery(tcp::iostream &client, User &user, json queryBody) {
-        client << queryBody << '\n';
-    }
-    std::optional<json> Server::checkQueryForErrors(const std::string &queryString) {
+    std::optional<json> Server::checkQueryCorrectness(const std::string &queryString) {
         json query;
         try {
             query = json::parse(queryString);

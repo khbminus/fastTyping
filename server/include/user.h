@@ -29,16 +29,31 @@ namespace FastTyping::Server {
         [[nodiscard]] int getId() const noexcept {
             return id;
         }
-        [[nodiscard]] Game *getGame() const noexcept {
+
+        [[nodiscard]] int isWantToExit() const noexcept {
+            return wantToExit;
+        }
+        [[nodiscard]] Game *getGame() const {
+            std::unique_lock l{mutex};
             return currentGame.get();
         }
-        void setGame(std::shared_ptr<Game> game) noexcept {
-            currentGame = game;
+        void setGame(std::shared_ptr<Game> game) {
+            std::unique_lock l{mutex};
+            currentGame = std::move(game);
+        }
+        void setWillToExit() {
+            std::unique_lock l{mutex};
+            wantToExit = true;
+        }
+        void clearWillToExit() {
+            std::unique_lock l{mutex};
+            wantToExit = false;
         }
 
     private:
         std::string userName;
         int id = 0;
+        bool wantToExit = false;
         static inline int nextId = 0;
 
         mutable std::mutex mutex;
