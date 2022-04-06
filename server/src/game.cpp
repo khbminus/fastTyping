@@ -10,10 +10,10 @@ namespace FastTyping::Server {
         result["header"] = {{"type", "checkResult"}};
         if (parser->isCorrect(userWord, rightWord)) {
             int currentWord = ++additionalInfo[user.getId()].currentWord;
-            result["body"] = {{{"isCorrect", true}}, {{"isEnd", (currentWord == dictionary->getWordCount())}}};
+            result["body"] = {{"isCorrect", true}, {"isEnd", (currentWord == dictionary->getWordCount())}};
             return result;
         }
-        result["body"] = {{"isCorrect", false}, {"isEnd", nullptr}};
+        result["body"] = {{"isCorrect", true}, {"isEnd", nullptr}};
         return result;
     }
     json Game::getNewLine(const User &user, json) {

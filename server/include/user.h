@@ -14,9 +14,6 @@ namespace FastTyping::Server {
     class User {
     public:
         User() = default;
-        explicit User(json j) : userName(j["username"]) {
-            id = nextId++;// strong exception guarantee
-        }
         explicit User(std::string name) : userName(std::move(name)) {
             id = nextId++;
         }

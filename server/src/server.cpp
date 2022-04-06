@@ -118,7 +118,7 @@ namespace FastTyping::Server {
                 query = json::parse(line);
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
-                if (auto it = commonQueriesMap.find(queryHeader["name"]); it != commonQueriesMap.end()) {
+                if (auto it = commonQueriesMap.find(queryHeader["type"]); it != commonQueriesMap.end()) {
                     result = it->second(queryBody, user);
                     if (user.isWantToExit()) {
                         user.clearWillToExit();
