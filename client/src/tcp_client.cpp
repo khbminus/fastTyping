@@ -4,24 +4,24 @@
 
 namespace game::client {
 
-std::unique_ptr<Query> ParseQuery(QString raw) {
-    json query = json::parse(raw.toStdString());
+    std::unique_ptr<Query> ParseQuery(QString raw) {
+        json query = json::parse(raw.toStdString());
 
-    if (query["header"]["type"].get<std::string>() == "checkResult") {
-        return std::make_unique<CheckQuery>(query["body"]);
-    } else {
-        return std::make_unique<EmptyQuery>();
+        if (query["header"]["type"].get<std::string>() == "checkResult") {
+            return std::make_unique<CheckQuery>(query["body"]);
+        } else {
+            return std::make_unique<EmptyQuery>();
+        }
     }
-}
 
-void CheckQuery::process(GameClient* client) {
-   client->mIsEnded = status["isEnd"].get<bool>();
-   client->mIsCorrect = status["isPrefixCorrect"].get<bool>();
-}
-}
+    void CheckQuery::process(GameClient *client) {
+        client->mIsEnded = status["isEnd"].get<bool>();
+        client->mIsCorrect = status["isPrefixCorrect"].get<bool>();
+    }
+}// namespace game::client
 
 namespace web {
-    WebClient::WebClient(QString ip, int port, game::client::GameClient* handler) : manager(handler){
+    WebClient::WebClient(QString ip, int port, game::client::GameClient *handler) : manager(handler) {
         socket = new QTcpSocket(this);
         socket->connectToHost(ip, port);
 

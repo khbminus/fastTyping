@@ -12,7 +12,8 @@ namespace game::client {
         Inputter local_buffer;
         friend struct CheckQuery;
         bool mIsEnded = false;
-        bool mIsCorrect=true;
+        bool mIsCorrect = true;
+
     public:
         GameClient(QString name);
         void keyPressed(QChar button) override;

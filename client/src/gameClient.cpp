@@ -1,8 +1,8 @@
 #include "gameClient.h"
 #include "common/include/json.hpp"
 #include <QString>
-#include <string>
 #include <iostream>
+#include <string>
 
 using nlohmann::json;
 
