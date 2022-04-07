@@ -26,10 +26,8 @@ namespace FastTyping::Server {
         std::unique_ptr<AbstractUserStorage> userStorage;
         std::unique_ptr<AbstractGameStorage> gameStorage;
         std::unordered_map<std::string, std::function<json(const json &, User &)>> commonQueriesMap;
-        std::unordered_map<std::string, std::function<json(const json &, User &)>> gameQueriesMap;
 
         void parseQuery(tcp::socket);
-        void echoQuery(tcp::iostream &client, User &user, json queryBody);
 
         std::optional<json> checkQueryCorrectness(const std::string &queryString);
     };
