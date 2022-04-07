@@ -13,17 +13,17 @@ namespace FastTyping::Server {
         };
         commonQueriesMap["createGame"] = [&](const json &body, User &user) -> json {
             // basic checks
-            if (!body["dictionaryName"].is_string()) {
+            if (!body.contains("dictionaryName") || !body["dictionaryName"].is_string()) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"dictionaryName\""}}}};
             }
 
-            if (!body["parserName"].is_string()) {
+            if (!body.contains("parserName") || !body["parserName"].is_string()) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"parserName\""}}}};
             }
             return gameStorage->createGame(body);
         };
         commonQueriesMap["joinGame"] = [&](const json &body, User &user) -> json {
-            if (!body["id"].is_number_unsigned()) {
+            if (!body.contains("id") || !body["id"].is_number_unsigned()) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"id\""}}}};
             }
             json errors;
@@ -46,7 +46,7 @@ namespace FastTyping::Server {
             if (user.getGame() == nullptr) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
             }
-            if (!body["word"].is_string()) {
+            if (!body.contains("word") || !body["word"].is_string()) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find word to check"}}}};
             }
             auto result = user.getGame()->checkInputAndProceed(user.getId(), body["word"].get<std::string>());
@@ -93,18 +93,24 @@ namespace FastTyping::Server {
             client << errors.value() << '\n';
             return;
         }
-        query = json::parse(line);
-        if (query["header"]["type"] != "hello") {
-            json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "first query should be hello"}}}};
-            client << result << '\n';
+        try {
+            query = json::parse(line);
+            if (query["header"]["type"] != "hello") {
+                json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "first query should be hello"}}}};
+                client << result << '\n';
+                return;
+            }
+            if (!query["body"]["name"].is_string()) {
+                json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"name\""}}}};
+                client << result << '\n';
+            }
+            user_name = query["body"]["name"].get<std::string>();
+        } catch (nlohmann::detail::exception &e) {
+            std::cerr << e.what() << std::endl;// process error to client
             return;
         }
-        if (!query["body"]["name"].is_string()) {
-            json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"name\""}}}};
-            client << result << '\n';
-        }
 
-        User &user = userStorage->get(query["body"]["name"].get<std::string>());
+        User &user = userStorage->get(user_name);
         json result = {{"header", {{"type", "loginSuccessfully"}}}, {"body", {{"name", user.name()}}}};
         client << result << '\n';
 
@@ -130,7 +136,7 @@ namespace FastTyping::Server {
                     client << result << '\n';
                 }
             }
-        } catch (nlohmann::detail::parse_error &e) {
+        } catch (nlohmann::detail::exception &e) {
             std::cerr << e.what() << std::endl;// process error to client
         }
 
@@ -140,7 +146,7 @@ namespace FastTyping::Server {
         json query;
         try {
             query = json::parse(queryString);
-        } catch (nlohmann::detail::parse_error &e) {
+        } catch (nlohmann::detail::exception &e) {
             return {{{"header", {{"type", "error"}}}, {"body", {{"text", "bad json"}}}}};
         }
         if (!query.contains("header") || !query["header"].is_object()) {
@@ -150,7 +156,7 @@ namespace FastTyping::Server {
             return {{{"header", {{"type", "error"}}}, {"body", {{"text", "can't find body"}}}}};
         }
 
-        if (!query["header"]["type"].is_string()) {
+        if (!query.contains("type") || !query["header"]["type"].is_string()) {
             return {{{"header", {{"type", "error"}}}, {"body", {{"text", "can't recognize type of query"}}}}};
         }
 

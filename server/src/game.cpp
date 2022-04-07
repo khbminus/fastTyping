@@ -48,7 +48,7 @@ namespace FastTyping::Server {
         if (body["dictionaryName"] != "const" || body["parserName"] != "simple") {
             return {{"header", {{"type", "error"}}}, {"body", {{"text", "wrong parameters"}}}};
         }
-        if (!body["words"].is_array()) {
+        if (!body.contains("words") || !body["words"].is_array()) {
             return {{"header", {{"type", "error"}}}, {"body", {{"text", "Can't find words"}}}};
         }
         std::shared_ptr<Game> game = std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
