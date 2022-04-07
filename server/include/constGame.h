@@ -11,7 +11,6 @@ namespace FastTyping::Logic {
 
     struct Dictionary : AbstractDictionary {
         std::vector<std::string> words;
-        std::size_t currentPosition = 0;
         explicit Dictionary(std::vector<std::string> words_) : words(std::move(words_)) {}
 
         [[nodiscard]] std::string getWord(int index) const override {
@@ -23,8 +22,11 @@ namespace FastTyping::Logic {
         }
         [[nodiscard]] std::string getLine(int index) const override {
             std::string result;
-            for (const std::string &s: words)
-                result += s;
+            for (std::size_t i = 0; i < words.size(); i++) {
+                if (i != 0)
+                    result += ' ';
+                result += result[i];
+            }
             return result;
         }
         [[nodiscard]] size_t getLinesCount() const override {
