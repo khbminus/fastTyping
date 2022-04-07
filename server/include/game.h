@@ -25,12 +25,15 @@ namespace FastTyping::Server {
             return id;
         }
 
-        json checkInputAndProceed(int uid, const std::string &word);
+        json addNewChar(int uid, char c);
+        json backspace(int uid);
+        json check(int uid);
         json getNewLine(int uid);
         json getStateOfUsers();
 
 
     private:
+        json checkUnsafe(int uid);// THREAD UNSAFE
         std::string gameName;
         int id = 0;
         static inline int nextId = 0;
@@ -39,6 +42,7 @@ namespace FastTyping::Server {
         std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;
 
         struct AdditionalUserInfo {
+            std::string currentBuffer;
             int currentWord = 0;
             int lineNumber = 0;
         };

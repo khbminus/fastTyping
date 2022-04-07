@@ -2,18 +2,39 @@
 #include "constGame.h"
 
 namespace FastTyping::Server {
-    json Game::checkInputAndProceed(int uid, const std::string &word) {
-        std::unique_lock l{mutex};
-        std::string rightWord = dictionary->getWord(additionalInfo[uid].currentWord);
+    json Game::checkUnsafe(int uid) {
         json result;
+        std::string rightWord = dictionary->getWord(additionalInfo[uid].currentWord);
+        std::string &word = additionalInfo[uid].currentBuffer;
         result["header"] = {{"type", "checkResult"}};
-        if (parser->isCorrect(word, rightWord)) {
+        result["body"] = {{"isFullCorrect", parser->isFullCorrect(word, rightWord)},
+                          {"isEnd", false},
+                          {"isPrefixCorrect", parser->isPrefixCorrect(word, rightWord)}};
+        if (parser->isFullCorrect(word, rightWord)) {
             int currentWord = ++additionalInfo[uid].currentWord;
-            result["body"] = {{"isCorrect", true}, {"isEnd", (currentWord == dictionary->getWordCount())}};
-            return result;
+            additionalInfo[uid].currentBuffer.clear();
+            result["body"]["isEnd"] = (currentWord == dictionary->getWordCount());
         }
-        result["body"] = {{"isCorrect", true}, {"isEnd", nullptr}};
         return result;
+    }
+    json Game::check(int uid) {
+        std::unique_lock l{mutex};
+        return checkUnsafe(uid);
+    }
+    json Game::addNewChar(int uid, char c) {
+        std::unique_lock l{mutex};
+        additionalInfo[uid].currentBuffer += c;
+        return checkUnsafe(uid);
+    }
+    json Game::backspace(int uid) {
+        std::unique_lock l{mutex};
+        std::string &word = additionalInfo[uid].currentBuffer;
+        json result;
+        if (word.empty()) {
+            return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't use backspace with empty buffer"}}}};
+        }
+        word.pop_back();
+        return checkUnsafe(uid);
     }
     json Game::getNewLine(int uid) {
         std::unique_lock l{mutex};

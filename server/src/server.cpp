@@ -42,18 +42,26 @@ namespace FastTyping::Server {
             return user.getGame()->getNewLine(user.getId());
         };
 
-        commonQueriesMap["checkInput"] = [&](const json &body, User &user) -> json {
+        commonQueriesMap["addNewChar"] = [&](const json &body, User &user) -> json {
             if (user.getGame() == nullptr) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
             }
-            if (!body.contains("word") || !body["word"].is_string()) {
+            if (!body.contains("char") || !body["char"].is_string() || body["char"].get<std::string>().size() != 1) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find word to check"}}}};
             }
-            auto result = user.getGame()->checkInputAndProceed(user.getId(), body["word"].get<std::string>());
-            if (result["body"]["isCorrect"] == true && result["body"]["isEnd"] == true) {
+
+            auto result = user.getGame()->addNewChar(user.getId(), body["char"].get<std::string>()[0]);
+            if (result["body"]["isFullCorrect"] == true && result["body"]["isEnd"] == true) {
                 user.setGame(nullptr);
             }
             return result;
+        };
+
+        commonQueriesMap["backspace"] = [&](const json &body, User &user) -> json {
+            if (user.getGame() == nullptr) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+            }
+            return user.getGame()->backspace(user.getId());
         };
 
         commonQueriesMap["getStates"] = [&](const json &body, User &user) -> json {
@@ -156,7 +164,7 @@ namespace FastTyping::Server {
             return {{{"header", {{"type", "error"}}}, {"body", {{"text", "can't find body"}}}}};
         }
 
-        if (!query.contains("type") || !query["header"]["type"].is_string()) {
+        if (!query["header"].contains("type") || !query["header"]["type"].is_string()) {
             return {{{"header", {{"type", "error"}}}, {"body", {{"text", "can't recognize type of query"}}}}};
         }
 

@@ -36,8 +36,17 @@ namespace FastTyping::Logic {
 
     struct SimpleParser : AbstractParser {
 
-        [[nodiscard]] bool isCorrect(const std::string &inputWord, const std::string &dictionaryWord) const override {
+        [[nodiscard]] bool isFullCorrect(const std::string &inputWord, const std::string &dictionaryWord) const override {
             return dictionaryWord == inputWord;
+        }
+        [[nodiscard]] bool isPrefixCorrect(const std::string &inputWord, const std::string &dictionaryWord) const override {
+            if (inputWord.size() > dictionaryWord.size())
+                return false;
+            for (std::size_t i = 0; i < inputWord.size(); i++) {
+                if (inputWord[i] != dictionaryWord[i])
+                    return false;
+            }
+            return true;
         }
     };
 
