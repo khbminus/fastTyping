@@ -36,6 +36,7 @@ set(PROJECT_SOURCES
         client/include/tcp_client.h
         client/src/gameClient.cpp
         client/include/gameClient.h
+        client/include/gameClientFwd.h
         common/include/json.hpp
         )
 

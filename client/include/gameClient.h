@@ -5,10 +5,14 @@
 #include "tcp_client.h"
 
 namespace game::client {
+
     struct GameClient : game::AbstractGameManager {
     private:
         web::WebClient socket_wrapper;
         Inputter local_buffer;
+        friend struct CheckQuery;
+        bool mIsEnded = false;
+        bool mIsCorrect=true;
     public:
         GameClient(QString name);
         void keyPressed(QChar button) override;

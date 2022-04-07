@@ -6,7 +6,7 @@
 GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::GameWindow),
                                           handlers{new game::RaceGame, new game::client::GameClient("aboba")},
-                                          main_handler(handlers[0]) {
+                                          main_handler(handlers[1]) {
     ui->setupUi(this);
     palette = ui->userText->palette();
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
