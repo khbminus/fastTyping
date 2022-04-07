@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(fastTyping VERSION 0.1 LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
 
 
 #set(EXTRA_CXX_FLAGS "-fsanitize=undefined -fsanitize=address -ggdb -O0")

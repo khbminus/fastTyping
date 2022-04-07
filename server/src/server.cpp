@@ -23,7 +23,7 @@ namespace FastTyping::Server {
             auto result = gameStorage->createGame(body);
             if (body.contains("autoJoin") && body["autoJoin"].is_boolean() && body["autoJoin"]) {
                 json errors;
-                auto game = gameStorage->get(body["id"], errors);
+                auto game = gameStorage->get(result["body"]["id"], errors);
                 if (game == nullptr) {
                     result["joined"] = false;
                     result["error"] = errors;
