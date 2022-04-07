@@ -39,6 +39,7 @@ namespace FastTyping::Server {
     }
 
     std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
+        std::unique_lock l{map_mutex};
         if (auto it = games.find(id); it != games.end())
             return it->second;
         errors = {{"header", {{"type", "error"}}}, {"body", {{"text", "Can't find game with specific id"}}}};
@@ -54,7 +55,10 @@ namespace FastTyping::Server {
         std::shared_ptr<Game> game = std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
                                                             std::make_unique<Logic::Dictionary>(
                                                                     body["words"].get<std::vector<std::string>>()));
-        games[game->getId()] = game;
+        {
+            std::unique_lock l{map_mutex};
+            games[game->getId()] = game;
+        }
         return {{"header", {{"type", "GameCreatedSuccessfully"}}}, {"body", {{"id", game->getId()}}}};
     }
 }// namespace FastTyping::Server

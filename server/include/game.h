@@ -59,6 +59,7 @@ namespace FastTyping::Server {
     public:
         std::shared_ptr<Game> get(int id, json &errors) override;
         json createGame(const json &body) override;
+        std::mutex map_mutex;
 
     private:
         std::unordered_map<int, std::shared_ptr<Game>> games;
