@@ -20,7 +20,20 @@ namespace FastTyping::Server {
             if (!body.contains("parserName") || !body["parserName"].is_string()) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"parserName\""}}}};
             }
-            return gameStorage->createGame(body);
+            auto result = gameStorage->createGame(body);
+            if (body.contains("autoJoin") && body["autoJoin"].is_boolean() && body["autoJoin"]) {
+                json errors;
+                auto game = gameStorage->get(body["id"], errors);
+                if (game == nullptr) {
+                    result["joined"] = false;
+                    result["error"] = errors;
+                } else {
+                    user.setGame(game);
+                    result["joined"] = true;
+                    result["error"] = "";
+                }
+            }
+            return result;
         };
         commonQueriesMap["joinGame"] = [&](const json &body, User &user) -> json {
             if (!body.contains("id") || !body["id"].is_number_unsigned()) {
