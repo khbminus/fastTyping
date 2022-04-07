@@ -39,14 +39,17 @@ namespace FastTyping::Server {
             if (user.getGame() == nullptr) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
             }
-            return user.getGame()->getNewLine(user, body);
+            return user.getGame()->getNewLine(user.getId());
         };
 
         commonQueriesMap["checkInput"] = [&](const json &body, User &user) -> json {
             if (user.getGame() == nullptr) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
             }
-            auto result = user.getGame()->checkInputAndProceed(user, body);
+            if (!body["word"].is_string()) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find word to check"}}}};
+            }
+            auto result = user.getGame()->checkInputAndProceed(user.getId(), body["word"].get<std::string>());
             if (result["body"]["isCorrect"] == true && result["body"]["isEnd"] == true) {
                 user.setGame(nullptr);
             }

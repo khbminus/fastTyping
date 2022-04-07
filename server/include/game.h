@@ -25,8 +25,8 @@ namespace FastTyping::Server {
             return id;
         }
 
-        json checkInputAndProceed(const User &user, json queryBody);
-        json getNewLine(const User &user, json queryBody);
+        json checkInputAndProceed(int uid, const std::string &word);
+        json getNewLine(int uid);
         json getStateOfUsers();
 
 
@@ -59,9 +59,9 @@ namespace FastTyping::Server {
     public:
         std::shared_ptr<Game> get(int id, json &errors) override;
         json createGame(const json &body) override;
-        std::mutex map_mutex;
 
     private:
+        std::mutex map_mutex;
         std::unordered_map<int, std::shared_ptr<Game>> games;
     };
 }// namespace FastTyping::Server

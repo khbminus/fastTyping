@@ -2,23 +2,22 @@
 #include "constGame.h"
 
 namespace FastTyping::Server {
-    json Game::checkInputAndProceed(const User &user, json queryBody) {
+    json Game::checkInputAndProceed(int uid, const std::string &word) {
         std::unique_lock l{mutex};
-        std::string userWord = queryBody["word"];
-        std::string rightWord = dictionary->getWord(additionalInfo[user.getId()].currentWord);
+        std::string rightWord = dictionary->getWord(additionalInfo[uid].currentWord);
         json result;
         result["header"] = {{"type", "checkResult"}};
-        if (parser->isCorrect(userWord, rightWord)) {
-            int currentWord = ++additionalInfo[user.getId()].currentWord;
+        if (parser->isCorrect(word, rightWord)) {
+            int currentWord = ++additionalInfo[uid].currentWord;
             result["body"] = {{"isCorrect", true}, {"isEnd", (currentWord == dictionary->getWordCount())}};
             return result;
         }
         result["body"] = {{"isCorrect", true}, {"isEnd", nullptr}};
         return result;
     }
-    json Game::getNewLine(const User &user, json) {
+    json Game::getNewLine(int uid) {
         std::unique_lock l{mutex};
-        int currentLine = additionalInfo[user.getId()].lineNumber++;
+        int currentLine = additionalInfo[uid].lineNumber++;
         std::string line = dictionary->getLine(currentLine);
         return {
                 {"header", {{"type", "newLineResult"}}},
