@@ -1,11 +1,13 @@
 #include "game.h"
 #include "constGame.h"
+#include <boost/log/trivial.hpp>
 
 namespace FastTyping::Server {
     json Game::checkUnsafe(int uid) {
         json result;
         std::string rightWord = dictionary->getWord(additionalInfo[uid].currentWord);
         std::string &word = additionalInfo[uid].currentBuffer;
+        BOOST_LOG_TRIVIAL(debug) << "Buffer of user " << uid << "is \"" << word << '\n';
         result["header"] = {{"type", "checkResult"}};
         result["body"] = {{"isFullCorrect", parser->isFullCorrect(word, rightWord)},
                           {"isEnd", false},
@@ -29,7 +31,6 @@ namespace FastTyping::Server {
     json Game::backspace(int uid) {
         std::unique_lock l{mutex};
         std::string &word = additionalInfo[uid].currentBuffer;
-        json result;
         if (word.empty()) {
             return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't use backspace with empty buffer"}}}};
         }
