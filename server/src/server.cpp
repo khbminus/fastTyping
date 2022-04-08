@@ -1,10 +1,10 @@
 #include "server.h"
 #include "game.h"
+#include <boost/log/trivial.hpp>
 #include <iostream>
 #include <memory>
 #include <optional>
 #include <thread>
-#include <boost/log/trivial.hpp>
 
 namespace FastTyping::Server {
     Server::Server() : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)), userStorage(new MapUserStorage), gameStorage(new MapGameStorage) {
