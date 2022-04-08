@@ -4,6 +4,7 @@
 #include <memory>
 #include <optional>
 #include <thread>
+#include <boost/log/trivial.hpp>
 
 namespace FastTyping::Server {
     Server::Server() : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)), userStorage(new MapUserStorage), gameStorage(new MapGameStorage) {
@@ -148,6 +149,7 @@ namespace FastTyping::Server {
                 query = json::parse(line);
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
+                BOOST_LOG_TRIVIAL(debug) << query << '\n';
                 if (auto it = commonQueriesMap.find(queryHeader["type"]); it != commonQueriesMap.end()) {
                     result = it->second(queryBody, user);
                     if (user.isWantToExit()) {
