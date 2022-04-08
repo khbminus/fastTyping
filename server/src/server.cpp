@@ -54,6 +54,9 @@ namespace FastTyping::Server {
             if (game == nullptr) {
                 return errors;
             }
+            if (game->hasUser(user.getId())) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Try connect after disconnect"}}}};
+            }
             user.setGame(game);
             return {{"header", {{"type", "GameJoinedSuccessfully"}}}, {"body", {{"id", game->getId()}}}};
         };

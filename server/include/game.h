@@ -25,6 +25,8 @@ namespace FastTyping::Server {
             return id;
         }
 
+        bool hasUser(int uid);
+
         json addNewChar(int uid, char c);
         json backspace(int uid);
         json check(int uid);

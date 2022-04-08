@@ -3,6 +3,12 @@
 #include <boost/log/trivial.hpp>
 
 namespace FastTyping::Server {
+    bool Game::hasUser(int uid) {
+        std::unique_lock l{mutex};
+        if (additionalInfo.count(uid))// it returns zero or one as int, so we need convert to bool
+            return true;
+        return false;
+    }
     json Game::checkUnsafe(int uid) {
         json result;
         std::string rightWord = dictionary->getWord(additionalInfo[uid].currentWord);
