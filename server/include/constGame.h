@@ -20,7 +20,7 @@ namespace FastTyping::Logic {
         [[nodiscard]] size_t getWordCount() const override {
             return words.size();
         }
-        [[nodiscard]] std::string getLine(int index) const override {
+        [[nodiscard]] std::vector<std::string> getLine(int index) const override {
             std::string result;
             for (std::size_t i = 0; i < words.size(); i++) {
                 if (i != 0)

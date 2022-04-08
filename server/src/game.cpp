@@ -10,13 +10,7 @@ namespace FastTyping::Server {
         BOOST_LOG_TRIVIAL(debug) << "Buffer of user " << uid << "is \"" << word << '\n';
         result["header"] = {{"type", "checkResult"}};
         result["body"] = {{"isFullCorrect", parser->isFullCorrect(word, rightWord)},
-                          {"isEnd", false},
                           {"isPrefixCorrect", parser->isPrefixCorrect(word, rightWord)}};
-        if (parser->isFullCorrect(word, rightWord)) {
-            int currentWord = ++additionalInfo[uid].currentWord;
-            additionalInfo[uid].currentBuffer.clear();
-            result["body"]["isEnd"] = (currentWord == dictionary->getWordCount());
-        }
         return result;
     }
     json Game::check(int uid) {
@@ -40,7 +34,7 @@ namespace FastTyping::Server {
     json Game::getNewLine(int uid) {
         std::unique_lock l{mutex};
         int currentLine = additionalInfo[uid].lineNumber++;
-        std::string line = dictionary->getLine(currentLine);
+        auto line = dictionary->getLine(currentLine);
         return {
                 {"header", {{"type", "newLineResult"}}},
                 {"body", {{"line", line}}}};
