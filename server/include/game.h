@@ -29,6 +29,7 @@ namespace FastTyping::Server {
         json backspace(int uid);
         json check(int uid);
         json getNewLine(int uid);
+        json getNewWord(int uid);
         json getStateOfUsers();
 
 

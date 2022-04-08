@@ -21,6 +21,11 @@ namespace FastTyping::Server {
             if (!body.contains("parserName") || !body["parserName"].is_string()) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"parserName\""}}}};
             }
+
+            if (user.getGame() != nullptr) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Already in game"}}}};
+            }
+
             auto result = gameStorage->createGame(body);
             if (body.contains("autoJoin") && body["autoJoin"].is_boolean() && body["autoJoin"]) {
                 json errors;
@@ -40,6 +45,10 @@ namespace FastTyping::Server {
             if (!body.contains("id") || !body["id"].is_number_unsigned()) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"id\""}}}};
             }
+
+            if (user.getGame() != nullptr) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Already in game"}}}};
+            }
             json errors;
             auto game = gameStorage->get(body["id"], errors);
             if (game == nullptr) {
@@ -47,6 +56,19 @@ namespace FastTyping::Server {
             }
             user.setGame(game);
             return {{"header", {{"type", "GameJoinedSuccessfully"}}}, {"body", {{"id", game->getId()}}}};
+        };
+
+        commonQueriesMap["leaveGame"] = [&](const json &body, User &user) -> json {
+            if (!body.contains("id") || !body["id"].is_number_unsigned()) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"id\""}}}};
+            }
+
+            if (user.getGame() == nullptr) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Not in game"}}}};
+            }
+
+            user.setGame(nullptr);
+            return {{"header", {{"type", "GameLeaveSuccessfully"}}}, {"body", {}}};
         };
 
         commonQueriesMap["getNewLine"] = [&](const json &body, User &user) -> json {
@@ -83,6 +105,13 @@ namespace FastTyping::Server {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
             }
             return user.getGame()->getStateOfUsers();
+        };
+
+        commonQueriesMap["getNewWord"] = [&](const json &body, User &user) -> json {
+            if (user.getGame() == nullptr) {
+                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+            }
+            return user.getGame()->getNewWord(user.getId());
         };
 
         commonQueriesMap["exit"] = [&](const json &body, User &user) -> json {

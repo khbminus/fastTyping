@@ -31,6 +31,19 @@ namespace FastTyping::Server {
         word.pop_back();
         return checkUnsafe(uid);
     }
+
+    json Game::getNewWord(int uid) {
+        std::unique_lock l{mutex};
+        auto &info = additionalInfo[uid];
+        json result;
+        result["header"] = {{"type", "newWordResult"}};
+        result["body"] = {{"isEnd", info.currentWord == dictionary->getWordCount()}, {"newWord", ""}};
+        if (info.currentWord != dictionary->getWordCount()) {
+            result["body"]["newWord"] = dictionary->getWord(++info.currentWord);
+        }
+        return result;
+    }
+
     json Game::getNewLine(int uid) {
         std::unique_lock l{mutex};
         int currentLine = additionalInfo[uid].lineNumber++;
