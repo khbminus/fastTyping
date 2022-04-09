@@ -21,13 +21,7 @@ namespace FastTyping::Logic {
             return words.size();
         }
         [[nodiscard]] std::vector<std::string> getLine(int index) const override {
-            std::string result;
-            for (std::size_t i = 0; i < words.size(); i++) {
-                if (i != 0)
-                    result += ' ';
-                result += result[i];
-            }
-            return result;
+            return words;
         }
         [[nodiscard]] size_t getLinesCount() const override {
             return 1;
