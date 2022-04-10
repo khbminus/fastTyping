@@ -57,9 +57,9 @@ namespace FastTyping::Server {
             if (game->hasUser(user_id)) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "Try connect after disconnect"}}}};
             }
-          gameStorage->setGame(userStorage->getGameId(user_id), game);
+            gameStorage->setGame(userStorage->getGameId(user_id), game);
 
-          return {{"header", {{"type", "GameJoinedSuccessfully"}}}, {"body", {{"id", game->getId()}}}};
+            return {{"header", {{"type", "GameJoinedSuccessfully"}}}, {"body", {{"id", game->getId()}}}};
         };
 
         commonQueriesMap["leaveGame"] = [&](const json &body, int user_id) -> json {
@@ -71,9 +71,9 @@ namespace FastTyping::Server {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "Not in game"}}}};
             }
 
-          gameStorage->setGame(userStorage->getGameId(user_id), nullptr);
+            gameStorage->setGame(userStorage->getGameId(user_id), nullptr);
 
-          return {{"header", {{"type", "GameLeaveSuccessfully"}}}, {"body", {}}};
+            return {{"header", {{"type", "GameLeaveSuccessfully"}}}, {"body", {}}};
         };
 
         commonQueriesMap["getNewLine"] = [&](const json &body, int user_id) -> json {
@@ -99,7 +99,7 @@ namespace FastTyping::Server {
         };
 
         commonQueriesMap["backspace"] = [&](const json &body, int user_id) -> json {
-            if (gameStorage->getGame(userStorage->getGameId(user_id))  == nullptr) {
+            if (gameStorage->getGame(userStorage->getGameId(user_id)) == nullptr) {
                 return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
             }
             return (gameStorage->getGame(userStorage->getGameId(user_id)))->backspace(user_id);
@@ -194,7 +194,7 @@ namespace FastTyping::Server {
                 }
             }
         } catch (nlohmann::detail::exception &e) {
-            std::cerr << e.what() << std::endl; // process error to client
+            std::cerr << e.what() << std::endl;// process error to client
         }
 
         std::cout << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
