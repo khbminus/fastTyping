@@ -1,17 +1,19 @@
 #ifndef FASTTYPING_USER_H
 #define FASTTYPING_USER_H
 #include "game_fwd.h"
+#include <iostream>
 #include <json.hpp>
 #include <mutex>
+#include <pqxx/pqxx>
 #include <string>
 #include <thread>
 #include <unordered_map>
 #include <utility>
 
 using nlohmann::json;
-
+using namespace pqxx;
 namespace FastTyping::Server {
-    class User {
+    /*class User {
     public:
         User() = default;
         explicit User(std::string name) : userName(std::move(name)) {
@@ -55,21 +57,26 @@ namespace FastTyping::Server {
 
         mutable std::mutex mutex;
         std::shared_ptr<Game> currentGame = nullptr;
-    };
+    }; */
 
     class AbstractUserStorage {
     public:
         AbstractUserStorage() = default;
-        virtual User &get(int) = 0;
-        virtual User &get(const std::string &) = 0;
+        virtual std::string getName(int) = 0;
+        virtual int getId(const std::string &) = 0;// or create it
+        virtual int getGameId(int) = 0;
+        virtual void setWantExit(int) = 0;
+        virtual void unsetWantExit(int) = 0;
+        virtual bool getWantExit(int) = 0;
+        virtual void setGameId(int, int) = 0;
         virtual ~AbstractUserStorage() = default;
     };
 
-    class MapUserStorage : public AbstractUserStorage {
+    /*class MapUserStorage : public AbstractUserStorage {
         // Probably should be replaced with SQL user storage
     public:
         MapUserStorage() = default;
-        User &get(int id) override {
+        int &getName(int id) override {
             std::unique_lock l{mutex};
             return usersById.at(id);
         }
@@ -86,6 +93,122 @@ namespace FastTyping::Server {
         std::unordered_map<std::string, User> usersByName;
         std::unordered_map<int, User &> usersById;
         mutable std::mutex mutex;
+    };*/
+
+    class DBUserStorage : public AbstractUserStorage {
+    public:
+        DBUserStorage() : C("dbname = fast_typing") {
+
+            try {
+                if (C.is_open()) {
+                    std::cout << "Opened database successfully: " << C.dbname() << std::endl;
+                } else {
+                    std::cout << "Can't open database" << std::endl;
+                }
+
+                /* Create SQL statement */
+                sql = "CREATE TABLE IF NOT EXISTS USERS("
+                      "ID INT PRIMARY KEY NOT NULL,"
+                      "NAME           TEXT    NOT NULL,"
+                      "GAME_ID INT,"
+                      "WANT_EXIT boolean);";
+
+                /* Create a transactional object. */
+
+                pqxx::work W(C);
+                /* Execute SQL query */
+                W.exec(sql);
+                W.commit();
+                std::cerr << "Table created successfully" << std::endl;
+            } catch (const std::exception &e) {
+                std::cerr << e.what() << std::endl;
+            }
+        }
+
+        std::string getName(int id) override {
+            pqxx::work W(C);
+            sql = "SELECT NAME FROM USERS WHERE ID = " + to_string(id) + ";";
+            pqxx::result res{W.exec(sql)};
+            std::string name;
+            for (auto row: res)
+                name = row["NAME"].c_str();
+            W.commit();
+            return name;
+        }
+
+        int getId(const std::string &name) override {
+            pqxx::work W(C);
+            int id;
+            pqxx::result find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + name + "';");
+
+            if (find_by_name.size() == 0) {
+                pqxx::result full_list = W.exec("SELECT * FROM USERS;");
+                id = full_list.size() + 1;
+
+                sql = "INSERT INTO USERS(ID, NAME, GAME_ID, WANT_EXIT)\n"
+                      "SELECT " +
+                      to_string(id) + ", '" + name + "', -1, FALSE\n"
+                                                     "WHERE\n"
+                                                     "    NOT EXISTS (\n"
+                                                     "        SELECT ID FROM USERS WHERE ID = " +
+                      to_string(id) + ");";
+                W.exec(sql);
+            } else {
+                for (auto row: find_by_name)
+                    id = row["ID"].as<int>();
+            }
+            W.commit();
+            return id;
+        }
+
+        int getGameId(int id) override {
+            pqxx::work W(C);
+            sql = "SELECT GAME_ID FROM USERS WHERE ID = " + to_string(id) + ";";
+            pqxx::result res{W.exec(sql)};
+            int game_id;
+            for (auto row: res)
+                game_id = row["NAME"].as<int>();
+            W.commit();
+            return game_id;
+        }
+
+        bool getWantExit(int id) override {
+            pqxx::work W(C);
+            sql = "SELECT WANT_EXIT FROM USERS WHERE ID = " + to_string(id) + ";";
+            pqxx::result res{W.exec(sql)};
+            bool want_exit;
+            for (auto row: res)
+                want_exit = row["NAME"].as<bool>();
+            W.commit();
+            return want_exit;
+        }
+        void setWantExit(int id) override {
+            pqxx::work W(C);
+            sql = "UPDATE USERS SET WANT_EXIT = TRUE WHERE ID = " + to_string(id) + ";";
+            W.exec(sql);
+            W.commit();
+        }
+        void unsetWantExit(int id) override {
+            pqxx::work W(C);
+            sql = "UPDATE USERS SET WANT_EXIT = FALSE WHERE ID = " + to_string(id) + ";";
+            W.exec(sql);
+            W.commit();
+        }
+
+        void setGameId(int id, int game_id) override {
+            pqxx::work W(C);
+            sql = "UPDATE USERS SET GAME_ID = " + to_string(id) + " WHERE ID = " + to_string(id) + ";";
+            W.exec(sql);
+            W.commit();
+        }
+
+        ~DBUserStorage() override {
+            C.disconnect();
+        }
+
+    private:
+        pqxx::connection C;
+        std::string sql;// sql query
     };
 }// namespace FastTyping::Server
 #endif//FASTTYPING_USER_H

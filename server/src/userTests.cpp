@@ -3,10 +3,10 @@
 #include <json.hpp>
 #include <type_traits>
 using namespace FastTyping::Server;
-TEST_CASE("User is constructible") {
-    CHECK(std::is_constructible_v<User, json>);
-    CHECK(std::is_constructible_v<User, std::string>);
-}
+//TEST_CASE("User is constructible") {
+//    CHECK(std::is_constructible_v<User, json>);
+//    CHECK(std::is_constructible_v<User, std::string>);
+//}
 //TEST_CASE("User from json") {
 //    json j;
 //    j["username"] = "aboba";
@@ -24,27 +24,27 @@ TEST_CASE("User is constructible") {
 //    CHECK(u3.getId() == u2.getId() + 1);
 //}
 
-TEST_CASE("user from string") {
-    std::string name1 = "aboba";
-    std::string name2 = "obaba";
-    User u1(name1);
-    User u2(name2);
-    CHECK(u1.getId() + 1 == u2.getId());
-    CHECK(u1.name() == name1);
-    CHECK(u2.name() == name2);
-}
+//TEST_CASE("user from string") {
+//    std::string name1 = "aboba";
+//    std::string name2 = "obaba";
+//    User u1(name1);
+//    User u2(name2);
+//    CHECK(u1.getId() + 1 == u2.getId());
+//    CHECK(u1.name() == name1);
+//    CHECK(u2.name() == name2);
+//}
 
-namespace {
-    bool operator==(const User &a, const User &b) {
-        CHECK_LE(a.getId() == b.getId(), a.name() == b.name());
-        return a.getId() == b.getId();
-    }
-    bool operator!=(const User &a, const User &b) {
-        return !(a == b);
-    }
-}// namespace
+//namespace {
+//    bool operator==(const User &a, const User &b) {
+//        CHECK_LE(a.getId() == b.getId(), a.name() == b.name());
+//        return a.getId() == b.getId();
+//    }
+//    bool operator!=(const User &a, const User &b) {
+//        return !(a == b);
+//    }
+// namespace
 
-TEST_CASE("MapUserStorage") {
+/*TEST_CASE("MapUserStorage") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
     MapUserStorage storage;
@@ -59,4 +59,21 @@ TEST_CASE("MapUserStorage") {
     CHECK(storage.get(a.getId()) != b);
     CHECK(storage.get(b.getId()) == b);
     CHECK(storage.get(b.getId()) != a);
+}*/
+
+TEST_CASE("DBUserStorage") {
+    std::string name1 = "Aboba";
+    std::string name2 = "Boba";
+    DBUserStorage storage;
+    int a = storage.getId(name1);
+    int b = storage.getId(name2);
+    CHECK(a + 1 == b);
+    CHECK(storage.getId(name1) == a);
+    CHECK(storage.getId(name1) != b);
+    CHECK(b == storage.getId(name2));
+    CHECK(a != storage.getId(name2));
+    CHECK(storage.getId(storage.getName(a)) == a);
+    CHECK(storage.getId(storage.getName(a)) != b);
+    CHECK(storage.getId(storage.getName(b)) == b);
+    CHECK(storage.getId(storage.getName(b)) != a);
 }
