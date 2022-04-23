@@ -4,7 +4,8 @@ on: push
 
 jobs:
   clang-format:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    container: ghcr.io/khbminus/fasttyping-ci:base
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
@@ -14,14 +15,16 @@ jobs:
           git commit -m "Automatic code format done by clang-format" || echo "Nothing to commit"
           git push || echo "Nothing to push"
   cppcheck:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    container: ghcr.io/khbminus/fasttyping-ci:base
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
       - run: cppcheck --version
       - run: cppcheck -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
   server-build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    container: ghcr.io/khbminus/fasttyping-ci:base
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
