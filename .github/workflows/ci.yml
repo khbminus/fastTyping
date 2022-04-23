@@ -28,7 +28,7 @@ jobs:
       - run: |
           mkdir build
           cd build
-          cmake .. -D=BUILD_ALL=OFF -DBUILD_CLIENT=OFF -DBUILD_SERVER=ON
+          cmake .. -DBUILD_ALL=OFF -DBUILD_CLIENT=OFF -DBUILD_SERVER=ON
       - run: |
           cd build
           make server
