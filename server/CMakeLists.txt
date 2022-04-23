@@ -6,6 +6,7 @@ find_package(Boost 1.71 REQUIRED system)
 
 find_package(nlohmann_json 3.7.3 REQUIRED)
 
+include_directories(include ../common/include)
 add_executable(server src/main.cpp src/server.cpp src/game.cpp include/user.h)
 target_include_directories(server PRIVATE ${Boost_INCLUDE_DIRS} include)
 target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS})
