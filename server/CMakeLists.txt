@@ -3,8 +3,8 @@ project(fasttyping_server)
 
 set(CMAKE_CXX_STANDARD 17)
 find_package(Boost 1.71 REQUIRED system)
-
 find_package(nlohmann_json 3.7.3 REQUIRED)
+find_package(Threads)
 
 include_directories(include ../common/include)
 add_executable(server src/main.cpp src/server.cpp src/game.cpp include/user.h)
