@@ -13,7 +13,7 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Network REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
-find_package(nlohmann_json 3.9.0 REQUIRED)
+find_package(nlohmann_json 3.7.3 REQUIRED)
 
 set(PROJECT_SOURCES
         src/main.cpp
