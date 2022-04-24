@@ -15,6 +15,8 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Network REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
 find_package(nlohmann_json 3.7.3 REQUIRED)
 
+include_directories(include ../common/include)
+
 set(PROJECT_SOURCES
         src/main.cpp
         src/mainwindow.cpp

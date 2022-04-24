@@ -1,8 +1,8 @@
-#include "client/include/createwindow.h"
-#include "client/include/gamewindow.h"
-#include "client/include/joinwindow.h"
-#include "client/include/mainwindow.h"
-#include "client/include/statwindow.h"
+#include "include/createwindow.h"
+#include "include/gamewindow.h"
+#include "include/joinwindow.h"
+#include "include/mainwindow.h"
+#include "include/statwindow.h"
 
 
 #include "windowcontroller.h"
