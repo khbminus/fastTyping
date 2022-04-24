@@ -35,3 +35,16 @@ jobs:
       - run: |
           cd build
           make server
+  client-build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/khbminus/fasttyping-ci:client
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          mkdir build
+          cd build
+          cmake .. -DBUILD_ALL=OFF -DBUILD_CLIENT=ON -DBUILD_SERVER=OFF
+      - run: |
+          cd build
+          make client
