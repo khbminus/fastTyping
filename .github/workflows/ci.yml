@@ -48,29 +48,3 @@ jobs:
       - run: |
           cd build
           make client
-  deploy-server:
-    runs-on: ubuntu-latest
-    environment: server-env
-    steps:
-      - uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          script: |
-            cd fastTyping
-            git pull
-            git switch feature/ci
-            sudo systemctl stop ftServer.service
-            mkdir build
-            cd build
-            cmake .. -DBUILD_ALL=OFF -DBUILD_CLIENT=OFF -DBUILD_SERVER=ON
-            make server
-            echo "built"
-            cp server/server ../../server
-            cd ..
-            rm -rf build
-            sudo systemctl start ftServer.service
-            echo "started"
-      - uses: actions/checkout@v2
-      - run: chmod +x .github/scripts/health_check.py && .github/scripts/health_check.py
