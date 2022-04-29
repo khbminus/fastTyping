@@ -73,6 +73,4 @@ jobs:
             sudo systemctl start ftServer.service
             echo "started"
       - uses: actions/checkout@v2
-      - run: ls
-      - run: ls .github
       - run: chmod +x .github/scripts/health_check.py && .github/scripts/health_check.py
