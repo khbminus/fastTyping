@@ -1,7 +1,7 @@
 #ifndef FASTTYPING_USER_H
 #define FASTTYPING_USER_H
-#include <json.hpp>
 #include <mutex>
+#include <nlohmann/json.hpp>
 #include <string>
 #include <thread>
 #include <unordered_map>
