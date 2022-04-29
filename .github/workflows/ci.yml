@@ -66,7 +66,9 @@ jobs:
             cd build
             cmake .. -DBUILD_ALL=OFF -DBUILD_CLIENT=OFF -DBUILD_SERVER=ON
             make server
+            echo "built"
             cp server/server ../../server
             cd ..
             rm -rf build
             systemctl --user start ftServer.service
+            echo "started"
