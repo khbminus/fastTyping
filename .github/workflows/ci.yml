@@ -48,3 +48,24 @@ jobs:
       - run: |
           cd build
           make client
+  deploy-server:
+    runs-on: ubuntu-latest
+    environment: server-env
+    steps:
+      - uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            cd fastTyping
+            git pull
+            git switch develop
+            systemctl --user stop ftServer.service
+            mkdir build
+            cd build
+            cmake .. -DBUILD_ALL=OFF -DBUILD_CLIENT=OFF -DBUILD_SERVER=ON
+            cp server ../../server
+            cd ..
+            rm -rf build
+            sudo systemctl start ftServer.service
