@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 3.0)
+project(fasttyping_client VERSION 1.0 LANGUAGES CXX)
+
 # -*-*- QT CMake start -*-*-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
