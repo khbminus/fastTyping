@@ -40,6 +40,11 @@ set(PROJECT_SOURCES
         include/tcp_client.h
         src/gameClient.cpp
         include/gameClient.h
+        src/createwindow.ui
+        src/gamewindow.ui
+        src/joinwindow.ui
+        src/mainwindow.ui
+        src/statwindow.ui
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
