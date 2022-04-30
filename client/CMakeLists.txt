@@ -55,6 +55,11 @@ set(PROJECT_SOURCES
         include/webManager.h
         include/confirmWindow.h
         include/responseParse.h
+        src/createwindow.ui
+        src/gamewindow.ui
+        src/joinwindow.ui
+        src/mainwindow.ui
+        src/statwindow.ui
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
