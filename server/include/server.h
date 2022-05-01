@@ -23,9 +23,9 @@ namespace FastTyping::Server {
         Server();
         boost::asio::io_context ioContext;
         tcp::acceptor acceptor;
-        std::unique_ptr<AbstractUserStorage> userStorage;
+        std::unique_ptr<DBUserStorage> userStorage;
         std::unique_ptr<AbstractGameStorage> gameStorage;
-        std::unordered_map<std::string, std::function<json(const json &, int &)>> commonQueriesMap;
+        std::unordered_map<std::string, std::function<json(const json &, User &)>> commonQueriesMap;
 
         void parseQuery(tcp::socket);
 

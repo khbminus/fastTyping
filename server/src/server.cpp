@@ -9,119 +9,117 @@
 namespace FastTyping::Server {
     Server::Server() : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)), userStorage(new DBUserStorage), gameStorage(new MapGameStorage) {
         std::cout << "Listening at " << acceptor.local_endpoint() << std::endl;
-        commonQueriesMap["echo"] = [&](const json &body, int user_id) {
-            return body;
+        commonQueriesMap["echo"] = [&](const json &body, User &user) {
+          return body;
         };
-        commonQueriesMap["createGame"] = [&](const json &body, int user_id) -> json {
-            // basic checks
-            if (!body.contains("dictionaryName") || !body["dictionaryName"].is_string()) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"dictionaryName\""}}}};
-            }
+        commonQueriesMap["createGame"] = [&](const json &body, User &user) -> json {
+          // basic checks
+          if (!body.contains("dictionaryName") || !body["dictionaryName"].is_string()) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"dictionaryName\""}}}};
+          }
 
-            if (!body.contains("parserName") || !body["parserName"].is_string()) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"parserName\""}}}};
-            }
+          if (!body.contains("parserName") || !body["parserName"].is_string()) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"parserName\""}}}};
+          }
 
-            if (gameStorage->getGame(userStorage->getGameId(user_id)) != nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Already in game"}}}};
-            }
+          if (user.getGame() != nullptr) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "Already in game"}}}};
+          }
 
-            auto result = gameStorage->createGame(body);
-            if (body.contains("autoJoin") && body["autoJoin"].is_boolean() && body["autoJoin"]) {
-                json errors;
-                auto game = gameStorage->get(result["body"]["id"], errors);
-                if (game == nullptr) {
-                    result["joined"] = false;
-                    result["error"] = errors;
-                } else {
-                    gameStorage->setGame(userStorage->getGameId(user_id), game);
-                    result["joined"] = true;
-                    result["error"] = "";
-                }
-            }
-            return result;
+          auto result = gameStorage->createGame(body);
+          if (body.contains("autoJoin") && body["autoJoin"].is_boolean() && body["autoJoin"]) {
+              json errors;
+              auto game = gameStorage->get(result["body"]["id"], errors);
+              if (game == nullptr) {
+                  result["joined"] = false;
+                  result["error"] = errors;
+              } else {
+                  user.setGame(game);
+                  result["joined"] = true;
+                  result["error"] = "";
+              }
+          }
+          return result;
         };
-        commonQueriesMap["joinGame"] = [&](const json &body, int user_id) -> json {
-            if (!body.contains("id") || !body["id"].is_number_unsigned()) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"id\""}}}};
-            }
+        commonQueriesMap["joinGame"] = [&](const json &body, User &user) -> json {
+          if (!body.contains("id") || !body["id"].is_number_unsigned()) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"id\""}}}};
+          }
 
-            if (gameStorage->getGame(userStorage->getGameId(user_id)) != nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Already in game"}}}};
-            }
-            json errors;
-            auto game = gameStorage->get(body["id"], errors);
-            if (game == nullptr) {
-                return errors;
-            }
-            if (game->hasUser(user_id)) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Try connect after disconnect"}}}};
-            }
-          gameStorage->setGame(userStorage->getGameId(user_id), game);
-
+          if (user.getGame() != nullptr) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "Already in game"}}}};
+          }
+          json errors;
+          auto game = gameStorage->get(body["id"], errors);
+          if (game == nullptr) {
+              return errors;
+          }
+          if (game->hasUser(user.getId())) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "Try connect after disconnect"}}}};
+          }
+          user.setGame(game);
           return {{"header", {{"type", "GameJoinedSuccessfully"}}}, {"body", {{"id", game->getId()}}}};
         };
 
-        commonQueriesMap["leaveGame"] = [&](const json &body, int user_id) -> json {
-            if (!body.contains("id") || !body["id"].is_number_unsigned()) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"id\""}}}};
-            }
+        commonQueriesMap["leaveGame"] = [&](const json &body, User &user) -> json {
+          if (!body.contains("id") || !body["id"].is_number_unsigned()) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"id\""}}}};
+          }
 
-            if (gameStorage->getGame(userStorage->getGameId(user_id)) == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Not in game"}}}};
-            }
+          if (user.getGame() == nullptr) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "Not in game"}}}};
+          }
 
-          gameStorage->setGame(userStorage->getGameId(user_id), nullptr);
-
+          user.setGame(nullptr);
           return {{"header", {{"type", "GameLeaveSuccessfully"}}}, {"body", {}}};
         };
 
-        commonQueriesMap["getNewLine"] = [&](const json &body, int user_id) -> json {
-            if (gameStorage->getGame(userStorage->getGameId(user_id)) == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
-            }
-            return (gameStorage->getGame(userStorage->getGameId(user_id)))->getNewLine(user_id);
+        commonQueriesMap["getNewLine"] = [&](const json &body, User &user) -> json {
+          if (user.getGame() == nullptr) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+          }
+          return user.getGame()->getNewLine(user.getId());
         };
 
-        commonQueriesMap["addNewChar"] = [&](const json &body, int user_id) -> json {
-            if (gameStorage->getGame(userStorage->getGameId(user_id)) == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
-            }
-            if (!body.contains("char") || !body["char"].is_string() || body["char"].get<std::string>().size() != 1) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find word to check"}}}};
-            }
+        commonQueriesMap["addNewChar"] = [&](const json &body, User &user) -> json {
+          if (user.getGame() == nullptr) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+          }
+          if (!body.contains("char") || !body["char"].is_string() || body["char"].get<std::string>().size() != 1) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find word to check"}}}};
+          }
 
-            auto result = (gameStorage->getGame(userStorage->getGameId(user_id)))->addNewChar(user_id, body["char"].get<std::string>()[0]);
-            if (result["body"]["isFullCorrect"] == true && result["body"]["isEnd"] == true) {
-                gameStorage->setGame(userStorage->getGameId(user_id), nullptr);
-            }
-            return result;
+          auto result = user.getGame()->addNewChar(user.getId(), body["char"].get<std::string>()[0]);
+          if (result["body"]["isFullCorrect"] == true && result["body"]["isEnd"] == true) {
+              user.setGame(nullptr);
+          }
+          return result;
         };
 
-        commonQueriesMap["backspace"] = [&](const json &body, int user_id) -> json {
-            if (gameStorage->getGame(userStorage->getGameId(user_id))  == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
-            }
-            return (gameStorage->getGame(userStorage->getGameId(user_id)))->backspace(user_id);
+        commonQueriesMap["backspace"] = [&](const json &body, User &user) -> json {
+          if (user.getGame() == nullptr) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+          }
+          return user.getGame()->backspace(user.getId());
         };
 
-        commonQueriesMap["getStates"] = [&](const json &body, int user_id) -> json {
-            if (gameStorage->getGame(userStorage->getGameId(user_id)) == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
-            }
-            return (gameStorage->getGame(userStorage->getGameId(user_id)))->getStateOfUsers();
+        commonQueriesMap["getStates"] = [&](const json &body, User &user) -> json {
+          if (user.getGame() == nullptr) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+          }
+          return user.getGame()->getStateOfUsers();
         };
 
-        commonQueriesMap["getNewWord"] = [&](const json &body, int user_id) -> json {
-            if (gameStorage->getGame(userStorage->getGameId(user_id)) == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
-            }
-            return (gameStorage->getGame(userStorage->getGameId(user_id)))->getNewWord(user_id);
+        commonQueriesMap["getNewWord"] = [&](const json &body, User &user) -> json {
+          if (user.getGame() == nullptr) {
+              return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+          }
+          return user.getGame()->getNewWord(user.getId());
         };
 
-        commonQueriesMap["exit"] = [&](const json &body, int user_id) -> json {
-            userStorage->setWantExit(user_id);
-            return {};
+        commonQueriesMap["exit"] = [&](const json &body, User &user) -> json {
+          user.setWillToExit();
+          return {};
         };
     }
 
@@ -129,7 +127,7 @@ namespace FastTyping::Server {
         while (true) {
             tcp::socket sock = acceptor.accept();
             std::thread([s = std::move(sock), this]() mutable {
-                parseQuery(std::move(s));
+              parseQuery(std::move(s));
             }).detach();
         }
     }
@@ -166,8 +164,8 @@ namespace FastTyping::Server {
             return;
         }
 
-        int user_id = userStorage->getId(user_name);
-        json result = {{"header", {{"type", "loginSuccessfully"}}}, {"body", {{"name", userStorage->getName(user_id)}}}};
+        User user(user_name, userStorage.get());
+        json result = {{"header", {{"type", "loginSuccessfully"}}}, {"body", {{"name", user.name()}}}};
         client << result << '\n';
 
         try {
@@ -185,16 +183,16 @@ namespace FastTyping::Server {
                 auto queryBody = query["body"];
                 BOOST_LOG_TRIVIAL(debug) << query << '\n';
                 if (auto it = commonQueriesMap.find(queryHeader["type"]); it != commonQueriesMap.end()) {
-                    result = it->second(queryBody, user_id);
-                    if (userStorage->getWantExit(user_id)) {
-                        userStorage->unsetWantExit(user_id);
+                    result = it->second(queryBody, user);
+                    if (user.isWantToExit()) {
+                        user.clearWillToExit();
                         break;
                     }
                     client << result << '\n';
                 }
             }
         } catch (nlohmann::detail::exception &e) {
-            std::cerr << e.what() << std::endl; // process error to client
+            std::cerr << e.what() << std::endl;// process error to client
         }
 
         std::cout << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;

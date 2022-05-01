@@ -13,52 +13,6 @@
 using nlohmann::json;
 using namespace pqxx;
 namespace FastTyping::Server {
-    /*class User {
-    public:
-        User() = default;
-        explicit User(std::string name) : userName(std::move(name)) {
-            id = nextId++;
-        }
-
-        [[nodiscard]] const std::string &name() const {
-            std::unique_lock l{mutex};
-            return userName;
-        }
-
-        [[nodiscard]] int getId() const noexcept {
-            return id;
-        }
-
-        [[nodiscard]] int isWantToExit() const noexcept {
-            return wantToExit;
-        }
-        [[nodiscard]] Game *getGame() const {
-            std::unique_lock l{mutex};
-            return currentGame.get();
-        }
-        void setGame(std::shared_ptr<Game> game) {
-            std::unique_lock l{mutex};
-            currentGame = std::move(game);
-        }
-        void setWillToExit() {
-            std::unique_lock l{mutex};
-            wantToExit = true;
-        }
-        void clearWillToExit() {
-            std::unique_lock l{mutex};
-            wantToExit = false;
-        }
-
-    private:
-        std::string userName;
-        int id = 0;
-        bool wantToExit = false;
-        static inline int nextId = 0;
-
-        mutable std::mutex mutex;
-        std::shared_ptr<Game> currentGame = nullptr;
-    }; */
-
     class AbstractUserStorage {
     public:
         AbstractUserStorage() = default;
@@ -98,7 +52,6 @@ namespace FastTyping::Server {
     class DBUserStorage : public AbstractUserStorage {
     public:
         DBUserStorage() : C("dbname = fast_typing") {
-
             try {
                 if (C.is_open()) {
                     std::cout << "Opened database successfully: " << C.dbname() << std::endl;
@@ -126,6 +79,7 @@ namespace FastTyping::Server {
         }
 
         std::string getName(int id) override {
+            std::unique_lock l{mutex};
             pqxx::work W(C);
             sql = "SELECT NAME FROM USERS WHERE ID = " + to_string(id) + ";";
             pqxx::result res{W.exec(sql)};
@@ -136,7 +90,8 @@ namespace FastTyping::Server {
             return name;
         }
 
-        int getId(const std::string &name) override {
+        int getId(const std::string &name) override {// creating new user or return existed one
+            std::unique_lock l{mutex};
             pqxx::work W(C);
             int id;
             pqxx::result find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + name + "';");
@@ -162,6 +117,7 @@ namespace FastTyping::Server {
         }
 
         int getGameId(int id) override {
+            std::unique_lock l{mutex};
             pqxx::work W(C);
             sql = "SELECT GAME_ID FROM USERS WHERE ID = " + to_string(id) + ";";
             pqxx::result res{W.exec(sql)};
@@ -173,6 +129,7 @@ namespace FastTyping::Server {
         }
 
         bool getWantExit(int id) override {
+            std::unique_lock l{mutex};
             pqxx::work W(C);
             sql = "SELECT WANT_EXIT FROM USERS WHERE ID = " + to_string(id) + ";";
             pqxx::result res{W.exec(sql)};
@@ -183,12 +140,14 @@ namespace FastTyping::Server {
             return want_exit;
         }
         void setWantExit(int id) override {
+            std::unique_lock l{mutex};
             pqxx::work W(C);
             sql = "UPDATE USERS SET WANT_EXIT = TRUE WHERE ID = " + to_string(id) + ";";
             W.exec(sql);
             W.commit();
         }
         void unsetWantExit(int id) override {
+            std::unique_lock l{mutex};
             pqxx::work W(C);
             sql = "UPDATE USERS SET WANT_EXIT = FALSE WHERE ID = " + to_string(id) + ";";
             W.exec(sql);
@@ -196,6 +155,7 @@ namespace FastTyping::Server {
         }
 
         void setGameId(int id, int game_id) override {
+            std::unique_lock l{mutex};
             pqxx::work W(C);
             sql = "UPDATE USERS SET GAME_ID = " + to_string(id) + " WHERE ID = " + to_string(id) + ";";
             W.exec(sql);
@@ -207,8 +167,70 @@ namespace FastTyping::Server {
         }
 
     private:
+        mutable std::mutex mutex;
         pqxx::connection C;
         std::string sql;// sql query
+    };
+
+    class DBUser {
+    public:
+        //        User() = default;
+        explicit DBUser(std::string &name_, DBUserStorage *DB_) : userName(name_), DB(DB_), id(DB->getId(name_)) {
+        }
+
+        [[nodiscard]] const std::string &name() const {
+            return userName;
+        }
+
+        [[nodiscard]] int getId() const noexcept {
+            return id;
+        }
+
+        [[nodiscard]] int isWantToExit() const noexcept {
+            return DB->getWantExit(id);
+        }
+        void setGameId(int game_id) {
+            DB->setGameId(id, game_id);
+        }
+        int getGameId() {
+            return DB->getGameId(id);
+        }
+//        [[nodiscard]] Game *getGame() const {
+//            return currentGame.get();
+//        }
+//        void setGame(std::shared_ptr<Game> game) {
+//            std::unique_lock l{mutex};
+//            currentGame = std::move(game);
+//        }
+        void setWillToExit() {
+            DB->setWantExit(id);
+        }
+        void clearWillToExit() {
+            DB->unsetWantExit(id);
+        }
+
+    private:
+        std::string userName;
+        DBUserStorage *DB;
+        int id = 0;
+    };
+    
+    struct User : DBUser {
+        User() = delete;
+        explicit User(std::string &name_, DBUserStorage *DB_) : DBUser(name_, DB_) {
+        }
+        [[nodiscard]] Game *getGame() const {
+            // getGameId()
+            return currentGame.get();
+        }
+        void setGame(std::shared_ptr<Game> game) {
+            std::unique_lock l{mutex};
+            currentGame = std::move(game);
+            // setGameId(TODO) 
+        }
+    private:
+        std::shared_ptr<Game> currentGame = nullptr;
+        mutable std::mutex mutex;
     };
 }// namespace FastTyping::Server
 #endif//FASTTYPING_USER_H
