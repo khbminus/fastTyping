@@ -195,13 +195,13 @@ namespace FastTyping::Server {
         int getGameId() {
             return DB->getGameId(id);
         }
-//        [[nodiscard]] Game *getGame() const {
-//            return currentGame.get();
-//        }
-//        void setGame(std::shared_ptr<Game> game) {
-//            std::unique_lock l{mutex};
-//            currentGame = std::move(game);
-//        }
+        //        [[nodiscard]] Game *getGame() const {
+        //            return currentGame.get();
+        //        }
+        //        void setGame(std::shared_ptr<Game> game) {
+        //            std::unique_lock l{mutex};
+        //            currentGame = std::move(game);
+        //        }
         void setWillToExit() {
             DB->setWantExit(id);
         }
@@ -214,7 +214,7 @@ namespace FastTyping::Server {
         DBUserStorage *DB;
         int id = 0;
     };
-    
+
     struct User : DBUser {
         User() = delete;
         explicit User(std::string &name_, DBUserStorage *DB_) : DBUser(name_, DB_) {
@@ -226,8 +226,9 @@ namespace FastTyping::Server {
         void setGame(std::shared_ptr<Game> game) {
             std::unique_lock l{mutex};
             currentGame = std::move(game);
-            // setGameId(TODO) 
+            // setGameId(TODO)
         }
+
     private:
         std::shared_ptr<Game> currentGame = nullptr;
         mutable std::mutex mutex;
