@@ -67,7 +67,7 @@ namespace FastTyping::Server {
     class MapGameStorage final : public AbstractGameStorage {
     public:
         std::shared_ptr<Game> get(int id, json &errors) override;
-        json createGame(const json &body) override; 
+        json createGame(const json &body) override;
         void setGame(int game_id, std::shared_ptr<Game> game) override {
             games[game_id] = std::move(game);
         }
@@ -78,7 +78,7 @@ namespace FastTyping::Server {
     private:
         std::mutex map_mutex;
         // TODO somewhere add NEW game in games by id
-        std::unordered_map<int, std::shared_ptr<Game>> games; 
+        std::unordered_map<int, std::shared_ptr<Game>> games;
     };
 }// namespace FastTyping::Server
 
