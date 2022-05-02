@@ -112,7 +112,7 @@ namespace FastTyping::Server {
             W.commit();
             return id;
         }
-        
+
 
         bool getWantExit(int id) override {
             std::unique_lock l{mutex};
@@ -125,7 +125,7 @@ namespace FastTyping::Server {
             W.commit();
             return want_exit;
         }
-        
+
         void setWantExit(int id) override {
             std::unique_lock l{mutex};
             pqxx::work W(C);
@@ -133,7 +133,7 @@ namespace FastTyping::Server {
             W.exec(sql);
             W.commit();
         }
-        
+
         void unsetWantExit(int id) override {
             std::unique_lock l{mutex};
             pqxx::work W(C);
@@ -141,7 +141,7 @@ namespace FastTyping::Server {
             W.exec(sql);
             W.commit();
         }
-        
+
         ~DBUserStorage() override {
             C.disconnect();
         }
