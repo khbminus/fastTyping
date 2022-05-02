@@ -163,8 +163,15 @@ namespace FastTyping::Server {
             std::cerr << e.what() << std::endl;// process error to client
             return;
         }
+        std::string passw = "123";// TODO parse login/register query
+        // Case 1: login:  if( userStorage->nameExist(name) == true && passw == getPassword(userStorage->getId(name)) ) go next, else send error to UI
+        // Case 2: register: if (userStorage->nameExist(name) == false) { setPassword(userStorage->getId(name))}
+        // Case 3: change password: match as in login and then setPassword
 
-        User user(user_name, userStorage.get());
+        // That's not user's methods because it's hard to hold user in incorrect password cases etc
+
+
+        User user(user_name, userStorage.get());// after you parse login and register query you can simply identify user by its name
         json result = {{"header", {{"type", "loginSuccessfully"}}}, {"body", {{"name", user.name()}}}};
         client << result << '\n';
 

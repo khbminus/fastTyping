@@ -17,35 +17,15 @@ namespace FastTyping::Server {
     public:
         AbstractUserStorage() = default;
         virtual std::string getName(int) = 0;
-        virtual int getId(const std::string &) = 0;// or create it
+        virtual std::string getPassword(int) = 0;
+        virtual void setPassword(int, const std::string &) = 0;// base password == '0000'
+        virtual int getId(const std::string &) = 0;            // or create it
         virtual void setWantExit(int) = 0;
+        virtual bool nameExist(const std::string &) = 0;
         virtual void unsetWantExit(int) = 0;
         virtual bool getWantExit(int) = 0;
         virtual ~AbstractUserStorage() = default;
     };
-
-    /*class MapUserStorage : public AbstractUserStorage {
-        // Probably should be replaced with SQL user storage
-    public:
-        MapUserStorage() = default;
-        int &getName(int id) override {
-            std::unique_lock l{mutex};
-            return usersById.at(id);
-        }
-        User &get(const std::string &name) override {
-            std::unique_lock l{mutex};
-            if (auto it = usersByName.find(name); it != usersByName.end()) {
-                return it->second;
-            }
-            User &user = usersByName.emplace(name, name).first->second;
-            return usersById.emplace(user.getId(), user).first->second;
-        }
-
-    private:
-        std::unordered_map<std::string, User> usersByName;
-        std::unordered_map<int, User &> usersById;
-        mutable std::mutex mutex;
-    };*/
 
     class DBUserStorage : public AbstractUserStorage {
     public:
@@ -61,6 +41,7 @@ namespace FastTyping::Server {
                 sql = "CREATE TABLE IF NOT EXISTS USERS("
                       "ID INT PRIMARY KEY NOT NULL,"
                       "NAME           TEXT    NOT NULL,"
+                      "PASSWORD           TEXT    NOT NULL,"
                       "WANT_EXIT boolean);";
 
                 /* Create a transactional object. */
@@ -73,6 +54,26 @@ namespace FastTyping::Server {
             } catch (const std::exception &e) {
                 std::cerr << e.what() << std::endl;
             }
+        }
+
+        std::string getPassword(int id) override {
+            std::unique_lock l{mutex};
+            pqxx::work W(C);
+            sql = "SELECT PASSWORD FROM USERS WHERE ID = " + to_string(id) + ";";
+            pqxx::result res{W.exec(sql)};
+            std::string passw;
+            for (auto row: res)
+                passw = row["PASSWORD"].c_str();
+            W.commit();
+            return passw;
+        }
+
+        void setPassword(int id, const std::string &passw) override {
+            std::unique_lock l{mutex};
+            pqxx::work W(C);
+            sql = "UPDATE USERS SET PASSWORD = '" + passw + "' WHERE ID = " + to_string(id) + ";";
+            W.exec(sql);
+            W.commit();
         }
 
         std::string getName(int id) override {
@@ -97,9 +98,9 @@ namespace FastTyping::Server {
                 pqxx::result full_list = W.exec("SELECT * FROM USERS;");
                 id = full_list.size() + 1;
 
-                sql = "INSERT INTO USERS(ID, NAME, WANT_EXIT)\n"
+                sql = "INSERT INTO USERS(ID, NAME, PASSWORD, WANT_EXIT)\n"
                       "SELECT " +
-                      to_string(id) + ", '" + name + "', FALSE\n"
+                      to_string(id) + ", '" + name + "', '0000', FALSE\n"
                                                      "WHERE\n"
                                                      "    NOT EXISTS (\n"
                                                      "        SELECT ID FROM USERS WHERE ID = " +
@@ -113,6 +114,12 @@ namespace FastTyping::Server {
             return id;
         }
 
+        bool nameExist(const std::string &name) override {
+            std::unique_lock l{mutex};
+            pqxx::work W(C);
+            pqxx::result find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + name + "';");
+            return find_by_name.size() != 0;
+        }
 
         bool getWantExit(int id) override {
             std::unique_lock l{mutex};

@@ -32,3 +32,19 @@ TEST_CASE("DBUserStorage") {
     CHECK(storage.getId(storage.getName(b)) == b);
     CHECK(storage.getId(storage.getName(b)) != a);
 }
+
+TEST_CASE("DB passwords") {
+    std::string name1 = "Aboba";
+    std::string name2 = "Boba";
+    DBUserStorage storage;
+    int a = storage.getId(name1);
+    int b = storage.getId(name2);
+    CHECK(storage.getPassword(a) == "0000");
+    CHECK(storage.getPassword(b) == "0000");
+    storage.setPassword(a, "lupa21_");
+    CHECK(storage.getPassword(a) == "lupa21_");
+    storage.setPassword(a, "aaaa");
+    CHECK(storage.getPassword(a) == "aaaa");
+    storage.setPassword(b, "0000");
+    CHECK(storage.getPassword(b) == "0000");
+}
