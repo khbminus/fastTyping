@@ -28,8 +28,13 @@ private:
     // game::AbstractGameManager *main_handler;
     GameManager *main_manager;
 
+signals:
+    void press(int key);
+    void release(int key);
+
 protected:
     void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 private slots:
     void on_ReturnButton_clicked();
     void error_slot();

@@ -5,6 +5,9 @@
 #include "sonicSocket.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
+#include <QQuickItem>
+#include <iostream>
+#include <qqml.h>
 
 GameWindow::GameWindow(GameManager *manager, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::GameWindow), main_manager(manager) {
@@ -45,6 +48,12 @@ void GameWindow::on_ReturnButton_clicked() {
 // cppcheck-suppress unusedFunction
 void GameWindow::keyPressEvent(QKeyEvent *event) {
     QString keysCombination = event->text();
+    //qDebug() << keysCombination;
+
+    QQuickItem *keyboard = ui->quickWidget->rootObject();
+    QVariant key = event->key();
+    QVariant retValue;
+    QMetaObject::invokeMethod(keyboard, "pressKey", Q_RETURN_ARG(QVariant, retValue), Q_ARG(QVariant, key));
 
     if (keysCombination == "") {
         return;
@@ -60,6 +69,13 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
 void GameWindow::error_slot() {
     palette.setColor(ui->userText->backgroundRole(), Qt::red);
     ui->userText->setPalette(palette);
+}
+
+void GameWindow::keyReleaseEvent(QKeyEvent *event) {
+    QQuickItem *keyboard = ui->quickWidget->rootObject();
+    QVariant key = event->key();
+    QVariant retValue;
+    QMetaObject::invokeMethod(keyboard, "releaseKey", Q_RETURN_ARG(QVariant, retValue), Q_ARG(QVariant, key));
 }
 
 void GameWindow::correct_slot() {

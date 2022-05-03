@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.14)
 project(fasttyping_client VERSION 1.0 LANGUAGES CXX)
 
 # -*-*- QT CMake start -*-*-
@@ -7,15 +7,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Network REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Widgets Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets QuickWidgets Network)
 find_package(nlohmann_json 3.7.3 REQUIRED)
 
 
@@ -60,6 +57,7 @@ set(PROJECT_SOURCES
         src/joinwindow.ui
         src/mainwindow.ui
         src/statwindow.ui
+        qml.qrc
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -77,8 +75,17 @@ else ()
             )
 endif ()
 
-target_link_libraries(client PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(client PRIVATE Qt${QT_VERSION_MAJOR}::Network)
+target_include_directories(client PRIVATE include ../common/include)
+
+#target_compile_definitions(client
+#        PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+target_link_libraries(client
+        PRIVATE Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Network
+        Qt${QT_VERSION_MAJOR}::Quick
+        Qt${QT_VERSION_MAJOR}::QuickWidgets)
+
 target_link_libraries(client PRIVATE nlohmann_json::nlohmann_json)
 
 set_target_properties(client PROPERTIES
@@ -89,7 +96,7 @@ set_target_properties(client PROPERTIES
         WIN32_EXECUTABLE TRUE
         )
 
-target_include_directories(client PRIVATE include)
+target_include_directories(client PRIVATE include src .)
 
 if (QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(client)
