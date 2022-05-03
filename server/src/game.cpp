@@ -63,6 +63,7 @@ namespace FastTyping::Server {
         std::unique_lock l{mutex};
         json result = {{"header", {{"type", "currentState"}}}};
         json &userStates = result["body"]["userStates"];
+        // cppcheck-suppress unassignedVariable
         for (const auto &[uid, info]: additionalInfo) {
             userStates.emplace_back();
             userStates.back()["id"] = uid;
