@@ -1,0 +1,115 @@
+#include "socketWrapper.h"
+#include <iostream>
+
+
+namespace client::web {
+void QuerySender::send(QString line) {
+    emit send_line(line);
+}
+
+SocketWrapper::SocketWrapper(QString ip, short port, ResponseHandler* a_handler) : handler(a_handler){
+    std::thread test([this, ip, port](){
+        init_mutex.lock();
+        QEventLoop socket_thread;
+        QTcpSocket* socket = new QTcpSocket(&socket_thread);
+        socket->connectToHost(ip, port);
+
+        if (socket->waitForConnected()) {
+            qDebug() << "connected to host(" << ip << ":" << port << ") \n";
+        } else {
+            qDebug() << "failed to connect to host\n";
+            return;
+        }
+
+        QObject::connect(&sender, &QuerySender::send_line, &socket_thread, [socket] (QString line) {
+            if (socket && socket->isOpen()) {
+                qDebug() << "sending\n";
+                QTextStream socket_stream(socket);
+                socket_stream << line;
+                qDebug() << "sent\n";
+            } else {
+                qDebug() << "failed to send\n";
+            }
+        });
+
+        QObject::connect(socket, &QTcpSocket::readyRead, &socket_thread, [this, socket] () {
+            QString response = socket->readLine();
+            qDebug() << "get sync: ";
+            qDebug() << "(" << response << ")\n";
+
+            ResponseType type = handler->type(response);
+
+            if (type == ResponseType::async) {
+                handler->handle(response);
+            } else if (type == ResponseType::sync) {
+                std::unique_lock response_lock{response_mutex};
+                responses.push(response);
+                wait_for_response.notify_one();
+            } else if (type == ResponseType::blocking) {
+                std::unique_lock blocking_lock{blocking_query_mutex};
+                blocking_query = response;
+                wait_for_blocking_query.notify_one();
+            }
+        });
+
+        QObject::connect(socket, &QTcpSocket::disconnected, &socket_thread, [&socket_thread] () {
+            qDebug() << "connection lost\n";
+            socket_thread.quit();
+        });
+
+        socket_wrap = socket;
+        loop_wrap = &socket_thread;
+
+        init_mutex.unlock();
+        wait_for_init.notify_one();
+        socket_thread.exec();
+
+        std::unique_lock l{init_mutex};
+        delete socket;
+        loop_wrap.reset();
+   });
+
+   test.detach();
+
+   std::unique_lock l{init_mutex};
+
+   while (!socket_wrap) {
+       wait_for_init.wait(l);
+   }
+}
+
+void SocketWrapper::send(QString const& line) {
+    sender.send(line);
+}
+
+SocketWrapper::~SocketWrapper() {
+    std::unique_lock l{init_mutex};
+
+    if (loop_wrap && (*loop_wrap)->isRunning()) {
+        (*loop_wrap)->quit();
+    }
+
+    std::cout << "Disconnected" << std::endl;
+}
+
+QString SocketWrapper::get_response() {
+    std::unique_lock l{response_mutex};
+    while (responses.empty()) {
+        wait_for_response.wait(l);
+    }
+    QString result = std::move(responses.back());
+    responses.pop();
+    return result;
+}
+
+QString SocketWrapper::query(QString const& line) {
+    std::unique_lock l{blocking_query_mutex};
+    send(line);
+    while (!blocking_query) {
+        wait_for_blocking_query.wait(l);
+    }
+    QString result = std::move(*blocking_query);
+    blocking_query.reset();
+    return result;
+}
+}

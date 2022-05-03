@@ -1,12 +1,14 @@
 #include "gamewindow.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
+#include "sonicSocket.h"
+#include "queryTemplates.h"
 #include <iostream>
 
 GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::GameWindow),
                                           handlers{new game::RaceGame, new game::client::GameClient("aboba")},
-                                          main_handler(handlers[1]) {
+                                          main_handler(handlers[0]) {
     ui->setupUi(this);
     palette = ui->userText->palette();
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
@@ -43,14 +45,19 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
         for (auto handler: handlers) {
             handler->backspacePressed();
         }
-        emit keyPressed();
+        keyPressed();
         return;
     }
+
+    using client::web::socket;
+    using client::queries::key_pressed_query;
+
+    socket().send(key_pressed_query("aboba"));
 
     for (auto handler: handlers) {
         handler->keyPressed(keysCombination[0]);
     }
-    emit keyPressed();
+    keyPressed();
 }
 
 void GameWindow::keyPressed() {

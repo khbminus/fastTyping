@@ -36,6 +36,14 @@ set(PROJECT_SOURCES
         client/include/tcp_client.h
         client/src/gameClient.cpp
         client/include/gameClient.h
+        client/src/socketWrapper.cpp
+        client/include/socketWrapper.h
+        client/src/sonicSocket.cpp
+        client/include/sonicSocket.h
+        client/src/queryTemplates.cpp
+        client/include/queryTemplates.h
+        client/src/responseHandler.cpp
+        client/include/responseHandler.h
         client/include/gameClientFwd.h
         common/include/json.hpp
         )
