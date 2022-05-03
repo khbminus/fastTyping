@@ -18,7 +18,7 @@ jobs:
           script: |
             cd fastTyping
             git pull
-            git switch feature/ci
+            git switch develop
             sudo systemctl stop ftServer.service
             mkdir build
             cd build
