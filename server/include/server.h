@@ -1,5 +1,6 @@
 #ifndef FASTTYPING_SERVER_H
 #define FASTTYPING_SERVER_H
+#include "game.h"
 #include "user.h"
 #include <boost/asio.hpp>
 #include <memory>
@@ -22,13 +23,16 @@ namespace FastTyping::Server {
         Server();
         boost::asio::io_context ioContext;
         tcp::acceptor acceptor;
-        std::unique_ptr<AbstractUserStorage> storage;
+        std::unique_ptr<AbstractUserStorage> userStorage;
+        std::unique_ptr<AbstractGameStorage> gameStorage;
+        std::unordered_map<std::string, std::function<json(const json &, User &)>> commonQueriesMap;
 
         void parseQuery(tcp::socket);
-        void echoQuery(tcp::iostream &client, User &user, json queryBody);
 
-        std::optional<json> checkQueryForErrors(const std::string &queryString);
+        std::optional<json> checkQueryCorrectness(const std::string &queryString);
     };
+
+
 }// namespace FastTyping::Server
 
 #endif//FASTTYPING_SERVER_H

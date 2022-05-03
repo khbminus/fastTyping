@@ -3,6 +3,7 @@
 #include "user.h"
 #include <abc.h>
 #include <memory>
+#include <mutex>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <unordered_map>
@@ -24,11 +25,18 @@ namespace FastTyping::Server {
             return id;
         }
 
-        json checkInputAndProceed(const User &user, json queryBody);
-        json getNewLine(const User &user, json queryBody);
+        bool hasUser(int uid);
+
+        json addNewChar(int uid, char c);
+        json backspace(int uid);
+        json check(int uid);
+        json getNewLine(int uid);
+        json getNewWord(int uid);
+        json getStateOfUsers();
 
 
     private:
+        json checkUnsafe(int uid);// THREAD UNSAFE
         std::string gameName;
         int id = 0;
         static inline int nextId = 0;
@@ -37,14 +45,32 @@ namespace FastTyping::Server {
         std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;
 
         struct AdditionalUserInfo {
+            std::string currentBuffer;
             int currentWord = 0;
             int lineNumber = 0;
         };
 
+        mutable std::mutex mutex;
         std::unordered_map<int, AdditionalUserInfo> additionalInfo;
     };
 
-    std::unique_ptr<Game> makeGame(User &user, json body, json &error);
+    class AbstractGameStorage {
+    public:
+        AbstractGameStorage() = default;
+        virtual std::shared_ptr<Game> get(int id, json &errors) = 0;
+        virtual json createGame(const json &body) = 0;
+        virtual ~AbstractGameStorage() = default;
+    };
+
+    class MapGameStorage final : public AbstractGameStorage {
+    public:
+        std::shared_ptr<Game> get(int id, json &errors) override;
+        json createGame(const json &body) override;
+
+    private:
+        std::mutex map_mutex;
+        std::unordered_map<int, std::shared_ptr<Game>> games;
+    };
 }// namespace FastTyping::Server
 
 
