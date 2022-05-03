@@ -14,17 +14,17 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>190</y>
-      <width>221</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
+   <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+           <rect>
+               <x>320</x>
+               <y>200</y>
+               <width>221</width>
+               <height>81</height>
+           </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
       <widget class="QPushButton" name="CreateButton">
        <property name="text">
         <string>Create a new game</string>

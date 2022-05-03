@@ -1,7 +1,9 @@
 #include "gamewindow.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
+#include <QQuickItem>
 #include <iostream>
+#include <qqml.h>
 
 GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::GameWindow),
@@ -33,7 +35,12 @@ void GameWindow::on_ReturnButton_clicked() {
 
 void GameWindow::keyPressEvent(QKeyEvent *event) {
     QString keysCombination = event->text();
-    //    qDebug() << keysCombination;
+    //qDebug() << keysCombination;
+
+    QQuickItem *keyboard = ui->quickWidget->rootObject();
+    QVariant key = event->key();
+    QVariant retValue;
+    QMetaObject::invokeMethod(keyboard, "pressKey", Q_RETURN_ARG(QVariant, retValue), Q_ARG(QVariant, key));
 
     if (keysCombination == "") {
         // for shift, ctrl, alt
@@ -46,11 +53,17 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
         emit keyPressed();
         return;
     }
-
     for (auto handler: handlers) {
         handler->keyPressed(keysCombination[0]);
     }
     emit keyPressed();
+}
+
+void GameWindow::keyReleaseEvent(QKeyEvent *event) {
+    QQuickItem *keyboard = ui->quickWidget->rootObject();
+    QVariant key = event->key();
+    QVariant retValue;
+    QMetaObject::invokeMethod(keyboard, "releaseKey", Q_RETURN_ARG(QVariant, retValue), Q_ARG(QVariant, key));
 }
 
 void GameWindow::keyPressed() {

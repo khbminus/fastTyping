@@ -18,12 +18,11 @@ int main(int argc, char *argv[]) {
     auto gameWindow = QSharedPointer<QMainWindow>(new GameWindow());
     auto statWindow = QSharedPointer<QMainWindow>(new StatWindow());
 
-
     controller.registerWindow("MainWindow", mainWindow);
     controller.registerWindow("JoinWindow", joinWindow);
     controller.registerWindow("CreateWindow", createWindow);
     controller.registerWindow("GameWindow", gameWindow);
     controller.registerWindow("StatWindow", statWindow);
-    controller.setActiveWindow("MainWindow");
+    controller.setActiveWindow("GameWindow");
     return a.exec();
 }

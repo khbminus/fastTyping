@@ -30,9 +30,13 @@ private:
 
     std::vector<game::AbstractGameManager *> handlers;
     game::AbstractGameManager *main_handler;
+signals:
+    void press(int key);
+    void release(int key);
 
 protected:
     void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 private slots:
     void keyPressed();
     void on_ReturnButton_clicked();
