@@ -18,6 +18,8 @@ GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
     ui->dictLabel->setAutoFillBackground(true);
     ui->dictLabel->setPalette(palette);
     ui->dictLabel->setText("This is sample don't judge me");
+    connect(this, SIGNAL(press(QVariant)), ui->quickWidget->rootObject(), SLOT(pressKey(QVariant)));
+    connect(this, SIGNAL(release(QVariant)), ui->quickWidget->rootObject(), SLOT(releaseKey(QVariant)));
 }
 
 
@@ -36,11 +38,11 @@ void GameWindow::on_ReturnButton_clicked() {
 void GameWindow::keyPressEvent(QKeyEvent *event) {
     QString keysCombination = event->text();
     //qDebug() << keysCombination;
-
-    QQuickItem *keyboard = ui->quickWidget->rootObject();
-    QVariant key = event->key();
-    QVariant retValue;
-    QMetaObject::invokeMethod(keyboard, "pressKey", Q_RETURN_ARG(QVariant, retValue), Q_ARG(QVariant, key));
+    emit press(event->key());
+    //    QQuickItem *keyboard = ui->quickWidget->rootObject();
+    //    QVariant key = event->key();
+    //    QVariant retValue;
+    //    QMetaObject::invokeMethod(keyboard, "pressKey", Q_RETURN_ARG(QVariant, retValue), Q_ARG(QVariant, key));
 
     if (keysCombination == "") {
         // for shift, ctrl, alt
@@ -60,10 +62,11 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
 }
 
 void GameWindow::keyReleaseEvent(QKeyEvent *event) {
-    QQuickItem *keyboard = ui->quickWidget->rootObject();
-    QVariant key = event->key();
-    QVariant retValue;
-    QMetaObject::invokeMethod(keyboard, "releaseKey", Q_RETURN_ARG(QVariant, retValue), Q_ARG(QVariant, key));
+    emit release(event->key());
+    //    QQuickItem *keyboard = ui->quickWidget->rootObject();
+    //    QVariant key = event->key();
+    //    QVariant retValue;
+    //    QMetaObject::invokeMethod(keyboard, "releaseKey", Q_RETURN_ARG(QVariant, retValue), Q_ARG(QVariant, key));
 }
 
 void GameWindow::keyPressed() {

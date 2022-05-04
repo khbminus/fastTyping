@@ -29,12 +29,12 @@
    </widget>
    <widget class="QLabel" name="dictLabel">
     <property name="geometry">
-        <rect>
-            <x>140</x>
-            <y>20</y>
-            <width>401</width>
-            <height>111</height>
-        </rect>
+     <rect>
+      <x>140</x>
+      <y>20</y>
+      <width>401</width>
+      <height>111</height>
+     </rect>
     </property>
     <property name="text">
      <string>YOU NEED TO TYPE THIS эчпочмак</string>
@@ -42,47 +42,47 @@
    </widget>
    <widget class="QPushButton" name="ReturnButton">
     <property name="geometry">
-        <rect>
-            <x>700</x>
-            <y>570</y>
-            <width>100</width>
-            <height>32</height>
-        </rect>
+     <rect>
+      <x>700</x>
+      <y>570</y>
+      <width>100</width>
+      <height>32</height>
+     </rect>
     </property>
-       <property name="focusPolicy">
-           <enum>Qt::ClickFocus</enum>
-       </property>
-       <property name="text">
-           <string>return</string>
-       </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="text">
+     <string>return</string>
+    </property>
    </widget>
-      <widget class="QQuickWidget" name="quickWidget">
-          <property name="geometry">
-              <rect>
-                  <x>50</x>
-                  <y>280</y>
-                  <width>701</width>
-                  <height>261</height>
-              </rect>
-          </property>
-          <property name="resizeMode">
-              <enum>QQuickWidget::SizeRootObjectToView</enum>
-          </property>
-          <property name="source">
-              <url>
-                  <string>qrc:/Keyboard.qml</string>
-              </url>
-          </property>
-      </widget>
+   <widget class="QQuickWidget" name="quickWidget">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>280</y>
+      <width>701</width>
+      <height>261</height>
+     </rect>
+    </property>
+    <property name="resizeMode">
+     <enum>QQuickWidget::SizeRootObjectToView</enum>
+    </property>
+    <property name="source">
+     <url>
+      <string>qrc:/Keyboard.qml</string>
+     </url>
+    </property>
+   </widget>
   </widget>
  </widget>
-    <customwidgets>
-        <customwidget>
-            <class>QQuickWidget</class>
-            <extends>QWidget</extends>
-            <header location="global">QtQuickWidgets/QQuickWidget</header>
-        </customwidget>
-    </customwidgets>
-    <resources/>
-    <connections/>
+ <customwidgets>
+  <customwidget>
+   <class>QQuickWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">QtQuickWidgets/QQuickWidget</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
 </ui>

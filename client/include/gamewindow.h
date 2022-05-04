@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QPushButton>
+#include <QVariant>
 #include <memory>
 
 namespace Ui {
@@ -31,8 +32,8 @@ private:
     std::vector<game::AbstractGameManager *> handlers;
     game::AbstractGameManager *main_handler;
 signals:
-    void press(int key);
-    void release(int key);
+    void press(QVariant key);
+    void release(QVariant key);
 
 protected:
     void keyPressEvent(QKeyEvent *event);

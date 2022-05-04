@@ -8,8 +8,18 @@ Item {
 
     function pressKey(key) {
         console.log("pressed key", key);
+        console.log(pimpl.shiftModifier);
+
+        if (pimpl.shiftModifier < 0) {
+            releaseKey(Qt.Key_Shift);
+            pimpl.shiftModifier = 0;
+        }
         if (key === Qt.Key_Shift) {
             pimpl.shiftModifier++;
+
+        }
+        if (key === Qt.Key_CapsLock) {
+            pimpl.capsModifier = !pimpl.capsModifier
         }
 
         pressed(key);
@@ -17,6 +27,7 @@ Item {
 
     function releaseKey(key) {
         console.log("released key", key);
+        console.log(pimpl.shiftModifier);
         if (key === Qt.Key_Shift) {
             pimpl.shiftModifier--;
         }
@@ -33,6 +44,7 @@ Item {
     QtObject {
         id:pimpl
         property int shiftModifier: 0
+        property bool capsModifier: false
         property int verticalSpacing: keyboard.height / 100
         property int horizontalSpacing: verticalSpacing
         property int buttonWidth:  (keyboard.width-column.anchors.margins)/15 - horizontalSpacing
@@ -45,16 +57,17 @@ Item {
                 id: button
                 width: pimpl.buttonWidth
                 height: pimpl.rowHeight
-                text: (pimpl.shiftModifier) ? letter.toUpperCase() : letter
+                text: ((!!pimpl.shiftModifier) ^ pimpl.capsModifier) ? letter.toUpperCase() : letter
                 inputPanel: root
                 key: keycode
+                color: clr
             }
     }
     Rectangle {
         //width: pimpl.buttonWidth * 15 + pimpl.horizontalSpacing * 14
         //height: pimpl.rowHeight * 6 + pimpl.verticalSpacing * 5
         id:keyboard
-        color: "black"
+        color: "white"
         anchors.fill: parent;
         MouseArea {
             anchors.fill: parent
@@ -79,7 +92,7 @@ Item {
                 }
                 KeyboardButton {
                     id: backspaceKey
-                    color: "#1e1b18"
+                    color: "#c0e1bf"
                     anchors.right: parent.right
                     width: 2*pimpl.buttonWidth
                     height: pimpl.rowHeight
@@ -93,7 +106,7 @@ Item {
                 width:parent.width
                 KeyboardButton {
                     id: tabKey
-                    color: "#1e1b18"
+                    color: "#d74547"
                     anchors.left: parent.left
                     width: 1.5*pimpl.buttonWidth
                     height: pimpl.rowHeight
@@ -113,7 +126,7 @@ Item {
                 }
                 KeyboardButton {
                     id: backslashKey
-                    color: "#1e1b18"
+                    color: "#c0e1bf"
                     anchors.right: parent.right
                     width: 1.5*pimpl.buttonWidth
                     height: pimpl.rowHeight
@@ -127,7 +140,7 @@ Item {
                 width:parent.width
                 KeyboardButton {
                     id: capsLock
-                    color: (pimpl.shiftModifier)? "#1e6fa7": "#1e1b18"
+                    color: (pimpl.capsModifier)? "#1e6fa7": "#d74547"
                     anchors.left: parent.left
                     width: 1.75*pimpl.buttonWidth
                     height: pimpl.rowHeight
@@ -149,7 +162,7 @@ Item {
                 KeyboardButton {
                     anchors.right:parent.right
                     id: enterKey
-                    color: "#1e1b18"
+                    color: "#c0e1bf"
                     width: 2.25*pimpl.buttonWidth
                     height: pimpl.rowHeight
                     displayText: "Enter"
@@ -163,7 +176,7 @@ Item {
                 width:parent.width
                 KeyboardButton {
                     id: leftShiftKey
-                    color: (pimpl.shiftModifier)? "#1e6fa7": "#1e1b18"
+                    color: (pimpl.shiftModifier)? "#1e6fa7": "#d74547"
                     anchors.left: parent.left
                     width: 2.25*pimpl.buttonWidth
                     height: pimpl.rowHeight
@@ -184,7 +197,7 @@ Item {
                 }
                 KeyboardButton {
                     id: rightShiftKey
-                    color: (pimpl.shiftModifier)? "#1e6fa7": "#1e1b18"
+                    color: (pimpl.shiftModifier)? "#1e6fa7": "#c0e1bf"
                     anchors.right: parent.right
                     width: 2.75*pimpl.buttonWidth
                     height: pimpl.rowHeight
@@ -203,7 +216,7 @@ Item {
                     anchors.left:parent.left
                     KeyboardButton {
                         id: leftCtrlKey
-                        color: "#1e1b18"
+                        color: "#d74547"
                         width: 1.25*pimpl.buttonWidth
                         height: pimpl.rowHeight
                         text: "Ctrl"
@@ -212,7 +225,7 @@ Item {
                     }
                     KeyboardButton {
                         id: leftWinKey
-                        color: "#1e1b18"
+                        color: "#bfcbe6"
                         width: 1.25*pimpl.buttonWidth
                         height: pimpl.rowHeight
                         text: "Win"
@@ -221,7 +234,7 @@ Item {
                     }
                     KeyboardButton {
                         id: leftAltKey
-                        color: "#1e1b18"
+                        color: "#bfcbe6"
                         width: 1.25*pimpl.buttonWidth
                         height: pimpl.rowHeight
                         text: "Alt"
@@ -230,6 +243,7 @@ Item {
                     }
                     KeyboardButton {
                         id: spaceKey
+                        color: "#bfcbe6"
                         width: 6.63*pimpl.buttonWidth
                         height: pimpl.rowHeight
                         text: " "
@@ -238,7 +252,7 @@ Item {
                     }
                     KeyboardButton {
                         id: rightAltKey
-                        color: "#1e1b18"
+                        color: "#bfcbe6"
                         width: 1.25*pimpl.buttonWidth
                         height: pimpl.rowHeight
                         text: "Alt"
@@ -247,7 +261,7 @@ Item {
                     }
                     KeyboardButton {
                         id: rightWinKey
-                        color: "#1e1b18"
+                        color: "#bfcbe6"
                         width: 1.25*pimpl.buttonWidth
                         height: pimpl.rowHeight
                         text: "Win"
@@ -256,7 +270,7 @@ Item {
                     }
                     KeyboardButton {
                         id: menuKey
-                        color: "#1e1b18"
+                        color: "#bfcbe6"
                         width: 1.25*pimpl.buttonWidth
                         height: pimpl.rowHeight
                         text: "Menu"
@@ -265,7 +279,7 @@ Item {
                     }
                     KeyboardButton {
                         id: rightCtrlKey
-                        color: "#1e1b18"
+                        color: "#bfcbe6"
                         width: 1.25*pimpl.buttonWidth
                         height: pimpl.rowHeight
                         text: "Ctrl"
