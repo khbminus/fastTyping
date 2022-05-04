@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QPushButton>
+#include <QVariant>
 #include <memory>
 #include "gameManager.h"
 
@@ -29,8 +30,8 @@ private:
     GameManager *main_manager;
 
 signals:
-    void press(int key);
-    void release(int key);
+    void press(QVariant key);
+    void release(QVariant key);
 
 protected:
     void keyPressEvent(QKeyEvent *event);

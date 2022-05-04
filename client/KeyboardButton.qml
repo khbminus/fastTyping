@@ -8,6 +8,7 @@ Item {
     property var inputPanel
     property alias displayText: txt.text
     property bool isHighlighted: false
+    property bool isNext: false
 
     Connections {
         target: inputPanel
@@ -25,21 +26,25 @@ Item {
         }
     }
 
-
-    Rectangle {
-            anchors.fill: parent
-            radius: height / 30
-            color: isHighlighted ? Qt.tint(root.color, "#801e6fa7") : root.color
-            Text {
-                id: txt
-                color: "black"
-                anchors.margins: parent.height / 6
+        Rectangle {
                 anchors.fill: parent
-                fontSizeMode: Text.Fit
-                font.pixelSize: height
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                text: root.text
-            }
+                border.color: "#000000"
+                border.width: isNext ? 3 : 0
+                //anchors.horizontalCenter: parent.horizontalCenter
+                //anchors.verticalCenter: parent.verticalCenter
+                //anchors.margins: 0.1
+                radius: height / 30
+                color: isHighlighted ? Qt.tint(root.color, "#801e6fa7") : root.color
+                Text {
+                    id: txt
+                    color: "black"
+                    anchors.margins: parent.height / 6
+                    anchors.fill: parent
+                    fontSizeMode: Text.Fit
+                    font.pixelSize: height
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    text: root.text
+                }
     }
 }
