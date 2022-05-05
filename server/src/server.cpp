@@ -133,69 +133,72 @@ namespace FastTyping::Server {
     }
 
     void Server::parseQuery(tcp::socket s) {
-        tcp::iostream client(std::move(s));
-        std::cout << "New client: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
-        std::string line;
-        if (!std::getline(client, line)) {
-            std::cout << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
-            return;
-        }
-        json query;
-        std::string user_name;
-        auto errors = checkQueryCorrectness(line);
-        if (errors) {
-            client << errors.value() << '\n';
-            return;
-        }
         try {
-            query = json::parse(line);
-            if (query["header"]["type"] != "hello") {
-                json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "first query should be hello"}}}};
-                client << result << '\n';
+            tcp::iostream client(std::move(s));
+            std::cout << "New client: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
+            std::string line;
+            if (!std::getline(client, line)) {
+                std::cout << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
                 return;
             }
-            if (!query["body"]["name"].is_string()) {
-                json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"name\""}}}};
-                client << result << '\n';
+            json query;
+            std::string user_name;
+            auto errors = checkQueryCorrectness(line);
+            if (errors) {
+                client << errors.value() << '\n';
+                return;
             }
-            user_name = query["body"]["name"].get<std::string>();
-        } catch (nlohmann::detail::exception &e) {
-            std::cerr << e.what() << std::endl;// process error to client
-            return;
-        }
-
-        User &user = userStorage->get(user_name);
-        json result = {{"header", {{"type", "loginSuccessfully"}}}, {"body", {{"name", user.name()}}}};
-        client << result << '\n';
-
-        try {
-            while (client) {
-                if (!std::getline(client, line)) {
-                    break;
-                }
-                errors = checkQueryCorrectness(line);
-                if (errors) {
-                    client << errors.value() << '\n';
-                    continue;
-                }
+            try {
                 query = json::parse(line);
-                auto queryHeader = query["header"];
-                auto queryBody = query["body"];
-                BOOST_LOG_TRIVIAL(debug) << query << '\n';
-                if (auto it = commonQueriesMap.find(queryHeader["type"]); it != commonQueriesMap.end()) {
-                    result = it->second(queryBody, user);
-                    if (user.isWantToExit()) {
-                        user.clearWillToExit();
-                        break;
-                    }
+                if (query["header"]["type"] != "hello") {
+                    json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "first query should be hello"}}}};
+                    client << result << '\n';
+                    return;
+                }
+                if (!query["body"]["name"].is_string()) {
+                    json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"name\""}}}};
                     client << result << '\n';
                 }
+                user_name = query["body"]["name"].get<std::string>();
+            } catch (nlohmann::detail::exception &e) {
+                std::cerr << e.what() << std::endl;// process error to client
+                return;
             }
-        } catch (nlohmann::detail::exception &e) {
-            std::cerr << e.what() << std::endl;// process error to client
-        }
 
-        std::cout << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
+            User &user = userStorage->get(user_name);
+            json result = {{"header", {{"type", "loginSuccessfully"}}}, {"body", {{"name", user.name()}}}};
+            client << result << '\n';
+
+            try {
+                while (client) {
+                    if (!std::getline(client, line)) {
+                        break;
+                    }
+                    errors = checkQueryCorrectness(line);
+                    if (errors) {
+                        client << errors.value() << '\n';
+                        continue;
+                    }
+                    query = json::parse(line);
+                    auto queryHeader = query["header"];
+                    auto queryBody = query["body"];
+                    BOOST_LOG_TRIVIAL(debug) << query << '\n';
+                    if (auto it = commonQueriesMap.find(queryHeader["type"]); it != commonQueriesMap.end()) {
+                        result = it->second(queryBody, user);
+                        if (user.isWantToExit()) {
+                            user.clearWillToExit();
+                            break;
+                        }
+                        client << result << '\n';
+                    }
+                }
+            } catch (nlohmann::detail::exception &e) {
+                std::cerr << e.what() << std::endl;// process error to client
+            }
+            std::cout << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
+        } catch (boost::system::system_error &e) {
+            std::cerr << "Unknown Boost::ASIO error occurred: " << e.what() << '\n';
+        }
     }
     std::optional<json> Server::checkQueryCorrectness(const std::string &queryString) {
         json query;
