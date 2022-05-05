@@ -47,4 +47,6 @@ TEST_CASE("DB passwords") {
     CHECK(storage.getPassword(a) == "aaaa");
     storage.setPassword(b, "0000");
     CHECK(storage.getPassword(b) == "0000");
+    storage.setPassword(a, "0000");
+    CHECK(storage.getPassword(a) == "0000");
 }
