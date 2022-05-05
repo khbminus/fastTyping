@@ -15,15 +15,15 @@ namespace FastTyping::Server {
         commonQueriesMap["createGame"] = [&](const json &body, User &user) -> json {
             // basic checks
             if (!body.contains("dictionaryName") || !body["dictionaryName"].is_string()) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"dictionaryName\""}}}};
+                return {{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find \"dictionaryName\""}}}};
             }
 
             if (!body.contains("parserName") || !body["parserName"].is_string()) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"parserName\""}}}};
+                return {{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find \"parserName\""}}}};
             }
 
             if (user.getGame() != nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Already in game"}}}};
+                return {{"header", {{"type", "alreadyInGameError"}}}, {"body", {{"text", "Already in game"}}}};
             }
 
             auto result = gameStorage->createGame(body);
@@ -43,11 +43,11 @@ namespace FastTyping::Server {
         };
         commonQueriesMap["joinGame"] = [&](const json &body, User &user) -> json {
             if (!body.contains("id") || !body["id"].is_number_unsigned()) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"id\""}}}};
+                return {{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find \"id\""}}}};
             }
 
             if (user.getGame() != nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Already in game"}}}};
+                return {{"header", {{"type", "alreadyInGameError"}}}, {"body", {{"text", "Already in game"}}}};
             }
             json errors;
             auto game = gameStorage->get(body["id"], errors);
@@ -55,7 +55,7 @@ namespace FastTyping::Server {
                 return errors;
             }
             if (game->hasUser(user.getId())) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Try connect after disconnect"}}}};
+                return {{"header", {{"type", "connectAfterLeaveError"}}}, {"body", {{"text", "Try connect after disconnect"}}}};
             }
             user.setGame(game);
             return {{"header", {{"type", "GameJoinedSuccessfully"}}}, {"body", {{"id", game->getId()}}}};
@@ -63,11 +63,11 @@ namespace FastTyping::Server {
 
         commonQueriesMap["leaveGame"] = [&](const json &body, User &user) -> json {
             if (!body.contains("id") || !body["id"].is_number_unsigned()) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"id\""}}}};
+                return {{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find \"id\""}}}};
             }
 
             if (user.getGame() == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "Not in game"}}}};
+                return {{"header", {{"type", "notInGameError"}}}, {"body", {{"text", "Not in game"}}}};
             }
 
             user.setGame(nullptr);
@@ -76,17 +76,17 @@ namespace FastTyping::Server {
 
         commonQueriesMap["getNewLine"] = [&](const json &body, User &user) -> json {
             if (user.getGame() == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+                return {{"header", {{"type", "notInGameError"}}}, {"body", {{"text", "not in game"}}}};
             }
             return user.getGame()->getNewLine(user.getId());
         };
 
         commonQueriesMap["addNewChar"] = [&](const json &body, User &user) -> json {
             if (user.getGame() == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+                return {{"header", {{"type", "notInGameError"}}}, {"body", {{"text", "not in game"}}}};
             }
             if (!body.contains("char") || !body["char"].is_string() || body["char"].get<std::string>().size() != 1) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find word to check"}}}};
+                return {{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find word to check"}}}};
             }
 
             auto result = user.getGame()->addNewChar(user.getId(), body["char"].get<std::string>()[0]);
@@ -98,21 +98,21 @@ namespace FastTyping::Server {
 
         commonQueriesMap["backspace"] = [&](const json &body, User &user) -> json {
             if (user.getGame() == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+                return {{"header", {{"type", "notInGameError"}}}, {"body", {{"text", "not in game"}}}};
             }
             return user.getGame()->backspace(user.getId());
         };
 
         commonQueriesMap["getStates"] = [&](const json &body, User &user) -> json {
             if (user.getGame() == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+                return {{"header", {{"type", "notInGameError"}}}, {"body", {{"text", "not in game"}}}};
             }
             return user.getGame()->getStateOfUsers();
         };
 
         commonQueriesMap["getNewWord"] = [&](const json &body, User &user) -> json {
             if (user.getGame() == nullptr) {
-                return {{"header", {{"type", "error"}}}, {"body", {{"text", "not in game"}}}};
+                return {{"header", {{"type", "notInGameError"}}}, {"body", {{"text", "not in game"}}}};
             }
             return user.getGame()->getNewWord(user.getId());
         };
@@ -151,12 +151,12 @@ namespace FastTyping::Server {
             try {
                 query = json::parse(line);
                 if (query["header"]["type"] != "hello") {
-                    json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "first query should be hello"}}}};
+                    json result = {{"header", {{"type", "wrongFirstQueryError"}}}, {"body", {{"text", "first query should be hello"}}}};
                     client << result << '\n';
                     return;
                 }
                 if (!query["body"]["name"].is_string()) {
-                    json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"name\""}}}};
+                    json result = {{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find \"name\""}}}};
                     client << result << '\n';
                 }
                 user_name = query["body"]["name"].get<std::string>();
@@ -205,17 +205,17 @@ namespace FastTyping::Server {
         try {
             query = json::parse(queryString);
         } catch (nlohmann::detail::exception &e) {
-            return {{{"header", {{"type", "error"}}}, {"body", {{"text", "bad json"}}}}};
+            return {{{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "bad json"}}}}};
         }
         if (!query.contains("header") || !query["header"].is_object()) {
-            return {{{"header", {{"type", "error"}}}, {"body", {{"text", "can't find header"}}}}};
+            return {{{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find header"}}}}};
         }
         if (!query.contains("body") || !query["body"].is_object()) {
-            return {{{"header", {{"type", "error"}}}, {"body", {{"text", "can't find body"}}}}};
+            return {{{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find body"}}}}};
         }
 
         if (!query["header"].contains("type") || !query["header"]["type"].is_string()) {
-            return {{{"header", {{"type", "error"}}}, {"body", {{"text", "can't recognize type of query"}}}}};
+            return {{{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't recognize type of query"}}}}};
         }
 
         return {};
