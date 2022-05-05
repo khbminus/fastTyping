@@ -2,9 +2,9 @@
 #define FASTTYPING_GAME_H
 #include "user.h"
 #include <abc.h>
-#include <json.hpp>
 #include <memory>
 #include <mutex>
+#include <nlohmann/json.hpp>
 #include <string>
 #include <unordered_map>
 

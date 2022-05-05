@@ -1,6 +1,6 @@
 #include "doctest.h"
-#include "server/include/user.h"
-#include <json.hpp>
+#include "user.h"
+#include <nlohmann/json.hpp>
 #include <type_traits>
 using namespace FastTyping::Server;
 

@@ -32,7 +32,7 @@ namespace FastTyping::Server {
         std::unique_lock l{mutex};
         std::string &word = additionalInfo[uid].currentBuffer;
         if (word.empty()) {
-            return {{"header", {{"type", "error"}}}, {"body", {{"text", "can't use backspace with empty buffer"}}}};
+            return {{"header", {{"type", "emptyBufferError"}}}, {"body", {{"text", "can't use backspace with empty buffer"}}}};
         }
         word.pop_back();
         return checkUnsafe(uid);
@@ -63,6 +63,7 @@ namespace FastTyping::Server {
         std::unique_lock l{mutex};
         json result = {{"header", {{"type", "currentState"}}}};
         json &userStates = result["body"]["userStates"];
+        // cppcheck-suppress unassignedVariable
         for (const auto &[uid, info]: additionalInfo) {
             userStates.emplace_back();
             userStates.back()["id"] = uid;
@@ -76,15 +77,15 @@ namespace FastTyping::Server {
         std::unique_lock l{map_mutex};
         if (auto it = games.find(id); it != games.end())
             return it->second;
-        errors = {{"header", {{"type", "error"}}}, {"body", {{"text", "Can't find game with specific id"}}}};
+        errors = {{"header", {{"type", "wrongIdError"}}}, {"body", {{"text", "Can't find game with specific id"}}}};
         return nullptr;
     }
     json MapGameStorage::createGame(const json &body) {
         if (body["dictionaryName"] != "const" || body["parserName"] != "simple") {
-            return {{"header", {{"type", "error"}}}, {"body", {{"text", "wrong parameters"}}}};
+            return {{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "wrong parameters"}}}};
         }
         if (!body.contains("words") || !body["words"].is_array()) {
-            return {{"header", {{"type", "error"}}}, {"body", {{"text", "Can't find words"}}}};
+            return {{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "Can't find words"}}}};
         }
         std::shared_ptr<Game> game = std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
                                                             std::make_unique<Logic::Dictionary>(

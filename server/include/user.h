@@ -2,8 +2,8 @@
 #define FASTTYPING_USER_H
 #include "game_fwd.h"
 #include <iostream>
-#include <json.hpp>
 #include <mutex>
+#include <nlohmann/json.hpp>
 #include <pqxx/pqxx>
 #include <string>
 #include <thread>
