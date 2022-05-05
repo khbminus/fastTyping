@@ -11,7 +11,6 @@
 #include <utility>
 
 using nlohmann::json;
-using namespace pqxx;
 namespace FastTyping::Server {
     class AbstractUserStorage {
     public:
@@ -55,7 +54,7 @@ namespace FastTyping::Server {
         std::string getPassword(int id) override {
             std::unique_lock l{mutex};
             pqxx::work W(connect);
-            sql = "SELECT PASSWORD FROM USERS WHERE ID = " + to_string(id) + ";";
+            sql = "SELECT PASSWORD FROM USERS WHERE ID = " + std::to_string(id) + ";";
             pqxx::result res{W.exec(sql)};
             std::string passw;
             for (auto row: res) {
@@ -68,15 +67,14 @@ namespace FastTyping::Server {
         void setPassword(int id, const std::string &passw) override {
             std::unique_lock l{mutex};
             pqxx::work W(connect);
-            sql = "UPDATE USERS SET PASSWORD = '" + passw + "' WHERE ID = " + to_string(id) + ";";
-            W.exec(sql);
+            W.exec("UPDATE USERS SET PASSWORD = '" + W.esc(passw) + "' WHERE ID = " + std::to_string(id) + ";");
             W.commit();
         }
 
         std::string getName(int id) override {
             std::unique_lock l{mutex};
             pqxx::work W(connect);
-            sql = "SELECT NAME FROM USERS WHERE ID = " + to_string(id) + ";";
+            sql = "SELECT NAME FROM USERS WHERE ID = " + std::to_string(id) + ";";
             pqxx::result res{W.exec(sql)};
             std::string name;
             for (auto row: res)
@@ -89,15 +87,14 @@ namespace FastTyping::Server {
             std::unique_lock l{mutex};
             pqxx::work W(connect);
             int id;
-            pqxx::result find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + name + "';");
+            pqxx::result find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + W.esc(name) + "';");
 
             if (find_by_name.size() == 0) {
                 pqxx::result full_list = W.exec("SELECT * FROM USERS;");
                 id = full_list.size() + 1;
-                sql = "INSERT INTO USERS(ID, NAME, PASSWORD)\n"
-                      "VALUES(" +
-                      to_string(id) + ", '" + name + "', '0000');";
-                W.exec(sql);
+                W.exec("INSERT INTO USERS(ID, NAME, PASSWORD)\n"
+                       "VALUES(" +
+                       std::to_string(id) + ", '" + W.esc(name) + "', '0000');");
             } else {
                 for (auto row: find_by_name)
                     id = row["ID"].as<int>();
@@ -109,7 +106,7 @@ namespace FastTyping::Server {
         bool nameExist(const std::string &name) override {
             std::unique_lock l{mutex};
             pqxx::work W(connect);
-            pqxx::result find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + name + "';");
+            pqxx::result find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + W.esc(name) + "';");
             return find_by_name.size() != 0;
         }
 
