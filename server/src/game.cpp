@@ -5,10 +5,9 @@
 namespace FastTyping::Server {
     bool Game::hasUser(int uid) {
         std::unique_lock l{mutex};
-        if (additionalInfo.count(uid))// it returns zero or one as int, so we need convert to bool
-            return true;
-        return false;
+        return additionalInfo.count(uid) != 0;
     }
+    
     json Game::checkUnsafe(int uid) {
         json result;
         std::string rightWord = dictionary->getWord(additionalInfo[uid].currentWord);

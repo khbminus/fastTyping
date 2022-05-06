@@ -25,3 +25,7 @@ target_link_libraries(server nlohmann_json::nlohmann_json)
 add_executable(server-tests src/doctest_main.cpp src/userTests.cpp)
 target_include_directories(server-tests PRIVATE ${Boost_INCLUDE_DIRS} include)
 target_link_libraries(server-tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
+
+add_executable(generator-tests src/doctest_main.cpp src/generatorTests.cpp)
+target_include_directories(generator-tests PRIVATE ${Boost_INCLUDE_DIRS} include)
+target_link_libraries(generator-tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})

@@ -6,6 +6,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+
 namespace FastTyping::Server {
     using boost::asio::ip::tcp;
 
