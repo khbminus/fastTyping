@@ -209,7 +209,7 @@ namespace FastTyping::Server {
         if (!query.contains("header") || !query["header"].is_object()) {
             return {{{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find header"}}}}};
         }
-        if (!query.contains("body") || !query["body"].is_object()) {
+        if (!query.contains("body") || (!query["body"].is_null() && !query["body"].is_object())) {
             return {{{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find body"}}}}};
         }
 
