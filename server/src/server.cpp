@@ -167,6 +167,7 @@ namespace FastTyping::Server {
 
             User &user = userStorage->get(user_name);
             json result = {{"header", {{"type", "loginSuccessfully"}}}, {"body", {{"name", user.name()}}}};
+            result["header"]["queryType"] = query["header"]["type"];
             client << result << '\n';
 
             try {
@@ -185,6 +186,7 @@ namespace FastTyping::Server {
                     BOOST_LOG_TRIVIAL(debug) << query << '\n';
                     if (auto it = commonQueriesMap.find(queryHeader["type"]); it != commonQueriesMap.end()) {
                         result = it->second(queryBody, user);
+                        result["header"]["queryType"] = queryHeader["type"];
                         if (user.isWantToExit()) {
                             user.clearWillToExit();
                             break;
