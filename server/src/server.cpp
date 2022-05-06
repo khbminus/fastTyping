@@ -62,9 +62,6 @@ namespace FastTyping::Server {
         };
 
         commonQueriesMap["leaveGame"] = [&](const json &body, User &user) -> json {
-            if (!body.contains("id") || !body["id"].is_number_unsigned()) {
-                return {{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find \"id\""}}}};
-            }
 
             if (user.getGame() == nullptr) {
                 return {{"header", {{"type", "notInGameError"}}}, {"body", {{"text", "Not in game"}}}};
