@@ -46,6 +46,8 @@ set(PROJECT_SOURCES
         client/include/responseHandler.h
         client/src/errorHandler.cpp
         client/include/errorHandler.h
+        client/src/localManager.cpp
+        client/include/localManager.h
         client/include/gameClientFwd.h
         client/include/gameManager.h
         common/include/json.hpp

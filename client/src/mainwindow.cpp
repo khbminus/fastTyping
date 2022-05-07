@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     ui->setupUi(this);
     QString answer = socket().query(greeting_query("Aboba"));
-    socket().query(leave_query());
+    //socket().query(leave_query());
     qDebug() << "login result: " << answer;
 }
 
