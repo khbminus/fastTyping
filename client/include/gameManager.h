@@ -1,8 +1,6 @@
 #ifndef GAME_MANAGER_H
 #define GAME_MANAGER_H
 
-#include "gameLogic.h"
-
 #include <QObject>
 #include <optional>
 

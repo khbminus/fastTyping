@@ -1,9 +1,6 @@
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
-//#include <QChar>
-#include "gameClient.h"
-#include "gameLogic.h"
 #include "gameManager.h"
 #include <QGridLayout>
 #include <QKeyEvent>
@@ -11,7 +8,6 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <memory>
-
 
 namespace Ui {
     class GameWindow;
