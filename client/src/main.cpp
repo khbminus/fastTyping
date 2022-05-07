@@ -4,6 +4,7 @@
 #include "client/include/mainwindow.h"
 #include "client/include/statwindow.h"
 #include "client/include/sonicSocket.h"
+#include "client/include/responseHandler.h"
 #include "windowcontroller.h"
 
 #include <QApplication>
@@ -11,8 +12,9 @@
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-    client::web::TestHandler aboba;
-    client::web::socket(&aboba);
+
+    client::responses::APIHandler response_handler;
+    client::web::socket(&response_handler);
 
 
     auto &controller = FastTyping::WindowController::getInstance();

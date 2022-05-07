@@ -49,34 +49,35 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
         return;
     }
 
-    using client::web::socket;
-    using client::queries::key_pressed_query;
-
-    socket().send(key_pressed_query("aboba"));
-
     for (auto handler: handlers) {
         handler->keyPressed(keysCombination[0]);
     }
+
     keyPressed();
 }
 
 void GameWindow::keyPressed() {
     ui->userText->setText(main_handler->getBuffer());
     if (main_handler->getErrorStatus())
-        setError();
+        error_slot();
     else
-        unsetError();
+        correct_slot();
     ui->userText->setPalette(palette);
     if (main_handler->isEnded()) {
-        auto &controller = FastTyping::WindowController::getInstance();
-        controller.setActiveWindow("StatWindow");
+        end();
     }
 }
 
-void GameWindow::setError() {
-    palette.setColor(ui->userText->backgroundRole(), Qt::darkRed);
+
+void GameWindow::error_slot() {
+    palette.setColor(ui->userText->backgroundRole(), Qt::red);
 }
 
-void GameWindow::unsetError() {
+void GameWindow::correct_slot() {
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
+}
+
+void GameWindow::end() {
+    auto &controller = FastTyping::WindowController::getInstance();
+    controller.setActiveWindow("StatWindow");
 }

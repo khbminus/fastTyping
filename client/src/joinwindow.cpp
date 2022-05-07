@@ -3,6 +3,7 @@
 #include "windowcontroller.h"
 #include "sonicSocket.h"
 #include "queryTemplates.h"
+#include "errorHandler.h"
 #include <iostream>
 
 JoinWindow::JoinWindow(QWidget *parent) : QMainWindow(parent),
@@ -21,8 +22,9 @@ void JoinWindow::on_JoinButton_clicked() {
 
     bool is_correct_id = true;
     int id =  ui->lineEdit->displayText().toInt(&is_correct_id);
-    std::string response = socket().query(join_query(id)).toStdString();
-    std::cout << "server answered" << response << std::endl;
+    QString response = socket().query(join_query(id));
+    qDebug() << "join result: " << response;
+    //error_alert("Error while joining", "Wrong ID");
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("GameWindow");
 }

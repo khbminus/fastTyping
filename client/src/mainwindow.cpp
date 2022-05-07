@@ -9,9 +9,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow) {
     using client::web::socket;
     using client::queries::greeting_query;
+    using client::queries::leave_query;
+
     ui->setupUi(this);
-    std::string answer = socket().query(greeting_query("Aboba")).toStdString();
-    std::cout << "init << " << answer << ")))" << std::endl;
+    QString answer = socket().query(greeting_query("Aboba"));
+    socket().query(leave_query());
+    qDebug() << "login result: " << answer;
 }
 
 MainWindow::~MainWindow() {
@@ -22,7 +25,6 @@ void MainWindow::on_JoinButton_clicked() {
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("JoinWindow");
 }
-
 
 void MainWindow::on_CreateButton_clicked() {
     auto &controller = FastTyping::WindowController::getInstance();

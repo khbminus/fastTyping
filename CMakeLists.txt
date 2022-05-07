@@ -44,7 +44,10 @@ set(PROJECT_SOURCES
         client/include/queryTemplates.h
         client/src/responseHandler.cpp
         client/include/responseHandler.h
+        client/src/errorHandler.cpp
+        client/include/errorHandler.h
         client/include/gameClientFwd.h
+        client/include/gameManager.h
         common/include/json.hpp
         )
 

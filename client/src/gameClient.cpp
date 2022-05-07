@@ -36,10 +36,7 @@ namespace game::client {
 
     GameClient::GameClient(QString name) : socket_wrapper("46.17.248.131", PORT, this) {
         socket_wrapper.sent(beautify(greetingRequest(name)));
-        //std::string aboba;
-        //std::cin >> aboba;
         socket_wrapper.sent(beautify(createGameRequest));
-        //socket_wrapper.sent(beautify(joinGameRequest));
     }
 
     void GameClient::keyPressed(QChar button) {

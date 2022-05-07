@@ -1,5 +1,6 @@
 #include <map>
 #include <string>
+#include <iostream>
 #include "responseHandler.h"
 #include "common/include/json.hpp"
 
@@ -8,14 +9,17 @@ using namespace client::web;
 using nlohmann::json;
 
 std::map<std::string, ResponseType> header_to_type {
-    {"hello", ResponseType::blocking},
     {"joinGame", ResponseType::blocking},
-    {"addNewChar", ResponseType::async}
+    {"hello", ResponseType::blocking},
+    {"leaveGame", ResponseType::blocking},
+    {"createGame", ResponseType::blocking},
+    {"addNewChar", ResponseType::async},
+    {"addBackspace", ResponseType::async},
 };
 
 ResponseType APIHandler::type(QString const& line) const {
     json response = json::parse(line.toStdString());
-    std::string header = response["header"]["type"].get<std::string>();
+    std::string header = response["header"]["queryType"].get<std::string>();
     if (header_to_type.count(header)) {
         return header_to_type[header];
     }
@@ -23,7 +27,7 @@ ResponseType APIHandler::type(QString const& line) const {
 }
 
 void APIHandler::handle(QString const& line) {
+    std::cout << line.toStdString() << std::endl;
 }
-
 }
 

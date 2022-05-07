@@ -21,9 +21,6 @@ class GameWindow : public QMainWindow {
 public:
     explicit GameWindow(QWidget *parent = nullptr);
     ~GameWindow();
-    void setError();
-    void unsetError();
-
 private:
     Ui::GameWindow *ui;
     QPalette palette;
@@ -36,6 +33,9 @@ protected:
 private slots:
     void keyPressed();
     void on_ReturnButton_clicked();
+    void error_slot();
+    void correct_slot();
+    void end();
 };
 
 #endif// GAMEWINDOW_H

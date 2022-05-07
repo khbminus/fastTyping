@@ -1,4 +1,5 @@
 #include "socketWrapper.h"
+#include "errorHandler.h"
 #include <iostream>
 
 
@@ -14,41 +15,51 @@ SocketWrapper::SocketWrapper(QString ip, short port, ResponseHandler* a_handler)
         QTcpSocket* socket = new QTcpSocket(&socket_thread);
         socket->connectToHost(ip, port);
 
+        QString buffer;
+
         if (socket->waitForConnected()) {
             qDebug() << "connected to host(" << ip << ":" << port << ") \n";
         } else {
             qDebug() << "failed to connect to host\n";
-            return;
+            exit(0);
         }
 
         QObject::connect(&sender, &QuerySender::send_line, &socket_thread, [socket] (QString line) {
             if (socket && socket->isOpen()) {
-                qDebug() << "sending\n";
+                qDebug() << "send:  " << line;
                 QTextStream socket_stream(socket);
                 socket_stream << line;
-                qDebug() << "sent\n";
             } else {
                 qDebug() << "failed to send\n";
             }
         });
 
-        QObject::connect(socket, &QTcpSocket::readyRead, &socket_thread, [this, socket] () {
-            QString response = socket->readLine();
-            qDebug() << "get sync: ";
-            qDebug() << "(" << response << ")\n";
+        QObject::connect(socket, &QTcpSocket::readyRead, &socket_thread, [this, socket, &buffer] () {
+            buffer += socket->readLine();
 
-            ResponseType type = handler->type(response);
+            // I think that `.split()` is amgisious - Qt should call it on every line, that ends with '\n'
+            if (!buffer.isEmpty() && buffer.back() == '\n') {
+                QStringList list = buffer.split(QLatin1Char('\n'), Qt::SkipEmptyParts);
 
-            if (type == ResponseType::async) {
-                handler->handle(response);
-            } else if (type == ResponseType::sync) {
-                std::unique_lock response_lock{response_mutex};
-                responses.push(response);
-                wait_for_response.notify_one();
-            } else if (type == ResponseType::blocking) {
-                std::unique_lock blocking_lock{blocking_query_mutex};
-                blocking_query = response;
-                wait_for_blocking_query.notify_one();
+                for (std::size_t i = 0; i < list.size(); i++) {
+                    QString response = list.at(i);
+
+                    qDebug() << "received: " << response;
+
+                    ResponseType type = handler->type(response);
+                    if (type == ResponseType::async) {
+                        handler->handle(response);
+                    } else if (type == ResponseType::sync) {
+                        std::unique_lock response_lock{response_mutex};
+                        responses.push(response);
+                        wait_for_response.notify_one();
+                    } else if (type == ResponseType::blocking) {
+                        std::unique_lock blocking_lock{blocking_query_mutex};
+                        blocking_query = response;
+                        wait_for_blocking_query.notify_one();
+                    }
+                }
+                buffer.clear();
             }
         });
 
@@ -76,6 +87,11 @@ SocketWrapper::SocketWrapper(QString ip, short port, ResponseHandler* a_handler)
    while (!socket_wrap) {
        wait_for_init.wait(l);
    }
+
+   if (socket_wrap == nullptr) {
+       exit(0);
+   }
+
 }
 
 void SocketWrapper::send(QString const& line) {
@@ -89,7 +105,7 @@ SocketWrapper::~SocketWrapper() {
         (*loop_wrap)->quit();
     }
 
-    std::cout << "Disconnected" << std::endl;
+    qDebug() << "disconnected";
 }
 
 QString SocketWrapper::get_response() {
@@ -109,7 +125,7 @@ QString SocketWrapper::query(QString const& line) {
         wait_for_blocking_query.wait(l);
     }
     QString result = std::move(*blocking_query);
-    blocking_query.reset();
+    blocking_query = std::nullopt;
     return result;
 }
 }

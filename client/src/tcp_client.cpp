@@ -3,7 +3,6 @@
 #include <iostream>
 
 namespace game::client {
-
     std::unique_ptr<Query> ParseQuery(QString raw) {
         json query = json::parse(raw.toStdString());
 
@@ -15,13 +14,14 @@ namespace game::client {
     }
 
     void CheckQuery::process(GameClient *client) {
-        client->mIsEnded = status["isEnd"].get<bool>();
+        //client->mIsEnded = status["isEnd"].get<bool>();
         client->mIsCorrect = status["isPrefixCorrect"].get<bool>();
     }
 }// namespace game::client
 
 namespace web {
     WebClient::WebClient(QString ip, int port, game::client::GameClient *handler) : manager(handler) {
+        return;
         socket = new QTcpSocket(this);
         socket->connectToHost(ip, port);
 
@@ -36,6 +36,7 @@ namespace web {
     }
 
     void WebClient::sent(QString line) {
+        return;
         if (socket && socket->isOpen()) {
             //std::cout << "sent(" << line.toStdString() << ")sent" << std::endl;
             QTextStream socket_stream(socket);
@@ -46,6 +47,7 @@ namespace web {
     }
 
     void WebClient::get() {
+        return;
         buffer += socket->readLine();
 
         //std::cout << "buffer(" << buffer.toStdString() << ")buffer" << std::endl;
@@ -62,6 +64,7 @@ namespace web {
     }
 
     WebClient::~WebClient() {
+        return;
         socket->close();
         std::cout << "Disconnected" << std::endl;
     }
