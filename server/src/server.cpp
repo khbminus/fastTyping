@@ -62,7 +62,6 @@ namespace FastTyping::Server {
         };
 
         commonQueriesMap["leaveGame"] = [&](const json &body, User &user) -> json {
-
             if (user.getGame() == nullptr) {
                 return {{"header", {{"type", "notInGameError"}}}, {"body", {{"text", "Not in game"}}}};
             }
@@ -194,9 +193,8 @@ namespace FastTyping::Server {
             } catch (nlohmann::detail::exception &e) {
                 std::cerr << e.what() << std::endl;// process error to client
             }
-            user.setGame(nullptr)
-                            std::cout
-                    << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
+            user.setGame(nullptr);
+            std::cout << "Disconnected: " << client.socket().remote_endpoint() << "->" << client.socket().local_endpoint() << std::endl;
         } catch (boost::system::system_error &e) {
             std::cerr << "Unknown Boost::ASIO error occurred: " << e.what() << '\n';
         }
