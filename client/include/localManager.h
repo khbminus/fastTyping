@@ -46,9 +46,7 @@ public:
 class LocalManager final : public GameManager {
     LocalInputter inputter;
     LocalDictionary dictionary;
-    void check_prefix(QString a, QString b);
-
-
+    void check_prefix();
 public:
     LocalManager(std::vector<QString> words);
     void key_pressed(QChar button) override;

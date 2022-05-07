@@ -1,16 +1,22 @@
 #include "localManager.h"
+#include <QDebug>
 
-void LocalManager::check_prefix(QString a, QString b) {
+void LocalManager::check_prefix() {
+    QString a = inputter.getBuffer();
+    QString b = dictionary.getCurrentWord();
+    qDebug() << "copmaparing" << a << " with " << b;
     if (a.size() > b.size()) {
-        emit error_signal(a);
+        emit error_signal();
         return;
     }
     for (int ind = 0; ind < a.size(); ind++) {
         if (a[ind] != b[ind]) {
-            emit error_signal(a);
+            emit error_signal();
             return;
         }
     }
+
+    emit correct_signal();
 }
 
 LocalManager::LocalManager(std::vector<QString> a_words) : dictionary(a_words) {
@@ -30,14 +36,13 @@ void LocalManager::key_pressed(QChar button) {
     } else {
         inputter.addSymbol(button);
     }
-    check_prefix(inputter.getBuffer(), dictionary.getCurrentWord());
+    check_prefix();
 }
 
 void LocalManager::backspace_pressed() {
     inputter.deleteSymbol();
-    check_prefix(inputter.getBuffer(), dictionary.getCurrentWord());
+    check_prefix();
 }
-
 
 QString LocalManager::get_buffer() {
     return inputter.getBuffer();
