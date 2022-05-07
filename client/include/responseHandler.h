@@ -2,16 +2,16 @@
 #define RESPONSE_HANDLER_H
 
 
-#include <QString>
 #include "socketWrapper.h"
+#include <QString>
 
 namespace client::responses {
 
-class APIHandler : public client::web::ResponseHandler{
-    client::web::ResponseType type(QString const& line) const override;
-    void handle(QString const& line) override;
-};
+    class APIHandler : public client::web::ResponseHandler {
+        client::web::ResponseType type(QString const &line) const override;
+        void handle(QString const &line) override;
+    };
 
-}
+}// namespace client::responses
 
 #endif

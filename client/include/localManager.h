@@ -10,6 +10,7 @@
 class LocalDictionary : public Dictionary {
     std::vector<QString> words;
     std::size_t currentPosition = 0;
+
 public:
     explicit LocalDictionary(std::vector<QString> a_words) : words(std::move(a_words)) {}
 
@@ -26,6 +27,7 @@ public:
 class LocalInputter : public Inputter {
 private:
     QString buffer;
+
 public:
     void addSymbol(QChar button) override {
         buffer += button;
@@ -54,7 +56,6 @@ public:
     void backspace_pressed() override;
     QString get_buffer() override;
     std::optional<QChar> next() override;
-
 };
 
 #endif// GAME_MANAGER_H

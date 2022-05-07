@@ -66,4 +66,3 @@ std::optional<QChar> LocalManager::next() {
         return sample[buffer.size()];
     }
 }
-

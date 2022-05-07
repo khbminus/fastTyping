@@ -1,11 +1,11 @@
 #include "client/include/createwindow.h"
 #include "client/include/gamewindow.h"
 #include "client/include/joinwindow.h"
-#include "client/include/mainwindow.h"
-#include "client/include/statwindow.h"
-#include "client/include/sonicSocket.h"
-#include "client/include/responseHandler.h"
 #include "client/include/localManager.h"
+#include "client/include/mainwindow.h"
+#include "client/include/responseHandler.h"
+#include "client/include/sonicSocket.h"
+#include "client/include/statwindow.h"
 #include "windowcontroller.h"
 
 #include <QApplication>

@@ -16,8 +16,7 @@ struct Inputter {
     virtual void clearBuffer() = 0;
 };
 
-class GameManager : public QObject
-{
+class GameManager : public QObject {
     Q_OBJECT
 public:
     virtual ~GameManager() {}

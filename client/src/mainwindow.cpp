@@ -1,15 +1,15 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include "windowcontroller.h"
-#include "sonicSocket.h"
 #include "queryTemplates.h"
+#include "sonicSocket.h"
+#include "windowcontroller.h"
 #include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow) {
-    using client::web::socket;
     using client::queries::greeting_query;
     using client::queries::leave_query;
+    using client::web::socket;
 
     ui->setupUi(this);
     QString answer = socket().query(greeting_query("Aboba"));
