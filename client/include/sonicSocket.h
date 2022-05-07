@@ -5,7 +5,7 @@
 
 
 namespace client::web {
-client::web::SocketWrapper& socket(ResponseHandler* handler = nullptr);
+    client::web::SocketWrapper &socket(ResponseHandler *handler = nullptr);
 }
 
 #endif

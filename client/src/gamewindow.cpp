@@ -1,15 +1,14 @@
 #include "gamewindow.h"
+#include "queryTemplates.h"
+#include "sonicSocket.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
-#include "sonicSocket.h"
-#include "queryTemplates.h"
 #include <iostream>
 
 
-GameWindow::GameWindow(GameManager* manager, QWidget *parent) : QMainWindow(parent),
-                                          ui(new Ui::GameWindow),
-                                          main_manager(manager)
-{
+GameWindow::GameWindow(GameManager *manager, QWidget *parent) : QMainWindow(parent),
+                                                                ui(new Ui::GameWindow),
+                                                                main_manager(manager) {
     QObject::connect(manager, &GameManager::correct_signal, this, &GameWindow::correct_slot);
     QObject::connect(manager, &GameManager::error_signal, this, &GameWindow::error_slot);
     QObject::connect(manager, &GameManager::end_signal, this, &GameWindow::end);
@@ -55,7 +54,6 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
 void GameWindow::error_slot() {
     palette.setColor(ui->userText->backgroundRole(), Qt::red);
     ui->userText->setPalette(palette);
-
 }
 
 void GameWindow::correct_slot() {

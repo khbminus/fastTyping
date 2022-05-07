@@ -50,4 +50,3 @@ QString LocalManager::get_buffer() {
 std::optional<QChar> LocalManager::next() {
     return std::nullopt;
 }
-

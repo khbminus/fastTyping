@@ -1,9 +1,9 @@
 #include "joinwindow.h"
 #include "./ui_joinwindow.h"
-#include "windowcontroller.h"
-#include "sonicSocket.h"
-#include "queryTemplates.h"
 #include "errorHandler.h"
+#include "queryTemplates.h"
+#include "sonicSocket.h"
+#include "windowcontroller.h"
 #include <iostream>
 
 JoinWindow::JoinWindow(QWidget *parent) : QMainWindow(parent),
@@ -17,11 +17,11 @@ JoinWindow::~JoinWindow() {
 
 
 void JoinWindow::on_JoinButton_clicked() {
-    using client::web::socket;
     using client::queries::join_query;
+    using client::web::socket;
 
     bool is_correct_id = true;
-    int id =  ui->lineEdit->displayText().toInt(&is_correct_id);
+    int id = ui->lineEdit->displayText().toInt(&is_correct_id);
     QString response = socket().query(join_query(id));
     qDebug() << "join result: " << response;
     //error_alert("Error while joining", "Wrong ID");

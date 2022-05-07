@@ -17,15 +17,16 @@ class GameWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit GameWindow(GameManager* manager, QWidget *parent = nullptr);
+    explicit GameWindow(GameManager *manager, QWidget *parent = nullptr);
     ~GameWindow();
+
 private:
     Ui::GameWindow *ui;
     QPalette palette;
 
     //std::vector<game::AbstractGameManager *> handlers;
     //game::AbstractGameManager *main_handler;
-    GameManager* main_manager;
+    GameManager *main_manager;
 
 protected:
     void keyPressEvent(QKeyEvent *event);
