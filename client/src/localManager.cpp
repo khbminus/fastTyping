@@ -17,7 +17,7 @@ bool LocalManager::check_prefix() {
     return true;
 }
 
-void LocalManager::emit_correctness(){
+void LocalManager::emit_correctness() {
     if (check_prefix()) {
         emit correct_signal();
     } else {
