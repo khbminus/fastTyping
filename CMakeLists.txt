@@ -30,12 +30,6 @@ set(PROJECT_SOURCES
         client/include/gamewindow.h
         client/src/statwindow.cpp
         client/include/statwindow.h
-        client/src/gameLogic.cpp
-        client/include/gameLogic.h
-        client/src/tcp_client.cpp
-        client/include/tcp_client.h
-        client/src/gameClient.cpp
-        client/include/gameClient.h
         client/src/socketWrapper.cpp
         client/include/socketWrapper.h
         client/src/sonicSocket.cpp
@@ -48,7 +42,6 @@ set(PROJECT_SOURCES
         client/include/errorHandler.h
         client/src/localManager.cpp
         client/include/localManager.h
-        client/include/gameClientFwd.h
         client/include/gameManager.h
         common/include/json.hpp
         )
