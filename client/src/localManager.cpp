@@ -14,7 +14,7 @@ bool LocalManager::check_prefix() {
     return std::equal(buffer.begin(), buffer.end(), sample.begin());
 }
 
-void LocalManager::emit_correctness(){
+void LocalManager::emit_correctness() {
     if (check_prefix()) {
         emit correct_signal();
     } else {

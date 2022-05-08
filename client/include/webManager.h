@@ -4,8 +4,8 @@
 #include "gameManager.h"
 #include "managerUtils.h"
 
-#include <QObject>
 #include <QList>
+#include <QObject>
 #include <QVector>
 #include <optional>
 #include <vector>
@@ -13,6 +13,7 @@
 class WebManager final : public GameManager {
     LocalInputter inputter;
     LocalDictionary dictionary;
+
 public:
     WebManager(std::vector<QString> words);
     void key_pressed(QChar button) override;

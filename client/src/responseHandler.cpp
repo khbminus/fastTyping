@@ -30,7 +30,7 @@ namespace client::responses {
     void APIHandler::handle(QString const &line) {
         json response = json::parse(line.toStdString());
         if (response["header"]["queryType"].get<std::string>() == "addNewChar" ||
-                response["header"]["queryType"].get<std::string>() == "backspace") {
+            response["header"]["queryType"].get<std::string>() == "backspace") {
             if (response["body"]["isEnd"].get<bool>()) {
                 emit end_signal();
             } else if (response["body"]["isFullCorrect"].get<bool>()) {

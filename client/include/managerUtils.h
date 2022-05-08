@@ -10,6 +10,7 @@ class LocalDictionary : public Dictionary {
     std::vector<QString> words;
     std::size_t currentPosition = 0;
     QString whole_line;
+
 public:
     explicit LocalDictionary(std::vector<QString> a_words) : words(std::move(a_words)) {
         QStringList list;

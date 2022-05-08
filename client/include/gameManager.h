@@ -29,7 +29,7 @@ signals:
     void error_signal();
     void correct_signal();
     void end_signal();
-    void print_signal(QString const& line);
+    void print_signal(QString const &line);
 };
 
 #endif// GAME_MANAGER_H

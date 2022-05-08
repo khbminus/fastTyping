@@ -1,14 +1,14 @@
 #include "webManager.h"
-#include "sonicSocket.h"
 #include "queryTemplates.h"
+#include "sonicSocket.h"
 #include <QDebug>
 
 WebManager::WebManager(std::vector<QString> a_words) : dictionary(a_words) {
 }
 
 void WebManager::key_pressed(QChar button) {
-    using client::web::socket;
     using client::queries::key_pressed_query;
+    using client::web::socket;
 
     inputter.addSymbol(button);
     emit print_signal(inputter.getBuffer());
@@ -16,8 +16,8 @@ void WebManager::key_pressed(QChar button) {
 }
 
 void WebManager::backspace_pressed() {
-    using client::web::socket;
     using client::queries::backspace_pressed_query;
+    using client::web::socket;
 
     inputter.deleteSymbol();
     emit print_signal(inputter.getBuffer());

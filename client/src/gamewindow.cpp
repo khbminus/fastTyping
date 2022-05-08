@@ -65,6 +65,6 @@ void GameWindow::end() {
     controller.setActiveWindow("StatWindow");
 }
 
-void GameWindow::print(QString const& line) {
+void GameWindow::print(QString const &line) {
     ui->userText->setText(line);
 }

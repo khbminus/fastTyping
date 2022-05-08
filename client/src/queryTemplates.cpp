@@ -17,7 +17,7 @@ namespace client::queries {
         return dump(result);
     }
 
-    QString key_pressed_query(QString const& new_char) {
+    QString key_pressed_query(QString const &new_char) {
         json result;
         result["header"] = {{"type", "addNewChar"}};
         result["body"] = {{"char", new_char.toStdString()}};
