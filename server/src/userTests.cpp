@@ -5,7 +5,7 @@
 using namespace FastTyping::Server;
 
 TEST_CASE("user from string") {
-    DBUserStorage *db = new DBUserStorage;
+    Database *db = new Database;
     std::string name1 = "aboba";
     std::string name2 = "obaba";
     User u1(name1, db);
@@ -16,10 +16,10 @@ TEST_CASE("user from string") {
     delete db;
 }
 
-TEST_CASE("DBUserStorage") {
+TEST_CASE("Database") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
-    DBUserStorage storage;
+    Database storage;
     int a = storage.getId(name1);
     int b = storage.getId(name2);
     CHECK(a + 1 == b);
@@ -36,7 +36,7 @@ TEST_CASE("DBUserStorage") {
 TEST_CASE("DB passwords") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
-    DBUserStorage storage;
+    Database storage;
     int a = storage.getId(name1);
     int b = storage.getId(name2);
     CHECK(storage.getPassword(a) == "0000");

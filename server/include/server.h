@@ -2,6 +2,7 @@
 #define FASTTYPING_SERVER_H
 #include "game.h"
 #include "user.h"
+#include "database.h"
 #include <boost/asio.hpp>
 #include <memory>
 #include <optional>
@@ -23,7 +24,7 @@ namespace FastTyping::Server {
         Server();
         boost::asio::io_context ioContext;
         tcp::acceptor acceptor;
-        std::unique_ptr<DBUserStorage> userStorage;
+        std::unique_ptr<Database> userStorage;
         std::unique_ptr<AbstractGameStorage> gameStorage;
         std::unordered_map<std::string, std::function<json(const json &, User &)>> commonQueriesMap;
 

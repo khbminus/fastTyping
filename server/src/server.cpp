@@ -7,7 +7,7 @@
 #include <thread>
 
 namespace FastTyping::Server {
-    Server::Server() : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)), userStorage(new DBUserStorage), gameStorage(new MapGameStorage) {
+    Server::Server() : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)), userStorage(new Database), gameStorage(new MapGameStorage) {
         std::cout << "Listening at " << acceptor.local_endpoint() << std::endl;
         commonQueriesMap["echo"] = [&](const json &body, User &user) {
             return body;
