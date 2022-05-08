@@ -36,6 +36,8 @@ public:
 
 private:
     json checkUnsafe(int uid);  // THREAD UNSAFE
+    bool isEndedUnsafe(int uid);
+
     std::string gameName;
     int id = 0;
     static inline int nextId = 0;

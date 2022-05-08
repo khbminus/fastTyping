@@ -1,26 +1,33 @@
 #include "game.h"
 #include <boost/log/trivial.hpp>
+#include <iostream>
 #include "constGame.h"
 
 namespace FastTyping::Server {
 bool Game::hasUser(int uid) {
     std::unique_lock l{mutex};
-    if (additionalInfo.count(
-            uid))  // it returns zero or one as int, so we need convert to bool
-        return true;
-    return false;
+    return static_cast<bool>(additionalInfo.count(uid));
 }
+
+bool Game::isEndedUnsafe(int uid) {
+    return additionalInfo[uid].currentWord == dictionary->getWordCount();
+}
+
 json Game::checkUnsafe(int uid) {
     json result;
     std::string rightWord =
         dictionary->getWord(additionalInfo[uid].currentWord);
     std::string &word = additionalInfo[uid].currentBuffer;
     BOOST_LOG_TRIVIAL(debug)
-        << "Buffer of user " << uid << "is \"" << word << '\n';
+        << "Buffer of user " << uid << " is \"" << word << "\"\n";
     result["header"] = {{"type", "checkResult"}};
     result["body"] = {
         {"isFullCorrect", parser->isFullCorrect(word, rightWord)},
         {"isPrefixCorrect", parser->isPrefixCorrect(word, rightWord)}};
+    if (result["body"]["isFullCorrect"] == true) {
+        additionalInfo[uid].currentWord++;
+    }
+    result["body"]["isEnd"] = isEndedUnsafe(uid);
     return result;
 }
 json Game::check(int uid) {

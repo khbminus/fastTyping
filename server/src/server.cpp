@@ -104,8 +104,7 @@ Server::Server()
 
         auto result = user.getGame()->addNewChar(
             user.getId(), body["char"].get<std::string>()[0]);
-        if (result["body"]["isFullCorrect"] == true &&
-            result["body"]["isEnd"] == true) {
+        if (result["body"]["isEnd"] == true) {
             user.setGame(nullptr);
         }
         return result;
