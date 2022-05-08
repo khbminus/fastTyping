@@ -1,13 +1,11 @@
+#include <QApplication>
+#include <QSharedPointer>
 #include "include/createwindow.h"
 #include "include/gamewindow.h"
 #include "include/joinwindow.h"
 #include "include/mainwindow.h"
 #include "include/statwindow.h"
-
-
 #include "windowcontroller.h"
-#include <QApplication>
-#include <QSharedPointer>
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -17,7 +15,6 @@ int main(int argc, char *argv[]) {
     auto createWindow = QSharedPointer<QMainWindow>(new CreateWindow());
     auto gameWindow = QSharedPointer<QMainWindow>(new GameWindow());
     auto statWindow = QSharedPointer<QMainWindow>(new StatWindow());
-
 
     controller.registerWindow("MainWindow", mainWindow);
     controller.registerWindow("JoinWindow", joinWindow);

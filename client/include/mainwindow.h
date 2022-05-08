@@ -5,7 +5,7 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-    class MainWindow;
+class MainWindow;
 }
 QT_END_NAMESPACE
 
@@ -20,8 +20,7 @@ private slots:
     void on_JoinButton_clicked();
     void on_CreateButton_clicked();
 
-
 private:
     Ui::MainWindow *ui;
 };
-#endif// MAINWINDOW_H
+#endif  // MAINWINDOW_H

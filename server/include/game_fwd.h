@@ -2,6 +2,6 @@
 #define FASTTYPING_GAME_FWD_H
 
 namespace FastTyping::Server {
-    struct Game;
+struct Game;
 }
-#endif//FASTTYPING_GAME_FWD_H
+#endif  // FASTTYPING_GAME_FWD_H

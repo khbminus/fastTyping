@@ -2,8 +2,8 @@
 #include "ui_statwindow.h"
 #include "windowcontroller.h"
 
-StatWindow::StatWindow(QWidget *parent) : QMainWindow(parent),
-                                          ui(new Ui::StatWindow) {
+StatWindow::StatWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::StatWindow) {
     ui->setupUi(this);
 }
 

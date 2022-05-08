@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 namespace Ui {
-    class JoinWindow;
+class JoinWindow;
 }
 
 class JoinWindow : public QMainWindow {
@@ -22,4 +22,4 @@ private:
     Ui::JoinWindow *ui;
 };
 
-#endif// JOINWINDOW_H
+#endif  // JOINWINDOW_H

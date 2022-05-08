@@ -2,17 +2,17 @@
 #define GAMEWINDOW_H
 
 //#include <QChar>
-#include "gameClient.h"
-#include "gameLogic.h"
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMainWindow>
 #include <QPushButton>
 #include <memory>
+#include "gameClient.h"
+#include "gameLogic.h"
 
 namespace Ui {
-    class GameWindow;
+class GameWindow;
 }
 
 class GameWindow : public QMainWindow {
@@ -38,4 +38,4 @@ private slots:
     void on_ReturnButton_clicked();
 };
 
-#endif// GAMEWINDOW_H
+#endif  // GAMEWINDOW_H

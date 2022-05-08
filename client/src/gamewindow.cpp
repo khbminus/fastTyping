@@ -1,12 +1,13 @@
 #include "gamewindow.h"
+#include <iostream>
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
-#include <iostream>
 
-GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
-                                          ui(new Ui::GameWindow),
-                                          handlers{new game::RaceGame, new game::client::GameClient("aboba")},
-                                          main_handler(handlers[0]) {
+GameWindow::GameWindow(QWidget *parent)
+    : QMainWindow(parent),
+      ui(new Ui::GameWindow),
+      handlers{new game::RaceGame, new game::client::GameClient("aboba")},
+      main_handler(handlers[0]) {
     ui->setupUi(this);
     palette = ui->userText->palette();
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
@@ -18,10 +19,9 @@ GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent),
     ui->dictLabel->setText("This is sample don't judge me");
 }
 
-
 GameWindow::~GameWindow() {
     delete ui;
-    for (auto handler: handlers) {
+    for (auto handler : handlers) {
         delete handler;
     }
 }
@@ -40,14 +40,14 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
         return;
     }
     if (event->key() == Qt::Key_Backspace) {
-        for (auto handler: handlers) {
+        for (auto handler : handlers) {
             handler->backspacePressed();
         }
         emit keyPressed();
         return;
     }
 
-    for (auto handler: handlers) {
+    for (auto handler : handlers) {
         handler->keyPressed(keysCombination[0]);
     }
     emit keyPressed();
