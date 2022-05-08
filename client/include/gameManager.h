@@ -24,10 +24,12 @@ public:
     virtual void backspace_pressed() = 0;
     virtual QString get_buffer() = 0;
     virtual std::optional<QChar> next() = 0;
+    virtual QString blob() = 0;
 signals:
     void error_signal();
     void correct_signal();
     void end_signal();
+    void print_signal(QString const& line);
 };
 
 #endif// GAME_MANAGER_H

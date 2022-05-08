@@ -17,10 +17,17 @@ namespace client::queries {
         return dump(result);
     }
 
-    QString key_pressed_query(QString const &buffer) {
+    QString key_pressed_query(QString const& new_char) {
         json result;
         result["header"] = {{"type", "addNewChar"}};
-        result["body"] = {{"char", buffer.toStdString()}};
+        result["body"] = {{"char", new_char.toStdString()}};
+        return dump(result);
+    }
+
+    QString backspace_pressed_query() {
+        json result;
+        result["header"] = {{"type", "backspace"}};
+        result["body"] = json::object();
         return dump(result);
     }
 

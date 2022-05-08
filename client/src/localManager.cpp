@@ -1,20 +1,17 @@
 #include "localManager.h"
 #include <QDebug>
+#include <iterator>
 
 bool LocalManager::check_prefix() {
     QString buffer = inputter.getBuffer();
     QString sample = dictionary.getCurrentWord();
     qDebug() << "copmaparing" << buffer << " with " << sample;
+
     if (buffer.size() > sample.size()) {
         return false;
     }
-    for (std::size_t ind = 0; ind < buffer.size(); ind++) {
-        if (buffer[ind] != sample[ind]) {
-            return false;
-        }
-    }
 
-    return true;
+    return std::equal(buffer.begin(), buffer.end(), sample.begin());
 }
 
 void LocalManager::emit_correctness(){
@@ -42,17 +39,24 @@ void LocalManager::key_pressed(QChar button) {
     } else {
         inputter.addSymbol(button);
     }
+    emit print_signal(inputter.getBuffer());
     emit_correctness();
 }
 
 void LocalManager::backspace_pressed() {
     inputter.deleteSymbol();
+    emit print_signal(inputter.getBuffer());
     emit_correctness();
 }
 
 QString LocalManager::get_buffer() {
     return inputter.getBuffer();
 }
+
+QString LocalManager::blob() {
+    return dictionary.blob();
+}
+
 std::optional<QChar> LocalManager::next() {
     if (!check_prefix()) {
         return std::nullopt;

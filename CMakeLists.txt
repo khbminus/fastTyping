@@ -42,7 +42,10 @@ set(PROJECT_SOURCES
         client/include/errorHandler.h
         client/src/localManager.cpp
         client/include/localManager.h
+        client/src/webManager.cpp
+        client/include/webManager.h
         client/include/gameManager.h
+        client/include/managerUtils.h
         common/include/json.hpp
         )
 

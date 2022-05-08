@@ -5,6 +5,7 @@
 #include <string>
 
 namespace client::responses {
+
     using namespace client::web;
     using nlohmann::json;
 
@@ -27,6 +28,18 @@ namespace client::responses {
     }
 
     void APIHandler::handle(QString const &line) {
-        std::cout << line.toStdString() << std::endl;
+        json response = json::parse(line.toStdString());
+        if (response["header"]["queryType"].get<std::string>() == "addNewChar" ||
+                response["header"]["queryType"].get<std::string>() == "backspace") {
+            if (response["body"]["isEnd"].get<bool>()) {
+                emit end_signal();
+            } else if (response["body"]["isFullCorrect"].get<bool>()) {
+                emit correct_word_signal();
+            } else if (response["body"]["isPrefixCorrect"].get<bool>()) {
+                emit correct_signal();
+            } else {
+                emit error_signal();
+            }
+        }
     }
 }// namespace client::responses

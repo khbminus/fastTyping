@@ -2,7 +2,6 @@
 #include "errorHandler.h"
 #include <iostream>
 
-
 namespace client::web {
     void QuerySender::send(QString line) {
         emit send_line(line);

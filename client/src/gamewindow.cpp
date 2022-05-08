@@ -12,6 +12,7 @@ GameWindow::GameWindow(GameManager *manager, QWidget *parent) : QMainWindow(pare
     QObject::connect(manager, &GameManager::correct_signal, this, &GameWindow::correct_slot);
     QObject::connect(manager, &GameManager::error_signal, this, &GameWindow::error_slot);
     QObject::connect(manager, &GameManager::end_signal, this, &GameWindow::end);
+    QObject::connect(manager, &GameManager::print_signal, this, &GameWindow::print);
 
     ui->setupUi(this);
     palette = ui->userText->palette();
@@ -21,7 +22,7 @@ GameWindow::GameWindow(GameManager *manager, QWidget *parent) : QMainWindow(pare
     ui->userText->setPalette(palette);
     ui->dictLabel->setAutoFillBackground(true);
     ui->dictLabel->setPalette(palette);
-    ui->dictLabel->setText("This is sample don't judge me");
+    ui->dictLabel->setText(manager->blob());
 }
 
 
@@ -46,8 +47,6 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
     } else {
         main_manager->key_pressed(keysCombination[0]);
     }
-
-    ui->userText->setText(main_manager->get_buffer());
 }
 
 
@@ -64,4 +63,8 @@ void GameWindow::correct_slot() {
 void GameWindow::end() {
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("StatWindow");
+}
+
+void GameWindow::print(QString const& line) {
+    ui->userText->setText(line);
 }
