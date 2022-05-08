@@ -17,10 +17,10 @@ namespace client::web {
             QString buffer;
 
             if (socket->waitForConnected()) {
-                qDebug() << "connected to host(" << ip << ":" << port << ") \n";
+                qInfo() << "connected to host(" << ip << ":" << port << ") \n";
             } else {
-                qDebug() << "failed to connect to host\n";
-                exit(0);
+                qCritical() << "failed to connect to host\n";
+                exit(1);
             }
 
             QObject::connect(&sender, &QuerySender::send_line, &socket_thread, [socket](QString line) {

@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
     client::responses::APIHandler response_handler;
     client::web::socket(&response_handler);
 
-    //  LocalManager manager({"This", "is", "sample", "don't", "judge", "me"});
-    ///*
+    LocalManager manager({"This", "is", "sample", "don't", "judge", "me"});
+/*
 
     WebManager manager({"This", "is", "sample", "don't", "judge", "me"});
 
