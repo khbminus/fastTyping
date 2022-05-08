@@ -32,12 +32,12 @@ namespace FastTyping::Logic {
 
     struct AdaptiveDictionary : AbstractDictionary {
         std::vector<std::string> words;
-        explicit AdaptiveDictionary(int user_id, generator::AdaptiveTextGenerator &gen) {// TODO may be refactor?
+        explicit AdaptiveDictionary(int user_id, generator::TextGenerator &gen) {// TODO may be refactor?
             int k = 3;
             // TODO get list of user's mistakes from DB
             std::vector<generator::UsersTypo> mistakes = {{'a', 'b'}, {'c', 'd'}};
             for (auto cur_mistake: mistakes) {
-                std::vector<std::string> cur_words = gen.getTopByMistakes(cur_mistake, k);
+                std::vector<std::string> cur_words = gen.getTop(k, cur_mistake);
                 for (auto x: cur_words) words.push_back(x);
             }
         }
