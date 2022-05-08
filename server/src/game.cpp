@@ -26,6 +26,7 @@ json Game::checkUnsafe(int uid) {
         {"isPrefixCorrect", parser->isPrefixCorrect(word, rightWord)}};
     if (result["body"]["isFullCorrect"] == true) {
         additionalInfo[uid].currentWord++;
+        additionalInfo[uid].currentBuffer.clear();
     }
     result["body"]["isEnd"] = isEndedUnsafe(uid);
     return result;
