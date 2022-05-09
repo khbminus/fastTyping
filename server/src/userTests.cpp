@@ -50,3 +50,10 @@ TEST_CASE("DB passwords") {
     storage.setPassword(a, "0000");
     CHECK(storage.getPassword(a) == "0000");
 }
+
+TEST_CASE("DB mistakes") {
+    Database storage;
+    storage.addMistake(0, 'a', 'b');
+    storage.addMistake(0, 'a', 'b');
+    storage.addMistake(0, 'c', 'b');
+}

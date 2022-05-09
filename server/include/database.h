@@ -15,17 +15,21 @@ namespace FastTyping::Server {
         virtual int getId(const std::string &) = 0;            // or create it
         virtual bool nameExist(const std::string &) = 0;
         // MISTAKES table
-        // TODO: ...
+        virtual void addMistake(int, char, char) = 0;
+
     };
     struct Database : AbstractDatabase {
     public:
         Database();
+        ~Database() override;
+        // USERS table
         std::string getPassword(int id) override;
         std::string getName(int) override;
-        void setPassword(int, const std::string &) override; // base password == '0000'
+        void setPassword(int, const std::string &) override; // base password == '0000'    
         int getId(const std::string &) override;            // or create it
         bool nameExist(const std::string &) override;
-        ~Database() override;
+        // MISTAKES table
+        void addMistake(int, char, char) override;
     private:
         mutable std::mutex mutex;
         pqxx::connection connect;

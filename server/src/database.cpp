@@ -19,6 +19,13 @@ namespace FastTyping::Server {
 
             pqxx::work W(connect);
             /* Execute SQL query */
+//            W.exec("DROP TABLE IF EXISTS mistakes;");
+            W.exec(sql);
+            sql = "CREATE TABLE IF NOT EXISTS MISTAKES("
+                  "ID SERIAL PRIMARY KEY,"
+                  "USER_ID INT    NOT NULL,"
+                  "POST_DATE DATE NOT NULL DEFAULT CURRENT_DATE,"
+                  "MISTAKE  TEXT NOT NULL);";
             W.exec(sql);
             W.commit();
             std::cerr << "Table created successfully" << std::endl;
@@ -85,8 +92,16 @@ namespace FastTyping::Server {
         pqxx::result find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + W.esc(name) + "';");
         return find_by_name.size() != 0;
     }
-
+    
     Database::~Database() {
         connect.disconnect();
+    }
+    
+    void Database::addMistake(int user_id, char let1, char let2) {
+        std::unique_lock l{mutex};
+        pqxx::work W(connect);
+        W.exec("INSERT INTO MISTAKES(USER_ID, MISTAKE)\n"
+               "VALUES(" +
+               std::to_string(user_id) + ", '" + let1 + let2 + "');");
     }
 }
