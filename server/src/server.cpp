@@ -72,7 +72,6 @@ Server::Server()
         return {{"header", {{"type", "GameJoinedSuccessfully"}}},
                 {"body", {{"id", game->getId()}}}};
     };
-
     commonQueriesMap["leaveGame"] = [&](const json &body, User &user) -> json {
         if (user.getGame() == nullptr) {
             return {{"header", {{"type", "notInGameError"}}},
@@ -82,7 +81,6 @@ Server::Server()
         user.setGame(nullptr);
         return {{"header", {{"type", "GameLeaveSuccessfully"}}}, {"body", {}}};
     };
-
     commonQueriesMap["getNewLine"] = [&](const json &body, User &user) -> json {
         if (user.getGame() == nullptr) {
             return {{"header", {{"type", "notInGameError"}}},
@@ -90,7 +88,6 @@ Server::Server()
         }
         return user.getGame()->getNewLine(user.getId());
     };
-
     commonQueriesMap["addNewChar"] = [&](const json &body, User &user) -> json {
         if (user.getGame() == nullptr) {
             return {{"header", {{"type", "notInGameError"}}},
@@ -109,7 +106,6 @@ Server::Server()
         }
         return result;
     };
-
     commonQueriesMap["backspace"] = [&](const json &body, User &user) -> json {
         if (user.getGame() == nullptr) {
             return {{"header", {{"type", "notInGameError"}}},
@@ -117,7 +113,6 @@ Server::Server()
         }
         return user.getGame()->backspace(user.getId());
     };
-
     commonQueriesMap["getStates"] = [&](const json &body, User &user) -> json {
         if (user.getGame() == nullptr) {
             return {{"header", {{"type", "notInGameError"}}},
@@ -125,7 +120,6 @@ Server::Server()
         }
         return user.getGame()->getStateOfUsers();
     };
-
     commonQueriesMap["getNewWord"] = [&](const json &body, User &user) -> json {
         if (user.getGame() == nullptr) {
             return {{"header", {{"type", "notInGameError"}}},
@@ -133,7 +127,14 @@ Server::Server()
         }
         return user.getGame()->getNewWord(user.getId());
     };
-
+    commonQueriesMap["clearBuffer"] = [&](const json &body,
+                                          User &user) -> json {
+        if (user.getGame() == nullptr) {
+            return {{"header", {{"type", "notInGameError"}}},
+                    {"body", {{"text", "not in game"}}}};
+        }
+        return user.getGame()->clearBuffer(user.getId());
+    };
     commonQueriesMap["exit"] = [&](const json &body, User &user) -> json {
         user.setWillToExit();
         return {};

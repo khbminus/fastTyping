@@ -24,11 +24,6 @@ json Game::checkUnsafe(int uid) {
     result["body"] = {
         {"isFullCorrect", parser->isFullCorrect(word, rightWord)},
         {"isPrefixCorrect", parser->isPrefixCorrect(word, rightWord)}};
-    if (result["body"]["isFullCorrect"] == true) {
-        additionalInfo[uid].currentWord++;
-        additionalInfo[uid].currentBuffer.clear();
-    }
-    result["body"]["isEnd"] = isEndedUnsafe(uid);
     return result;
 }
 json Game::check(int uid) {
@@ -61,6 +56,16 @@ json Game::getNewWord(int uid) {
     if (info.currentWord != dictionary->getWordCount()) {
         result["body"]["newWord"] = dictionary->getWord(++info.currentWord);
     }
+    return result;
+}
+
+json Game::clearBuffer(int uid) {
+    std::unique_lock l{mutex};
+    auto &info = additionalInfo[uid];
+    info.currentBuffer.clear();
+    json result;
+    result["header"] = {{"type", "clearResult"}};
+    result["body"] = {{"status", "successful"}};
     return result;
 }
 

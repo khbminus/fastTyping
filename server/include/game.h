@@ -33,6 +33,7 @@ public:
     json getNewLine(int uid);
     json getNewWord(int uid);
     json getStateOfUsers();
+    json clearBuffer(int uid);
 
 private:
     json checkUnsafe(int uid);  // THREAD UNSAFE
