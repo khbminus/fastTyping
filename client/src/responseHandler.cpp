@@ -16,8 +16,7 @@ namespace client::responses {
             {"createGame", ResponseType::blocking},
             {"addNewChar", ResponseType::async},
             {"addBackspace", ResponseType::async},
-            {"getNewWord", ResponseType::async}
-    };
+            {"getNewWord", ResponseType::async}};
 
     ResponseType APIHandler::type(QString const &line) const {
         json response = json::parse(line.toStdString());

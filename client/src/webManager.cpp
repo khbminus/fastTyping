@@ -7,8 +7,8 @@ WebManager::WebManager(std::vector<QString> a_words) : dictionary(a_words) {
 }
 
 void WebManager::key_pressed(QChar button) {
-    using client::queries::key_pressed_query;
     using client::queries::buffer_clear_query;
+    using client::queries::key_pressed_query;
     using client::queries::new_word_query;
 
     using client::web::socket;
