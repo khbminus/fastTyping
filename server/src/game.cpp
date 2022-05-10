@@ -55,19 +55,24 @@ json Game::getNewWord(int uid) {
         {"isEnd", info.currentWord + 1 == dictionary->getWordCount()},
         {"newWord", ""}};
     if (info.currentWord + 1 < dictionary->getWordCount()) {
+        clearUnsafe(uid);
         result["body"]["newWord"] = dictionary->getWord(++info.currentWord);
     }
     return result;
 }
 
-json Game::clearBuffer(int uid) {
-    std::unique_lock l{mutex};
+json Game::clearUnsafe(int uid) {
     auto &info = additionalInfo[uid];
     info.currentBuffer.clear();
     json result;
     result["header"] = {{"type", "clearResult"}};
     result["body"] = {{"status", "successful"}};
     return result;
+}
+
+json Game::clearBuffer(int uid) {
+    std::unique_lock l{mutex};
+    return clearUnsafe(uid);
 }
 
 json Game::getNewLine(int uid) {
