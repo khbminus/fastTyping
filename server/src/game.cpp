@@ -51,9 +51,10 @@ json Game::getNewWord(int uid) {
     auto &info = additionalInfo[uid];
     json result;
     result["header"] = {{"type", "newWordResult"}};
-    result["body"] = {{"isEnd", info.currentWord == dictionary->getWordCount()},
-                      {"newWord", ""}};
-    if (info.currentWord != dictionary->getWordCount()) {
+    result["body"] = {
+        {"isEnd", info.currentWord + 1 == dictionary->getWordCount()},
+        {"newWord", ""}};
+    if (info.currentWord + 1 < dictionary->getWordCount()) {
         result["body"]["newWord"] = dictionary->getWord(++info.currentWord);
     }
     return result;
