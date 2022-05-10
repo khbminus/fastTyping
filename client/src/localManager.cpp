@@ -61,6 +61,7 @@ std::optional<QChar> LocalManager::next() {
     if (!check_prefix()) {
         return std::nullopt;
     }
+
     QString buffer = inputter.getBuffer();
     QString sample = dictionary.getCurrentWord();
 

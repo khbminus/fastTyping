@@ -10,6 +10,8 @@ namespace client::queries {
     QString greeting_query(QString const &name);
     QString create_game_query(bool auto_join = true);
     QString leave_query();
+    QString buffer_clear_query();
+    QString new_word_query();
 }// namespace client::queries
 
 #endif

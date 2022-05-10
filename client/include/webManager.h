@@ -13,6 +13,7 @@
 class WebManager final : public GameManager {
     LocalInputter inputter;
     LocalDictionary dictionary;
+    bool clear_buffer = false;
 
 public:
     WebManager(std::vector<QString> words);

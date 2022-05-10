@@ -8,11 +8,23 @@ WebManager::WebManager(std::vector<QString> a_words) : dictionary(a_words) {
 
 void WebManager::key_pressed(QChar button) {
     using client::queries::key_pressed_query;
+    using client::queries::buffer_clear_query;
+    using client::queries::new_word_query;
+
     using client::web::socket;
 
-    inputter.addSymbol(button);
+
+    if (button == ' ' && clear_buffer) {
+        clear_buffer = false;
+        inputter.clearBuffer();
+        //socket().send(buffer_clear_query());
+        socket().send(new_word_query());
+    } else {
+        inputter.addSymbol(button);
+        socket().send(key_pressed_query(QString(button)));
+    }
+
     emit print_signal(inputter.getBuffer());
-    socket().send(key_pressed_query(QString(button)));
 }
 
 void WebManager::backspace_pressed() {
@@ -49,7 +61,6 @@ void WebManager::correct_slot() {
 }
 
 void WebManager::correct_word_slot() {
-    inputter.clearBuffer();
-    emit print_signal("");
+    clear_buffer = true;
     emit correct_signal();
 }

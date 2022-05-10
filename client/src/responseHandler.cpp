@@ -16,6 +16,7 @@ namespace client::responses {
             {"createGame", ResponseType::blocking},
             {"addNewChar", ResponseType::async},
             {"addBackspace", ResponseType::async},
+            {"getNewWord", ResponseType::async}
     };
 
     ResponseType APIHandler::type(QString const &line) const {
@@ -31,14 +32,17 @@ namespace client::responses {
         json response = json::parse(line.toStdString());
         if (response["header"]["queryType"].get<std::string>() == "addNewChar" ||
             response["header"]["queryType"].get<std::string>() == "backspace") {
-            if (response["body"]["isEnd"].get<bool>()) {
-                emit end_signal();
-            } else if (response["body"]["isFullCorrect"].get<bool>()) {
+            if (response["body"]["isFullCorrect"].get<bool>()) {
                 emit correct_word_signal();
             } else if (response["body"]["isPrefixCorrect"].get<bool>()) {
                 emit correct_signal();
             } else {
                 emit error_signal();
+            }
+        }
+        if (response["header"]["queryType"].get<std::string>() == "getNewWord") {
+            if (response["body"]["isEnd"].get<bool>()) {
+                emit end_signal();
             }
         }
     }

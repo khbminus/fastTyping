@@ -45,6 +45,21 @@ namespace client::queries {
         return dump(result);
     }
 
+    QString buffer_clear_query() {
+        json result;
+        result["header"] = {{"type", "clearBuffer"}};
+        result["body"] = json::object();
+        return dump(result);
+    }
+
+    QString new_word_query() {
+        json result;
+        result["header"] = {{"type", "getNewWord"}};
+        result["body"] = json::object();
+        return dump(result);
+    }
+
+
     QString create_game_query(bool auto_join) {
         json result;
         json words = json::array({"This", "is", "sample", "don't", "judge", "me"});

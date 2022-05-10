@@ -20,7 +20,6 @@ int main(int argc, char *argv[]) {
 
     LocalManager manager({"This", "is", "sample", "don't", "judge", "me"});
     /*
-
     WebManager manager({"This", "is", "sample", "don't", "judge", "me"});
 
     QObject::connect(&response_handler, &client::responses::APIHandler::correct_signal, &manager, &WebManager::correct_slot);
