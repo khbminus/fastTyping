@@ -117,21 +117,6 @@ Server::Server()
         }
         return user.getGame()->getStateOfUsers();
     };
-    commonQueriesMap["getNewWord"] = [&](const json &body, User &user) -> json {
-        if (user.getGame() == nullptr) {
-            return {{"header", {{"type", "notInGameError"}}},
-                    {"body", {{"text", "not in game"}}}};
-        }
-        return user.getGame()->getNewWord(user.getId());
-    };
-    commonQueriesMap["clearBuffer"] = [&](const json &body,
-                                          User &user) -> json {
-        if (user.getGame() == nullptr) {
-            return {{"header", {{"type", "notInGameError"}}},
-                    {"body", {{"text", "not in game"}}}};
-        }
-        return user.getGame()->clearBuffer(user.getId());
-    };
     commonQueriesMap["exit"] = [&](const json &body, User &user) -> json {
         user.setWillToExit();
         return {};

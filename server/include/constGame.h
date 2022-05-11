@@ -10,7 +10,6 @@
 namespace FastTyping::Logic {
 
 struct Dictionary : AbstractDictionary {
-    std::vector<std::string> words;
     explicit Dictionary(std::vector<std::string> words_)
         : words(std::move(words_)) {}
 
@@ -21,12 +20,15 @@ struct Dictionary : AbstractDictionary {
     [[nodiscard]] size_t getWordCount() const override {
         return words.size();
     }
-    [[nodiscard]] std::vector<std::string> getLine(int index) const override {
+    [[nodiscard]] std::vector<std::string> getLine(int) const override {
         return words;
     }
     [[nodiscard]] size_t getLinesCount() const override {
         return 1;
     }
+
+private:
+    std::vector<std::string> words;
 };
 
 struct SimpleParser : AbstractParser {
