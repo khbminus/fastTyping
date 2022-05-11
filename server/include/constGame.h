@@ -33,13 +33,15 @@ struct SimpleParser : AbstractParser {
     [[nodiscard]] bool isFullCorrect(
         const std::string &inputWord,
         const std::string &dictionaryWord) const override {
-        return dictionaryWord == inputWord;
+        return dictionaryWord + ' ' == inputWord;
     }
     [[nodiscard]] bool isPrefixCorrect(
         const std::string &inputWord,
         const std::string &dictionaryWord) const override {
-        std::size_t minSize = std::min(inputWord.size(), dictionaryWord.size());
-        for (std::size_t i = 0; i < minSize; i++) {
+        if (inputWord.size() > dictionaryWord.size()) {
+            return false;
+        }
+        for (std::size_t i = 0; i < inputWord.size(); i++) {
             if (inputWord[i] != dictionaryWord[i]) {
                 return false;
             }
