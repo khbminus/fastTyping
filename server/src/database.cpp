@@ -19,7 +19,7 @@ namespace FastTyping::Server {
 
             pqxx::work W(connect);
             /* Execute SQL query */
-//            W.exec("DROP TABLE IF EXISTS mistakes;");
+            //            W.exec("DROP TABLE IF EXISTS mistakes;");
             W.exec(sql);
             sql = "CREATE TABLE IF NOT EXISTS MISTAKES("
                   "ID SERIAL PRIMARY KEY,"
@@ -66,7 +66,7 @@ namespace FastTyping::Server {
         return name;
     }
 
-    int Database::getId(const std::string &name)  { // creating new user or return existed one's id
+    int Database::getId(const std::string &name) {// creating new user or return existed one's id
         std::unique_lock l{mutex};
         pqxx::work W(connect);
         int id;
@@ -90,18 +90,39 @@ namespace FastTyping::Server {
         std::unique_lock l{mutex};
         pqxx::work W(connect);
         pqxx::result find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + W.esc(name) + "';");
+        W.commit();
         return find_by_name.size() != 0;
     }
-    
+
     Database::~Database() {
         connect.disconnect();
     }
-    
-    void Database::addMistake(int user_id, char let1, char let2) {
+
+    void Database::addMistake(int userId, char let1, char let2) {
         std::unique_lock l{mutex};
         pqxx::work W(connect);
         W.exec("INSERT INTO MISTAKES(USER_ID, MISTAKE)\n"
                "VALUES(" +
-               std::to_string(user_id) + ", '" + let1 + let2 + "');");
+               std::to_string(userId) + ", '" + let1 + let2 + "');");
+        W.commit();
     }
-}
+
+    std::vector<std::pair<char, char>> Database::getTopMistakes(int userId, int number) {
+        std::unique_lock l{mutex};
+        pqxx::work W(connect);
+        std::vector<std::pair<char, char>> result;
+        pqxx::result find_by_name = W.exec("SELECT MISTAKE, COUNT(MISTAKE) AS value_occurrence "
+                                           "FROM MISTAKES WHERE USER_ID = " +
+                                           std::to_string(userId) + " GROUP BY MISTAKE "
+                                                                    "ORDER BY value_occurrence DESC "
+                                                                    "LIMIT " +
+                                           std::to_string(number) + ";");
+        for (auto row: find_by_name) {
+            result.push_back({row["MISTAKE"].c_str()[0], row["MISTAKE"].c_str()[1]});
+        }
+        W.commit();
+        return result;
+    }
+
+
+}// namespace FastTyping::Server

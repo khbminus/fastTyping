@@ -16,7 +16,7 @@ namespace FastTyping::Server {
         virtual bool nameExist(const std::string &) = 0;
         // MISTAKES table
         virtual void addMistake(int, char, char) = 0;
-
+        virtual std::vector<std::pair<char, char>> getTopMistakes(int, int) = 0;
     };
     struct Database : AbstractDatabase {
     public:
@@ -30,6 +30,7 @@ namespace FastTyping::Server {
         bool nameExist(const std::string &) override;
         // MISTAKES table
         void addMistake(int, char, char) override;
+        std::vector<std::pair<char, char>> getTopMistakes(int, int) override;
     private:
         mutable std::mutex mutex;
         pqxx::connection connect;

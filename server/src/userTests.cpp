@@ -53,7 +53,17 @@ TEST_CASE("DB passwords") {
 
 TEST_CASE("DB mistakes") {
     Database storage;
-    storage.addMistake(0, 'a', 'b');
-    storage.addMistake(0, 'a', 'b');
+    storage.addMistake(1, 'e', 'e');
     storage.addMistake(0, 'c', 'b');
+    storage.addMistake(0, 'a', 'b');
+    storage.addMistake(0, 'a', 'a');
+    storage.addMistake(0, 'a', 'b');
+    storage.addMistake(0, 'a', 'a');
+    storage.addMistake(0, 'a', 'a');
+    std::vector<std::pair<char, char>> mistakes = storage.getTopMistakes(0, 10);
+    CHECK(mistakes.size() == 3);
+    CHECK(mistakes == std::vector<std::pair<char, char>>{{'a', 'a'}, {'a', 'b'},{'c', 'b'}});
+    std::vector<std::pair<char, char>> mistakes_one = storage.getTopMistakes(0, 1);
+    CHECK(mistakes_one.size() == 1);
+    CHECK(mistakes_one == std::vector<std::pair<char, char>>{{'a', 'a'}});
 }
