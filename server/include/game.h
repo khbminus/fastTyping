@@ -8,7 +8,6 @@
 #include <unordered_map>
 #include "user.h"
 
-
 namespace FastTyping::Server {
 using nlohmann::json;
 struct Game {
