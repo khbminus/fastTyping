@@ -34,12 +34,22 @@ set(PROJECT_SOURCES
         include/gamewindow.h
         src/statwindow.cpp
         include/statwindow.h
-        src/gameLogic.cpp
-        include/gameLogic.h
-        src/tcp_client.cpp
-        include/tcp_client.h
-        src/gameClient.cpp
-        include/gameClient.h
+        src/errorHandler.cpp
+        src/queryTemplates.cpp
+        src/localManager.cpp
+        src/responseHandler.cpp
+        src/socketWrapper.cpp
+        src/sonicSocket.cpp
+        src/webManager.cpp
+        include/gameManager.h
+        include/errorHandler.h
+        include/localManager.h
+        include/managerUtils.h
+        include/queryTemplates.h
+        include/responseHandler.h
+        include/socketWrapper.h
+        include/sonicSocket.h
+        include/webManager.h
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

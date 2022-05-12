@@ -1,16 +1,15 @@
-#include "client/include/createwindow.h"
-#include "client/include/gamewindow.h"
-#include "client/include/joinwindow.h"
-#include "client/include/localManager.h"
-#include "client/include/mainwindow.h"
-#include "client/include/responseHandler.h"
-#include "client/include/sonicSocket.h"
-#include "client/include/statwindow.h"
-#include "client/include/webManager.h"
-#include "windowcontroller.h"
-
 #include <QApplication>
 #include <QSharedPointer>
+#include "createwindow.h"
+#include "gamewindow.h"
+#include "joinwindow.h"
+#include "localManager.h"
+#include "mainwindow.h"
+#include "responseHandler.h"
+#include "sonicSocket.h"
+#include "statwindow.h"
+#include "webManager.h"
+#include "windowcontroller.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);

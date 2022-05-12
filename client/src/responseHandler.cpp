@@ -1,7 +1,7 @@
 #include "responseHandler.h"
-#include "common/include/json.hpp"
 #include <iostream>
 #include <map>
+#include <nlohmann/json.hpp>
 #include <string>
 
 namespace client::responses {
