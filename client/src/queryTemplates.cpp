@@ -37,13 +37,14 @@ QString join_query(int id) {
     return dump(result);
 }
 
+// cppcheck-suppress unusedFunction
 QString leave_query() {
     json result;
     result["header"] = {{"type", "leaveGame"}};
     result["body"] = json::object();
     return dump(result);
 }
-
+// cppcheck-suppress unusedFunction
 QString buffer_clear_query() {
     json result;
     result["header"] = {{"type", "clearBuffer"}};

@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <cstdlib>
 
+// cppcheck-suppress unusedFunction
 void error_alert(QString title, QString text, bool is_blocking) {
     QMessageBox message_box;
     message_box.setText(text);
