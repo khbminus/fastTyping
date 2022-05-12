@@ -32,4 +32,4 @@ signals:
     void print_signal(QString const &line);
 };
 
-#endif// GAME_MANAGER_H
+#endif  // GAME_MANAGER_H

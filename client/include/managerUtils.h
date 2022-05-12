@@ -1,10 +1,9 @@
 #ifndef MANAGER_UTILS_H
 #define MANAGER_UTILS_H
 
-#include "gameManager.h"
 #include <algorithm>
 #include <iterator>
-
+#include "gameManager.h"
 
 class LocalDictionary : public Dictionary {
     std::vector<QString> words;
@@ -12,7 +11,8 @@ class LocalDictionary : public Dictionary {
     QString whole_line;
 
 public:
-    explicit LocalDictionary(std::vector<QString> a_words) : words(std::move(a_words)) {
+    explicit LocalDictionary(std::vector<QString> a_words)
+        : words(std::move(a_words)) {
         QStringList list;
         list.reserve(words.size());
         std::copy(words.begin(), words.end(), std::back_inserter(list));
@@ -53,6 +53,5 @@ public:
         buffer.clear();
     }
 };
-
 
 #endif

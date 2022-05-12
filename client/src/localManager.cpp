@@ -22,8 +22,8 @@ void LocalManager::emit_correctness() {
     }
 }
 
-LocalManager::LocalManager(std::vector<QString> a_words) : dictionary(a_words) {
-}
+LocalManager::LocalManager(std::vector<QString> a_words)
+    : dictionary(a_words) {}
 
 void LocalManager::key_pressed(QChar button) {
     if (button == ' ') {

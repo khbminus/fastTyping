@@ -1,16 +1,16 @@
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
-#include "gameManager.h"
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMainWindow>
 #include <QPushButton>
 #include <memory>
+#include "gameManager.h"
 
 namespace Ui {
-    class GameWindow;
+class GameWindow;
 }
 
 class GameWindow : public QMainWindow {
@@ -24,8 +24,8 @@ private:
     Ui::GameWindow *ui;
     QPalette palette;
 
-    //std::vector<game::AbstractGameManager *> handlers;
-    //game::AbstractGameManager *main_handler;
+    // std::vector<game::AbstractGameManager *> handlers;
+    // game::AbstractGameManager *main_handler;
     GameManager *main_manager;
 
 protected:
@@ -38,4 +38,4 @@ private slots:
     void end();
 };
 
-#endif// GAMEWINDOW_H
+#endif  // GAMEWINDOW_H

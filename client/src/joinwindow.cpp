@@ -23,7 +23,7 @@ void JoinWindow::on_JoinButton_clicked() {
     int id = ui->lineEdit->displayText().toInt(&is_correct_id);
     QString response = socket().query(join_query(id));
     qDebug() << "join result: " << response;
-    //error_alert("Error while joining", "Wrong ID");
+    // error_alert("Error while joining", "Wrong ID");
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("GameWindow");
 }

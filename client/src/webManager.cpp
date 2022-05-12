@@ -1,10 +1,9 @@
 #include "webManager.h"
+#include <QDebug>
 #include "queryTemplates.h"
 #include "sonicSocket.h"
-#include <QDebug>
 
-WebManager::WebManager(std::vector<QString> a_words) : dictionary(a_words) {
-}
+WebManager::WebManager(std::vector<QString> a_words) : dictionary(a_words) {}
 
 void WebManager::key_pressed(QChar button) {
     using client::queries::buffer_clear_query;
@@ -13,11 +12,10 @@ void WebManager::key_pressed(QChar button) {
 
     using client::web::socket;
 
-
     if (button == ' ' && clear_buffer) {
         clear_buffer = false;
         inputter.clearBuffer();
-        //socket().send(buffer_clear_query());
+        // socket().send(buffer_clear_query());
         socket().send(new_word_query());
     } else {
         inputter.addSymbol(button);
