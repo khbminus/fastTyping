@@ -15,6 +15,7 @@ JoinWindow::~JoinWindow() {
     delete ui;
 }
 
+// cppcheck-suppress unusedFunction
 void JoinWindow::on_JoinButton_clicked() {
     using client::queries::join_query;
     using client::web::socket;

@@ -14,7 +14,7 @@ class LocalManager final : public GameManager {
     void emit_correctness();
 
 public:
-    LocalManager(std::vector<QString> words);
+    explicit LocalManager(std::vector<QString> words);
     void key_pressed(QChar button) override;
     void backspace_pressed() override;
     QString get_buffer() override;

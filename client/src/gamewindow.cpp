@@ -35,6 +35,7 @@ void GameWindow::on_ReturnButton_clicked() {
     controller.setActiveWindow("MainWindow");
 }
 
+// cppcheck-suppress unusedFunction
 void GameWindow::keyPressEvent(QKeyEvent *event) {
     QString keysCombination = event->text();
 

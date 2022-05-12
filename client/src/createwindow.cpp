@@ -14,11 +14,13 @@ CreateWindow::~CreateWindow() {
     delete ui;
 }
 
+// cppcheck-suppress unusedFunction
 void CreateWindow::on_ReturnButton_clicked() {
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("MainWindow");
 }
 
+// cppcheck-suppress unusedFunction
 void CreateWindow::on_CreateButton_clicked() {
     auto &controller = FastTyping::WindowController::getInstance();
     // TODO get info about game

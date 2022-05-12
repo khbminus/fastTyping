@@ -1,9 +1,11 @@
 #include "webManager.h"
 #include <QDebug>
+#include <utility>
 #include "queryTemplates.h"
 #include "sonicSocket.h"
 
-WebManager::WebManager(std::vector<QString> a_words) : dictionary(a_words) {}
+WebManager::WebManager(std::vector<QString> a_words)
+    : dictionary(std::move(a_words)) {}
 
 void WebManager::key_pressed(QChar button) {
     using client::queries::buffer_clear_query;
@@ -46,18 +48,17 @@ std::optional<QChar> WebManager::next() {
     return std::nullopt;
 }
 
+// cppcheck-suppress unusedFunction
 void WebManager::end_slot() {
     emit end_signal();
 }
-
 void WebManager::error_slot() {
     emit error_signal();
 }
-
 void WebManager::correct_slot() {
     emit correct_signal();
 }
-
+// cppcheck-suppress unusedFunction
 void WebManager::correct_word_slot() {
     clear_buffer = true;
     emit correct_signal();

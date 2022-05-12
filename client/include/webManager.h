@@ -15,7 +15,7 @@ class WebManager final : public GameManager {
     bool clear_buffer = false;
 
 public:
-    WebManager(std::vector<QString> words);
+    explicit WebManager(std::vector<QString> words);
     void key_pressed(QChar button) override;
     void backspace_pressed() override;
     QString get_buffer() override;

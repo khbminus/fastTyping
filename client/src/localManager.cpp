@@ -1,6 +1,7 @@
 #include "localManager.h"
 #include <QDebug>
 #include <iterator>
+#include <utility>
 
 bool LocalManager::check_prefix() {
     QString buffer = inputter.getBuffer();
@@ -23,7 +24,7 @@ void LocalManager::emit_correctness() {
 }
 
 LocalManager::LocalManager(std::vector<QString> a_words)
-    : dictionary(a_words) {}
+    : dictionary(std::move(a_words)) {}
 
 void LocalManager::key_pressed(QChar button) {
     if (button == ' ') {
@@ -49,6 +50,7 @@ void LocalManager::backspace_pressed() {
     emit_correctness();
 }
 
+// cppcheck-suppress unusedFunction
 QString LocalManager::get_buffer() {
     return inputter.getBuffer();
 }
@@ -57,6 +59,7 @@ QString LocalManager::blob() {
     return dictionary.blob();
 }
 
+// cppcheck-suppress unusedFunction
 std::optional<QChar> LocalManager::next() {
     if (!check_prefix()) {
         return std::nullopt;

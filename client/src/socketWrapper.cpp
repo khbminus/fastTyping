@@ -94,7 +94,7 @@ SocketWrapper::SocketWrapper(QString ip, short port, ResponseHandler *a_handler)
     while (!socket_wrap) {
         wait_for_init.wait(l);
     }
-
+    // cppcheck-suppress knownConditionTrueFalse
     if (socket_wrap == nullptr) {
         exit(0);
     }
@@ -114,6 +114,7 @@ SocketWrapper::~SocketWrapper() {
     qDebug() << "disconnected";
 }
 
+// cppcheck-suppress unusedFunction
 QString SocketWrapper::get_response() {
     std::unique_lock l{response_mutex};
     while (responses.empty()) {
