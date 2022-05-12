@@ -48,8 +48,8 @@ TEST_CASE("MapUserStorage") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
     MapUserStorage storage;
-    User &a = storage.get(name1);
-    User &b = storage.get(name2);
+    const User &a = storage.get(name1);
+    const User &b = storage.get(name2);
     CHECK(a.getId() + 1 == b.getId());
     CHECK(storage.get(name1) == a);
     CHECK(storage.get(name1) != b);
