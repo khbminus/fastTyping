@@ -21,10 +21,15 @@ int main(int argc, char *argv[]) {
     /*
     WebManager manager({"This", "is", "sample", "don't", "judge", "me"});
 
-    QObject::connect(&response_handler, &client::responses::APIHandler::correct_signal, &manager, &WebManager::correct_slot);
-    QObject::connect(&response_handler, &client::responses::APIHandler::error_signal, &manager, &WebManager::error_slot);
-    QObject::connect(&response_handler, &client::responses::APIHandler::end_signal, &manager, &WebManager::end_slot);
-    QObject::connect(&response_handler, &client::responses::APIHandler::correct_word_signal, &manager, &WebManager::correct_word_slot);
+    QObject::connect(&response_handler,
+    &client::responses::APIHandler::correct_signal, &manager,
+    &WebManager::correct_slot); QObject::connect(&response_handler,
+    &client::responses::APIHandler::error_signal, &manager,
+    &WebManager::error_slot); QObject::connect(&response_handler,
+    &client::responses::APIHandler::end_signal, &manager,
+    &WebManager::end_slot); QObject::connect(&response_handler,
+    &client::responses::APIHandler::correct_word_signal, &manager,
+    &WebManager::correct_word_slot);
     //*/
     auto &controller = FastTyping::WindowController::getInstance();
     auto mainWindow = QSharedPointer<QMainWindow>(new MainWindow());

@@ -1,14 +1,13 @@
 #ifndef WEB_MANAGER_H
 #define WEB_MANAGER_H
 
-#include "gameManager.h"
-#include "managerUtils.h"
-
 #include <QList>
 #include <QObject>
 #include <QVector>
 #include <optional>
 #include <vector>
+#include "gameManager.h"
+#include "managerUtils.h"
 
 class WebManager final : public GameManager {
     LocalInputter inputter;
@@ -29,4 +28,4 @@ public slots:
     void correct_word_slot();
 };
 
-#endif// GAME_MANAGER_H
+#endif  // GAME_MANAGER_H

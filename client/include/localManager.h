@@ -1,12 +1,11 @@
 #ifndef LOCAL_MANAGER_H
 #define LOCAL_MANAGER_H
 
-#include "gameManager.h"
-#include "managerUtils.h"
-
 #include <QObject>
 #include <optional>
 #include <vector>
+#include "gameManager.h"
+#include "managerUtils.h"
 
 class LocalManager final : public GameManager {
     LocalInputter inputter;
@@ -23,4 +22,4 @@ public:
     QString blob() override;
 };
 
-#endif// GAME_MANAGER_H
+#endif  // GAME_MANAGER_H

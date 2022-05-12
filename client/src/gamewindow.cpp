@@ -1,18 +1,19 @@
 #include "gamewindow.h"
+#include <iostream>
 #include "queryTemplates.h"
 #include "sonicSocket.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
-#include <iostream>
 
-
-GameWindow::GameWindow(GameManager *manager, QWidget *parent) : QMainWindow(parent),
-                                                                ui(new Ui::GameWindow),
-                                                                main_manager(manager) {
-    QObject::connect(manager, &GameManager::correct_signal, this, &GameWindow::correct_slot);
-    QObject::connect(manager, &GameManager::error_signal, this, &GameWindow::error_slot);
+GameWindow::GameWindow(GameManager *manager, QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::GameWindow), main_manager(manager) {
+    QObject::connect(manager, &GameManager::correct_signal, this,
+                     &GameWindow::correct_slot);
+    QObject::connect(manager, &GameManager::error_signal, this,
+                     &GameWindow::error_slot);
     QObject::connect(manager, &GameManager::end_signal, this, &GameWindow::end);
-    QObject::connect(manager, &GameManager::print_signal, this, &GameWindow::print);
+    QObject::connect(manager, &GameManager::print_signal, this,
+                     &GameWindow::print);
 
     ui->setupUi(this);
     palette = ui->userText->palette();
@@ -24,7 +25,6 @@ GameWindow::GameWindow(GameManager *manager, QWidget *parent) : QMainWindow(pare
     ui->dictLabel->setPalette(palette);
     ui->dictLabel->setText(manager->blob());
 }
-
 
 GameWindow::~GameWindow() {
     delete ui;
@@ -48,7 +48,6 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
         main_manager->key_pressed(keysCombination[0]);
     }
 }
-
 
 void GameWindow::error_slot() {
     palette.setColor(ui->userText->backgroundRole(), Qt::red);

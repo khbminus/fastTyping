@@ -17,7 +17,6 @@ void error_alert(QString title, QString text, bool is_blocking) {
 
     message_box.exec();
 
-
     if (message_box.clickedButton() == abort) {
         std::exit(0);
     }
