@@ -28,10 +28,13 @@ json Game::checkUnsafe(int uid) {
     };
     return result;
 }
-[[maybe_unused]] json Game::check(int uid) {
+
+// сppcheck-suppress unusedFunction
+json Game::check(int uid) {
     std::unique_lock l{mutex};
     return checkUnsafe(uid);
 }
+
 json Game::addNewChar(int uid, char c) {
     std::unique_lock l{mutex};
     additionalInfo[uid].currentBuffer += c;
