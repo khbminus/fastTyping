@@ -28,7 +28,7 @@ json Game::checkUnsafe(int uid) {
     };
     return result;
 }
-json Game::check(int uid) {
+[[maybe_unused]] json Game::check(int uid) {
     std::unique_lock l{mutex};
     return checkUnsafe(uid);
 }
