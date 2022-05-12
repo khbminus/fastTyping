@@ -24,6 +24,7 @@ namespace FastTyping::Server {
             sql = "CREATE TABLE IF NOT EXISTS MISTAKES("
                   "ID SERIAL PRIMARY KEY,"
                   "USER_ID INT    NOT NULL,"
+                  "KEYBOARD_TYPE TEXT NOT NULL,"
                   "POST_DATE DATE NOT NULL DEFAULT CURRENT_DATE,"
                   "MISTAKE  TEXT NOT NULL);";
             W.exec(sql);
@@ -98,24 +99,25 @@ namespace FastTyping::Server {
         connect.disconnect();
     }
 
-    void Database::addMistake(int userId, char let1, char let2) {
+    void Database::addMistake(int userId, char let1, char let2, std::string keyboardType) {
         std::unique_lock l{mutex};
         pqxx::work W(connect);
-        W.exec("INSERT INTO MISTAKES(USER_ID, MISTAKE)\n"
+        W.exec("INSERT INTO MISTAKES(USER_ID, KEYBOARD_TYPE, MISTAKE)\n"
                "VALUES(" +
-               std::to_string(userId) + ", '" + let1 + let2 + "');");
+               std::to_string(userId) + ", '" + keyboardType + "', '" + let1 + let2 + "');");
         W.commit();
     }
 
-    std::vector<std::pair<char, char>> Database::getTopMistakes(int userId, int number) {
+    std::vector<std::pair<char, char>> Database::getTopMistakes(int userId, int number, std::string keyboardType) {
         std::unique_lock l{mutex};
         pqxx::work W(connect);
         std::vector<std::pair<char, char>> result;
         pqxx::result find_by_name = W.exec("SELECT MISTAKE, COUNT(MISTAKE) AS value_occurrence "
                                            "FROM MISTAKES WHERE USER_ID = " +
-                                           std::to_string(userId) + " GROUP BY MISTAKE "
-                                                                    "ORDER BY value_occurrence DESC "
-                                                                    "LIMIT " +
+                                           std::to_string(userId) + " AND KEYBOARD_TYPE = '" + keyboardType + 
+                                           "' GROUP BY MISTAKE "
+                                           "ORDER BY value_occurrence DESC "
+                                           "LIMIT " +
                                            std::to_string(number) + ";");
         for (auto row: find_by_name) {
             result.push_back({row["MISTAKE"].c_str()[0], row["MISTAKE"].c_str()[1]});
