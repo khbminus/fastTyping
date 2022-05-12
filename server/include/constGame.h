@@ -10,7 +10,6 @@
 namespace FastTyping::Logic {
 
 struct Dictionary : AbstractDictionary {
-    std::vector<std::string> words;
     explicit Dictionary(std::vector<std::string> words_)
         : words(std::move(words_)) {}
 
@@ -21,25 +20,30 @@ struct Dictionary : AbstractDictionary {
     [[nodiscard]] size_t getWordCount() const override {
         return words.size();
     }
-    [[nodiscard]] std::vector<std::string> getLine(int index) const override {
+    [[nodiscard]] std::vector<std::string> getLine(int) const override {
         return words;
     }
     [[nodiscard]] size_t getLinesCount() const override {
         return 1;
     }
+
+private:
+    std::vector<std::string> words;
 };
 
 struct SimpleParser : AbstractParser {
     [[nodiscard]] bool isFullCorrect(
         const std::string &inputWord,
         const std::string &dictionaryWord) const override {
-        return dictionaryWord == inputWord;
+        return dictionaryWord + ' ' == inputWord;
     }
     [[nodiscard]] bool isPrefixCorrect(
         const std::string &inputWord,
         const std::string &dictionaryWord) const override {
-        std::size_t minSize = std::min(inputWord.size(), dictionaryWord.size());
-        for (std::size_t i = 0; i < minSize; i++) {
+        if (inputWord.size() > dictionaryWord.size()) {
+            return false;
+        }
+        for (std::size_t i = 0; i < inputWord.size(); i++) {
             if (inputWord[i] != dictionaryWord[i]) {
                 return false;
             }

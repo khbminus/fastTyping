@@ -23,7 +23,9 @@ json Game::checkUnsafe(int uid) {
     result["header"] = {{"type", "checkResult"}};
     result["body"] = {
         {"isFullCorrect", parser->isFullCorrect(word, rightWord)},
-        {"isPrefixCorrect", parser->isPrefixCorrect(word, rightWord)}};
+        {"isPrefixCorrect", parser->isPrefixCorrect(word, rightWord)},
+        {"isEnd", false},
+    };
     return result;
 }
 json Game::check(int uid) {
@@ -33,7 +35,15 @@ json Game::check(int uid) {
 json Game::addNewChar(int uid, char c) {
     std::unique_lock l{mutex};
     additionalInfo[uid].currentBuffer += c;
-    return checkUnsafe(uid);
+    auto checkResult = checkUnsafe(uid);
+    if (checkResult["body"]["isFullCorrect"] == true) {
+        auto &info = additionalInfo[uid];
+        info.currentBuffer.clear();
+        info.currentWord++;
+        checkResult["body"]["isEnd"] = isEndedUnsafe(uid);
+        return checkResult;
+    }
+    return checkResult;
 }
 json Game::backspace(int uid) {
     std::unique_lock l{mutex};
@@ -44,35 +54,6 @@ json Game::backspace(int uid) {
     }
     word.pop_back();
     return checkUnsafe(uid);
-}
-
-json Game::getNewWord(int uid) {
-    std::unique_lock l{mutex};
-    auto &info = additionalInfo[uid];
-    json result;
-    result["header"] = {{"type", "newWordResult"}};
-    result["body"] = {
-        {"isEnd", info.currentWord + 1 == dictionary->getWordCount()},
-        {"newWord", ""}};
-    if (info.currentWord + 1 < dictionary->getWordCount()) {
-        clearUnsafe(uid);
-        result["body"]["newWord"] = dictionary->getWord(++info.currentWord);
-    }
-    return result;
-}
-
-json Game::clearUnsafe(int uid) {
-    auto &info = additionalInfo[uid];
-    info.currentBuffer.clear();
-    json result;
-    result["header"] = {{"type", "clearResult"}};
-    result["body"] = {{"status", "successful"}};
-    return result;
-}
-
-json Game::clearBuffer(int uid) {
-    std::unique_lock l{mutex};
-    return clearUnsafe(uid);
 }
 
 json Game::getNewLine(int uid) {

@@ -8,9 +8,8 @@
 #include <unordered_map>
 #include "user.h"
 
-using nlohmann::json;
-
 namespace FastTyping::Server {
+using nlohmann::json;
 struct Game {
 public:
     Game(std::unique_ptr<FastTyping::Logic::AbstractParser> parser_,
@@ -31,14 +30,11 @@ public:
     json backspace(int uid);
     json check(int uid);
     json getNewLine(int uid);
-    json getNewWord(int uid);
     json getStateOfUsers();
-    json clearBuffer(int uid);
 
 private:
     json checkUnsafe(int uid);  // THREAD UNSAFE
     bool isEndedUnsafe(int uid);
-    json clearUnsafe(int uid);
 
     std::string gameName;
     int id = 0;
