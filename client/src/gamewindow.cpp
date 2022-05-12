@@ -1,13 +1,19 @@
 #include "gamewindow.h"
-#include <iostream>
+#include "queryTemplates.h"
+#include "sonicSocket.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
+#include <iostream>
 
-GameWindow::GameWindow(QWidget *parent)
-    : QMainWindow(parent),
-      ui(new Ui::GameWindow),
-      handlers{new game::RaceGame, new game::client::GameClient("aboba")},
-      main_handler(handlers[0]) {
+
+GameWindow::GameWindow(GameManager *manager, QWidget *parent) : QMainWindow(parent),
+                                                                ui(new Ui::GameWindow),
+                                                                main_manager(manager) {
+    QObject::connect(manager, &GameManager::correct_signal, this, &GameWindow::correct_slot);
+    QObject::connect(manager, &GameManager::error_signal, this, &GameWindow::error_slot);
+    QObject::connect(manager, &GameManager::end_signal, this, &GameWindow::end);
+    QObject::connect(manager, &GameManager::print_signal, this, &GameWindow::print);
+
     ui->setupUi(this);
     palette = ui->userText->palette();
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
@@ -16,14 +22,12 @@ GameWindow::GameWindow(QWidget *parent)
     ui->userText->setPalette(palette);
     ui->dictLabel->setAutoFillBackground(true);
     ui->dictLabel->setPalette(palette);
-    ui->dictLabel->setText("This is sample don't judge me");
+    ui->dictLabel->setText(manager->blob());
 }
+
 
 GameWindow::~GameWindow() {
     delete ui;
-    for (auto handler : handlers) {
-        delete handler;
-    }
 }
 
 void GameWindow::on_ReturnButton_clicked() {
@@ -33,43 +37,34 @@ void GameWindow::on_ReturnButton_clicked() {
 
 void GameWindow::keyPressEvent(QKeyEvent *event) {
     QString keysCombination = event->text();
-    //    qDebug() << keysCombination;
 
     if (keysCombination == "") {
-        // for shift, ctrl, alt
         return;
     }
+
     if (event->key() == Qt::Key_Backspace) {
-        for (auto handler : handlers) {
-            handler->backspacePressed();
-        }
-        emit keyPressed();
-        return;
+        main_manager->backspace_pressed();
+    } else {
+        main_manager->key_pressed(keysCombination[0]);
     }
-
-    for (auto handler : handlers) {
-        handler->keyPressed(keysCombination[0]);
-    }
-    emit keyPressed();
 }
 
-void GameWindow::keyPressed() {
-    ui->userText->setText(main_handler->getBuffer());
-    if (main_handler->getErrorStatus())
-        setError();
-    else
-        unsetError();
+
+void GameWindow::error_slot() {
+    palette.setColor(ui->userText->backgroundRole(), Qt::red);
     ui->userText->setPalette(palette);
-    if (main_handler->isEnded()) {
-        auto &controller = FastTyping::WindowController::getInstance();
-        controller.setActiveWindow("StatWindow");
-    }
 }
 
-void GameWindow::setError() {
-    palette.setColor(ui->userText->backgroundRole(), Qt::darkRed);
-}
-
-void GameWindow::unsetError() {
+void GameWindow::correct_slot() {
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
+    ui->userText->setPalette(palette);
+}
+
+void GameWindow::end() {
+    auto &controller = FastTyping::WindowController::getInstance();
+    controller.setActiveWindow("StatWindow");
+}
+
+void GameWindow::print(QString const &line) {
+    ui->userText->setText(line);
 }
