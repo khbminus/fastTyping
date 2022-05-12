@@ -17,7 +17,7 @@ namespace generator {
     bool operator<(const UsersTypo &a, const UsersTypo &b);
 
     struct AbstractTextGenerator {
-        virtual std::vector<std::string> getTop(int k, UsersTypo mistake = {'$', '$'}) = 0;
+        virtual std::vector<std::string> getTop(int k, bool isAdaptive = false, UsersTypo mistake = {'$', '$'}) = 0;
     };
 
     struct TextGenerator : AbstractTextGenerator {
@@ -29,7 +29,7 @@ namespace generator {
 
     public:
         TextGenerator(std::string &filename);
-        std::vector<std::string> getTop(int k, UsersTypo mistake = {'$', '$'}) override;
+        std::vector<std::string> getTop(int k, bool isAdaptive = false, UsersTypo mistake = {'$', '$'}) override;
     };
 }// namespace generator
 

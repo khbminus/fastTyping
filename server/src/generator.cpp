@@ -40,8 +40,8 @@ namespace generator {
         }
     }
 
-    std::vector<std::string> TextGenerator::getTop(int k, UsersTypo mistake) {
-        if (mistake.letter1 == '$') {// if it's not adaptive return random words
+    std::vector<std::string> TextGenerator::getTop(int k, bool isAdaptive, UsersTypo mistake) {
+        if (!isAdaptive) {// if it's not adaptive return random words
             return getRandom(k);
         }
         std::vector<std::string> result(k);

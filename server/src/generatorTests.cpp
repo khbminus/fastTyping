@@ -10,15 +10,15 @@ generator::TextGenerator gen(path);
 TEST_CASE("output") {
     std::vector<std::string> res = gen.getTop(5);
     assert(res.size() == 5);
-    for (int i =0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         std::cout << res[i] << '\n';
     }
 }
 
 TEST_CASE("Mistakes output") {
-    std::vector<std::string> res = gen.getTop( 5, {'a', 'c'});
+    std::vector<std::string> res = gen.getTop(5, true, {'a', 'c'});
     assert(res.size() == 5);
-    for (int i =0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         std::cout << res[i] << '\n';
     }
 }

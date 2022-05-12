@@ -37,7 +37,7 @@ namespace FastTyping::Logic {
             // TODO get list of user's mistakes from DB
             std::vector<generator::UsersTypo> mistakes = {{'a', 'b'}, {'c', 'd'}};
             for (auto cur_mistake: mistakes) {
-                std::vector<std::string> cur_words = gen.getTop(k, cur_mistake);
+                std::vector<std::string> cur_words = gen.getTop(k, true, cur_mistake);
                 for (auto x: cur_words) words.push_back(x);
             }
         }
@@ -52,7 +52,7 @@ namespace FastTyping::Logic {
         [[nodiscard]] std::vector<std::string> getLine(int index) const override {
             return words;
         }
-        [[nodiscard]] size_t getLinesCount() const override {
+        [[nodiscard]] std::size_t getLinesCount() const override {
             return 1;// TODO lol what???
         }
     };
