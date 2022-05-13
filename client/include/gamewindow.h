@@ -1,9 +1,6 @@
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
-//#include <QChar>
-#include "gameClient.h"
-#include "gameLogic.h"
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <QLabel>
@@ -11,19 +8,18 @@
 #include <QPushButton>
 #include <QVariant>
 #include <memory>
+#include "gameManager.h"
 
 namespace Ui {
-    class GameWindow;
+class GameWindow;
 }
 
 class GameWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit GameWindow(QWidget *parent = nullptr);
+    explicit GameWindow(GameManager *manager, QWidget *parent = nullptr);
     ~GameWindow();
-    void setError();
-    void unsetError();
 
 private:
     Ui::GameWindow *ui;
@@ -34,13 +30,19 @@ private:
 signals:
     void press(QVariant key);
     void release(QVariant key);
+    // std::vector<game::AbstractGameManager *> handlers;
+    // game::AbstractGameManager *main_handler;
+    GameManager *main_manager;
 
 protected:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 private slots:
-    void keyPressed();
     void on_ReturnButton_clicked();
+    void error_slot();
+    void correct_slot();
+    void print(QString const &line);
+    void end();
 };
 
-#endif// GAMEWINDOW_H
+#endif  // GAMEWINDOW_H

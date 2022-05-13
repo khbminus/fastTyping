@@ -1,49 +1,56 @@
 #ifndef FASTTYPING_CONSTGAME_H
 #define FASTTYPING_CONSTGAME_H
 
-#include "abc.h"
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <thread>
+#include "abc.h"
 
 namespace FastTyping::Logic {
 
-    struct Dictionary : AbstractDictionary {
-        std::vector<std::string> words;
-        explicit Dictionary(std::vector<std::string> words_) : words(std::move(words_)) {}
+struct Dictionary : AbstractDictionary {
+    explicit Dictionary(std::vector<std::string> words_)
+        : words(std::move(words_)) {}
 
-        [[nodiscard]] std::string getWord(int index) const override {
-            return words[index];
-        }
+    [[nodiscard]] std::string getWord(int index) const override {
+        return words[index];
+    }
 
-        [[nodiscard]] size_t getWordCount() const override {
-            return words.size();
-        }
-        [[nodiscard]] std::vector<std::string> getLine(int index) const override {
-            return words;
-        }
-        [[nodiscard]] size_t getLinesCount() const override {
-            return 1;
-        }
-    };
+    [[nodiscard]] size_t getWordCount() const override {
+        return words.size();
+    }
+    [[nodiscard]] std::vector<std::string> getLine(int) const override {
+        return words;
+    }
+    [[nodiscard]] size_t getLinesCount() const override {
+        return 1;
+    }
 
-    struct SimpleParser : AbstractParser {
+private:
+    std::vector<std::string> words;
+};
 
-        [[nodiscard]] bool isFullCorrect(const std::string &inputWord, const std::string &dictionaryWord) const override {
-            return dictionaryWord == inputWord;
+struct SimpleParser : AbstractParser {
+    [[nodiscard]] bool isFullCorrect(
+        const std::string &inputWord,
+        const std::string &dictionaryWord) const override {
+        return dictionaryWord + ' ' == inputWord;
+    }
+    [[nodiscard]] bool isPrefixCorrect(
+        const std::string &inputWord,
+        const std::string &dictionaryWord) const override {
+        if (inputWord.size() > dictionaryWord.size()) {
+            return false;
         }
-        [[nodiscard]] bool isPrefixCorrect(const std::string &inputWord, const std::string &dictionaryWord) const override {
-            if (inputWord.size() > dictionaryWord.size())
+        for (std::size_t i = 0; i < inputWord.size(); i++) {
+            if (inputWord[i] != dictionaryWord[i]) {
                 return false;
-            for (std::size_t i = 0; i < inputWord.size(); i++) {
-                if (inputWord[i] != dictionaryWord[i])
-                    return false;
             }
-            return true;
         }
-    };
+        return true;
+    }
+};
 
-
-};    // namespace FastTyping::Logic
-#endif// FASTTYPING_CONSTGAME_H
+};      // namespace FastTyping::Logic
+#endif  // FASTTYPING_CONSTGAME_H

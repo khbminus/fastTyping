@@ -11,17 +11,28 @@ jobs:
       - uses: actions/checkout@v2
       - run: clang-format-12 -i $(find . -iname '*.cpp' -or -iname '*.c' -or -iname '*.h' -and -not -iname 'doctest.h')
       - run: |
+          git config --global user.email "github-runner@nowhere.kek"
+          git config --global user.name "GitHub Actions"
           git add .
           git commit -m "Automatic code format done by clang-format" || echo "Nothing to commit"
           git push || echo "Nothing to push"
-  cppcheck:
+  cppcheck-client:
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:base
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
       - run: cppcheck --version
-      - run: cppcheck -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
+      - run: cd client && cppcheck -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
+  cppcheck-server:
+    runs-on: ubuntu-latest
+    container: ghcr.io/khbminus/fasttyping-ci:base
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+      - run: cppcheck --version
+      - run: cd server && cppcheck -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
+
   server-build:
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:base
