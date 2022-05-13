@@ -60,7 +60,6 @@ namespace FastTyping::Server {
         virtual std::shared_ptr<Game> get(int id, json &errors) = 0;
         virtual json createGame(const json &body) = 0;
         virtual Game *getGame(int game_id) = 0;
-        virtual void setGame(int game_id, std::shared_ptr<Game> game) = 0;
         virtual ~AbstractGameStorage() = default;
     };
 
@@ -68,9 +67,6 @@ namespace FastTyping::Server {
     public:
         std::shared_ptr<Game> get(int id, json &errors) override;
         json createGame(const json &body) override;
-        void setGame(int game_id, std::shared_ptr<Game> game) override {
-            games[game_id] = std::move(game);
-        }
         Game *getGame(int game_id) override {
             return games[game_id].get();
         }

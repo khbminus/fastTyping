@@ -30,6 +30,12 @@ namespace FastTyping::Server {
         [[nodiscard]] int isWantToExit() const noexcept {
             return (wantToExit ? 1 : 0);
         }
+        
+        void setGame(std::shared_ptr<Game> game) {
+            std::unique_lock l{mutex};
+            currentGame = std::move(game);
+            // setGameId(TODO)
+        }
         void setGameId(int gameId_) noexcept {
             gameId = gameId_;
         }
