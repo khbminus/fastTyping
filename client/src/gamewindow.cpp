@@ -1,12 +1,11 @@
 #include "gamewindow.h"
+#include <qqml.h>
+#include <QQuickItem>
 #include <iostream>
 #include "queryTemplates.h"
 #include "sonicSocket.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
-#include <QQuickItem>
-#include <iostream>
-#include <qqml.h>
 
 GameWindow::GameWindow(GameManager *manager, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::GameWindow), main_manager(manager) {
@@ -27,8 +26,10 @@ GameWindow::GameWindow(GameManager *manager, QWidget *parent)
     ui->dictLabel->setAutoFillBackground(true);
     ui->dictLabel->setPalette(palette);
     ui->dictLabel->setText("This is sample don't judge me");
-    connect(this, SIGNAL(press(QVariant)), ui->quickWidget->rootObject(), SLOT(pressKey(QVariant)));
-    connect(this, SIGNAL(release(QVariant)), ui->quickWidget->rootObject(), SLOT(releaseKey(QVariant)));
+    connect(this, SIGNAL(press(QVariant)), ui->quickWidget->rootObject(),
+            SLOT(pressKey(QVariant)));
+    connect(this, SIGNAL(release(QVariant)), ui->quickWidget->rootObject(),
+            SLOT(releaseKey(QVariant)));
     ui->dictLabel->setText(manager->blob());
 }
 
