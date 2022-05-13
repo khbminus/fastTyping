@@ -18,11 +18,6 @@ namespace FastTyping::Server {
             // getGameId()
             return currentGame.get();
         }
-        void setGame(std::shared_ptr<Game> game) {
-            std::unique_lock l{mutex};
-            currentGame = std::move(game);
-            // setGameId(TODO)
-        }
 
         [[nodiscard]] const std::string &name() const noexcept {
             return userName;
