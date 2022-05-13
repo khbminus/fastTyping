@@ -25,13 +25,14 @@ private:
     Ui::GameWindow *ui;
     QPalette palette;
 
-    // std::vector<game::AbstractGameManager *> handlers;
-    // game::AbstractGameManager *main_handler;
+    //    std::vector<game::AbstractGameManager *> handlers;
+    //    game::AbstractGameManager *main_handler;
     GameManager *main_manager;
-
 signals:
     void press(QVariant key);
     void release(QVariant key);
+    // std::vector<game::AbstractGameManager *> handlers;
+    // game::AbstractGameManager *main_handler;
 
 protected:
     void keyPressEvent(QKeyEvent *event);
