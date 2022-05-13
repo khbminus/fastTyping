@@ -1,13 +1,12 @@
 #include "gamewindow.h"
+#include <qqml.h>
+#include <QQuickItem>
 #include "sonicSocket.h"
 #include <iostream>
 #include "confirmWindow.h"
 #include "queryTemplates.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
-#include <QQuickItem>
-#include <iostream>
-#include <qqml.h>
 
 GameWindow::GameWindow(GameManager *manager, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::GameWindow), main_manager(manager) {
