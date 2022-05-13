@@ -69,7 +69,7 @@ else ()
             )
 endif ()
 
-target_include_directories(client PRIVATE include ../common/include)
+target_include_directories(client PUBLIC include ../common/include)
 
 #target_compile_definitions(client
 #        PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
