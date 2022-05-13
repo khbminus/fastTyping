@@ -50,12 +50,7 @@ void GameWindow::on_ReturnButton_clicked() {
 // cppcheck-suppress unusedFunction
 void GameWindow::keyPressEvent(QKeyEvent *event) {
     QString keysCombination = event->text();
-    //qDebug() << keysCombination;
     emit press(event->key());
-    //    QQuickItem *keyboard = ui->quickWidget->rootObject();
-    //    QVariant key = event->key();
-    //    QVariant retValue;
-    //    QMetaObject::invokeMethod(keyboard, "pressKey", Q_RETURN_ARG(QVariant, retValue), Q_ARG(QVariant, key));
 
     if (keysCombination == "") {
         return;
@@ -68,17 +63,14 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
     }
 }
 
+// cppcheck-suppress unusedFunction
+void GameWindow::keyReleaseEvent(QKeyEvent *event) {
+    emit release(event->key());
+}
+
 void GameWindow::error_slot() {
     palette.setColor(ui->userText->backgroundRole(), Qt::red);
     ui->userText->setPalette(palette);
-}
-
-void GameWindow::keyReleaseEvent(QKeyEvent *event) {
-    emit release(event->key());
-    //    QQuickItem *keyboard = ui->quickWidget->rootObject();
-    //    QVariant key = event->key();
-    //    QVariant retValue;
-    //    QMetaObject::invokeMethod(keyboard, "releaseKey", Q_RETURN_ARG(QVariant, retValue), Q_ARG(QVariant, key));
 }
 
 void GameWindow::correct_slot() {
