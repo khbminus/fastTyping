@@ -58,6 +58,7 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
     }
 }
 
+// cppcheck-suppress unusedFunction
 void GameWindow::keyReleaseEvent(QKeyEvent *event) {
     emit release(event->key());
 }
