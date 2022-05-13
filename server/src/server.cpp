@@ -151,12 +151,12 @@ namespace FastTyping::Server {
             try {
                 query = json::parse(line);
                 if (query["header"]["type"] != "hello") {
-                    json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "first query should be hello"}}}};
+                    json result = {{"header", {{"type", "wrongFirstQueryError"}}}, {"body", {{"text", "first query should be hello"}}}};
                     client << result << '\n';
                     return;
                 }
                 if (!query["body"]["name"].is_string()) {
-                    json result = {{"header", {{"type", "error"}}}, {"body", {{"text", "can't find \"name\""}}}};
+                    json result = {{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find \"name\""}}}};
                     client << result << '\n';
                 }
                 user_name = query["body"]["name"].get<std::string>();
