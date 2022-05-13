@@ -5,32 +5,21 @@
 #include <pqxx/pqxx>
 
 namespace FastTyping::Server {
-    struct AbstractDatabase {
-        AbstractDatabase() = default;
-        virtual ~AbstractDatabase() = default;
-        // USERS table
-        virtual std::string getName(int) = 0;
-        virtual std::string getPassword(int) = 0;
-        virtual void setPassword(int, const std::string &) = 0;
-        virtual int getId(const std::string &) = 0;// or create it
-        virtual bool nameExist(const std::string &) = 0;
-        // MISTAKES table
-        virtual void addMistake(int, char, char, std::string) = 0;
-        virtual std::vector<std::pair<char, char>> getTopMistakes(int, int, std::string) = 0;
-    };
-    struct Database : AbstractDatabase {
+    struct Database {
     public:
         Database();
-        ~Database() override;
+        ~Database();
         // USERS table
-        std::string getPassword(int id) override;
-        std::string getName(int) override;
-        void setPassword(int, const std::string &) override;// base password == '0000'
-        int getId(const std::string &) override;            // or create it
-        bool nameExist(const std::string &) override;
+        std::string getPassword(int id);
+        std::string getName(int);
+        void setPassword(int, const std::string &);// base password == '0000'
+        int getId(const std::string &);            // or create it
+        bool nameExist(const std::string &);
+        void dropUsers();
         // MISTAKES table
-        void addMistake(int, char, char, std::string) override;
-        std::vector<std::pair<char, char>> getTopMistakes(int, int, std::string) override;
+        void addMistake(int, char, char, std::string);
+        std::vector<std::pair<char, char>> getTopMistakes(int, int, std::string);
+        void dropMistakes();
 
     private:
         mutable std::mutex mutex;

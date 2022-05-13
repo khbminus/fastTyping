@@ -4,14 +4,15 @@ namespace FastTyping::Server {
     Database::Database() : connect("dbname = fast_typing") {
         try {
             if (connect.is_open()) {
-                std::cout << "Opened database successfully: " << connect.dbname() << std::endl;
+                std::cerr << "Opened database successfully: " << connect.dbname() << std::endl;
             } else {
-                std::cout << "Can't open database" << std::endl;
+                std::cerr << "Can't open database" << std::endl;
+                std::abort();
             }
 
             /* Create SQL statement */
             sql = "CREATE TABLE IF NOT EXISTS USERS("
-                  "ID INT PRIMARY KEY NOT NULL,"
+                  "ID SERIAL PRIMARY KEY,"
                   "NAME           TEXT    NOT NULL,"
                   "PASSWORD           TEXT NOT NULL);";
 
@@ -35,6 +36,18 @@ namespace FastTyping::Server {
         }
     }
 
+    void Database::dropUsers() {
+        std::unique_lock l{mutex};
+        pqxx::work W(connect);
+        W.exec("DROP TABLE USERS;");
+        W.commit();
+    }
+    void Database::dropMistakes() {
+        std::unique_lock l{mutex};
+        pqxx::work W(connect);
+        W.exec("DROP TABLE MISTAKES;");
+        W.commit();
+    }
     std::string Database::getPassword(int id) {
         std::unique_lock l{mutex};
         pqxx::work W(connect);
@@ -70,19 +83,18 @@ namespace FastTyping::Server {
     int Database::getId(const std::string &name) {// creating new user or return existed one's id
         std::unique_lock l{mutex};
         pqxx::work W(connect);
-        int id;
         pqxx::result find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + W.esc(name) + "';");
 
-        if (find_by_name.size() == 0) {
-            pqxx::result full_list = W.exec("SELECT * FROM USERS;");
-            id = full_list.size() + 1;
-            W.exec("INSERT INTO USERS(ID, NAME, PASSWORD)\n"
-                   "VALUES(" +
-                   std::to_string(id) + ", '" + W.esc(name) + "', '0000');");
-        } else {
-            for (auto row: find_by_name)
-                id = row["ID"].as<int>();
+        if (find_by_name.empty()) {
+            W.exec("INSERT INTO USERS(NAME, PASSWORD) "
+                   "VALUES('" +
+                   W.esc(name) + "', '0000');");
+            find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + W.esc(name) + "';");
         }
+        int id = 0;
+
+        for (auto row: find_by_name)
+            id = row["ID"].as<int>();
         W.commit();
         return id;
     }
@@ -90,9 +102,11 @@ namespace FastTyping::Server {
     bool Database::nameExist(const std::string &name) {
         std::unique_lock l{mutex};
         pqxx::work W(connect);
-        pqxx::result find_by_name = W.exec("SELECT * FROM USERS WHERE NAME = '" + W.esc(name) + "';");
+        pqxx::result find_by_name = W.exec("SELECT 1 "
+                                           "FROM USERS "
+                                           "WHERE NAME = ' + " + W.esc(name) + "';");
         W.commit();
-        return find_by_name.size() != 0;
+        return !find_by_name.empty();
     }
 
     Database::~Database() {
@@ -114,7 +128,7 @@ namespace FastTyping::Server {
         std::vector<std::pair<char, char>> result;
         pqxx::result find_by_name = W.exec("SELECT MISTAKE, COUNT(MISTAKE) AS value_occurrence "
                                            "FROM MISTAKES WHERE USER_ID = " +
-                                           std::to_string(userId) + " AND KEYBOARD_TYPE = '" + keyboardType + 
+                                           std::to_string(userId) + " AND KEYBOARD_TYPE = '" + keyboardType +
                                            "' GROUP BY MISTAKE "
                                            "ORDER BY value_occurrence DESC "
                                            "LIMIT " +
