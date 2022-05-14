@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: cppcheck --version
-      - run: cd server && cppcheck -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
+      - run: cd server && cppcheck -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
 
   server-build:
     runs-on: ubuntu-latest
