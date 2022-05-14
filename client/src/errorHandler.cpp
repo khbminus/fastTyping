@@ -4,7 +4,6 @@
 #include <QPushButton>
 #include <cstdlib>
 
-// cppcheck-suppress unusedFunction
 void error_alert(QString title,
                  QString text,
                  bool has_close_button,
