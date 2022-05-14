@@ -11,7 +11,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Widgets Network)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Quick Widgets Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets QuickWidgets Network)
 find_package(nlohmann_json 3.7.3 REQUIRED)
 
@@ -58,6 +58,9 @@ set(PROJECT_SOURCES
         src/mainwindow.ui
         src/statwindow.ui
         qml.qrc
+
+        include/keyboard.h
+        src/keyboard.cpp
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -87,7 +90,13 @@ target_link_libraries(client
         Qt${QT_VERSION_MAJOR}::QuickWidgets)
 
 target_link_libraries(client PRIVATE nlohmann_json::nlohmann_json)
-
+qt_add_qml_module(client
+        URI fasttyping.keyboard
+        VERSION 1.0
+        SOURCES
+        src/keyboard.cpp
+        include/keyboard.h
+        )
 set_target_properties(client PROPERTIES
         MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
         MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

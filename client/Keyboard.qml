@@ -1,14 +1,16 @@
 ﻿import QtQuick 2.15
+import fasttyping.keyboard 1.0
 
 Item {
     id:root
     objectName: "keyboard"
     width: parent.width
     height: parent.height
+    property KeyboardModel keyModel
 
     function pressKey(key) {
         console.log("pressed key", key);
-        console.log(pimpl.shiftModifier);
+        console.log("debug text", root.keyModel.firstRowModel);
 
         if (pimpl.shiftModifier < 0) {
             releaseKey(Qt.Key_Shift);
@@ -27,7 +29,6 @@ Item {
 
     function releaseKey(key) {
         console.log("released key", key);
-        console.log(pimpl.shiftModifier);
         if (key === Qt.Key_Shift) {
             pimpl.shiftModifier--;
         }
@@ -36,10 +37,6 @@ Item {
 
     signal pressed(int key)
     signal released(int key)
-
-    KeyModel {
-            id:keyModel
-    }
 
     QtObject {
         id:pimpl
@@ -52,16 +49,17 @@ Item {
     }
 
     Component {
-            id: keyButtonDelegate
-            KeyboardButton {
-                id: button
-                width: pimpl.buttonWidth
-                height: pimpl.rowHeight
-                text: ((!!pimpl.shiftModifier) ^ pimpl.capsModifier) ? letter.toUpperCase() : letter
-                inputPanel: root
-                key: keycode
-                color: clr
-            }
+        id: keyButtonDelegate
+        KeyboardButton {
+            id: button
+            width: pimpl.buttonWidth
+            height: pimpl.rowHeight
+            text: (pimpl.capsModifier ? ((!pimpl.shiftModifier && keycode == shiftKeycode) || (pimpl.shiftModifier && keycode != shiftKeycode) ? shiftLetter : letter) :
+                                        (pimpl.shiftModifier ? shiftLetter : letter))
+            inputPanel: root
+            key: keycode
+            color: clr
+        }
     }
     Rectangle {
         //width: pimpl.buttonWidth * 15 + pimpl.horizontalSpacing * 14
@@ -86,7 +84,7 @@ Item {
                     spacing: pimpl.horizontalSpacing
                     anchors.left:parent.left
                     Repeater {
-                        model: keyModel.numbersRowModel
+                        model: root.keyModel.numbersRowModel
                         delegate: keyButtonDelegate
                     }
                 }
@@ -120,7 +118,7 @@ Item {
                     spacing: pimpl.horizontalSpacing
                     anchors.horizontalCenter:parent.horizontalCenter
                     Repeater {
-                        model: keyModel.firstRowModel
+                        model: root.keyModel.firstRowModel
                         delegate: keyButtonDelegate
                     }
                 }
@@ -155,7 +153,7 @@ Item {
                     anchors.margins: 2 * pimpl.horizontalSpacing
                     /*anchors.horizontalCenter:parent.horizontalCenter*/
                     Repeater {
-                        model: keyModel.secondRowModel
+                        model: root.keyModel.secondRowModel
                         delegate: keyButtonDelegate
                     }
                 }
@@ -191,7 +189,7 @@ Item {
                     anchors.margins: 2 * pimpl.horizontalSpacing
                     Repeater {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        model: keyModel.thirdRowModel
+                        model: root.keyModel.thirdRowModel
                         delegate: keyButtonDelegate
                     }
                 }
