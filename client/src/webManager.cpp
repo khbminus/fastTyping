@@ -38,7 +38,6 @@ std::optional<QChar> WebManager::next() {
     return std::nullopt;
 }
 
-// cppcheck-suppress unusedFunction
 void WebManager::end_slot() {
     emit end_signal();
 }
@@ -48,7 +47,6 @@ void WebManager::error_slot() {
 void WebManager::correct_slot() {
     emit correct_signal();
 }
-// cppcheck-suppress unusedFunction
 void WebManager::correct_word_slot() {
     inputter.clearBuffer();
     emit print_signal(inputter.getBuffer());
