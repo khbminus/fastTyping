@@ -36,15 +36,20 @@ Server::Server()
         auto result = gameStorage->createGame(body);
         if (body.contains("autoJoin") && body["autoJoin"].is_boolean() &&
             body["autoJoin"]) {
+            if (!result["body"].contains("id") ||
+                !result["body"]["id"].is_number()) {
+                result["body"]["joined"] = false;
+                return result;
+            }
             json errors;
             auto game = gameStorage->get(result["body"]["id"], errors);
             if (game == nullptr) {
-                result["joined"] = false;
-                result["error"] = errors;
+                result["body"]["joined"] = false;
+                result["body"]["error"] = errors;
             } else {
                 user.setGame(game);
-                result["joined"] = true;
-                result["error"] = "";
+                result["body"]["joined"] = true;
+                result["body"]["error"] = "";
             }
         }
         return result;
