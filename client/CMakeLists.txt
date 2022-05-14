@@ -42,6 +42,7 @@ set(PROJECT_SOURCES
         src/socketWrapper.cpp
         src/sonicSocket.cpp
         src/webManager.cpp
+        src/confirmWindow.cpp
         include/gameManager.h
         include/errorHandler.h
         include/localManager.h
@@ -51,6 +52,7 @@ set(PROJECT_SOURCES
         include/socketWrapper.h
         include/sonicSocket.h
         include/webManager.h
+        include/confirmWindow.h
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
