@@ -1,8 +1,10 @@
 #include "joinwindow.h"
 #include <iostream>
+#include <nlohmann/json.hpp>
 #include "./ui_joinwindow.h"
 #include "errorHandler.h"
 #include "queryTemplates.h"
+#include "responseParse.h"
 #include "sonicSocket.h"
 #include "windowcontroller.h"
 
@@ -18,15 +20,29 @@ JoinWindow::~JoinWindow() {
 // cppcheck-suppress unusedFunction
 void JoinWindow::on_JoinButton_clicked() {
     using client::queries::join_query;
+    using client::responses::error_text;
+    using client::responses::is_success;
     using client::web::socket;
+    using nlohmann::json;
 
     bool is_correct_id = true;
     int id = ui->lineEdit->displayText().toInt(&is_correct_id);
-    QString response = socket().query(join_query(id));
-    qDebug() << "join result: " << response;
-    // error_alert("Error while joining", "Wrong ID");
-    auto &controller = FastTyping::WindowController::getInstance();
-    controller.setActiveWindow("GameWindow");
+
+    if (!is_correct_id) {
+        error_alert("Wrong Id", "Id should be non negative integer");
+        return;
+    }
+
+    QString raw_response = socket().query(join_query(id));
+    qDebug() << "join result: " << raw_response;
+    json response = json::parse(raw_response.toStdString());
+
+    if (is_success(response)) {
+        auto &controller = FastTyping::WindowController::getInstance();
+        controller.setActiveWindow("GameWindow");
+    } else {
+        error_alert("Join error", error_text(response));
+    }
 }
 
 void JoinWindow::on_ReturnButton_clicked() {

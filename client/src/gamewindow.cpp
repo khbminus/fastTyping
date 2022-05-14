@@ -1,7 +1,7 @@
 #include "gamewindow.h"
 #include <iostream>
-#include "queryTemplates.h"
 #include "confirmWindow.h"
+#include "queryTemplates.h"
 #include "sonicSocket.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
@@ -32,8 +32,8 @@ GameWindow::~GameWindow() {
 }
 
 void GameWindow::on_ReturnButton_clicked() {
-    using client::web::socket;
     using client::queries::leave_query;
+    using client::web::socket;
 
     if (confirm("Exit", "Are you really want to exit")) {
         qDebug() << "leave result: " << socket().query(leave_query());

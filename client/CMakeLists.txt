@@ -43,6 +43,7 @@ set(PROJECT_SOURCES
         src/sonicSocket.cpp
         src/webManager.cpp
         src/confirmWindow.cpp
+        src/responseParse.cpp
         include/gameManager.h
         include/errorHandler.h
         include/localManager.h
@@ -53,6 +54,7 @@ set(PROJECT_SOURCES
         include/sonicSocket.h
         include/webManager.h
         include/confirmWindow.h
+        include/responseParse.h
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
