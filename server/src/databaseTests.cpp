@@ -1,7 +1,7 @@
-#include "doctest.h"
-#include "user.h"
 #include <nlohmann/json.hpp>
 #include <type_traits>
+#include "doctest.h"
+#include "user.h"
 using namespace FastTyping::Server;
 
 TEST_CASE("user from string") {
@@ -62,10 +62,13 @@ TEST_CASE("DB mistakes") {
     storage.addMistake(0, 'a', 'a', "qwerty");
     storage.addMistake(0, 'c', 'c', "dvorak");
 
-    std::vector<std::pair<char, char>> mistakes = storage.getTopMistakes(0, 10, "qwerty");
+    std::vector<std::pair<char, char>> mistakes =
+        storage.getTopMistakes(0, 10, "qwerty");
     CHECK(mistakes.size() == 3);
-    CHECK(mistakes == std::vector<std::pair<char, char>>{{'a', 'a'}, {'a', 'b'}, {'c', 'b'}});
-    std::vector<std::pair<char, char>> mistakes_one = storage.getTopMistakes(0, 1, "qwerty");
+    CHECK(mistakes == std::vector<std::pair<char, char>>{
+                          {'a', 'a'}, {'a', 'b'}, {'c', 'b'}});
+    std::vector<std::pair<char, char>> mistakes_one =
+        storage.getTopMistakes(0, 1, "qwerty");
     CHECK(mistakes_one.size() == 1);
     CHECK(mistakes_one == std::vector<std::pair<char, char>>{{'a', 'a'}});
 }

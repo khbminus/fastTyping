@@ -4,10 +4,9 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include "database.h"
 #include "game.h"
 #include "user.h"
-
-#include "database.h"
 namespace FastTyping::Server {
 using boost::asio::ip::tcp;
 
