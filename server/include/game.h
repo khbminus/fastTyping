@@ -1,6 +1,5 @@
 #ifndef FASTTYPING_GAME_H
 #define FASTTYPING_GAME_H
-#include "user.h"
 #include <abc.h>
 #include <memory>
 #include <mutex>
@@ -54,27 +53,27 @@ private:
     std::unordered_map<int, AdditionalUserInfo> additionalInfo;
 };
 
-    class AbstractGameStorage {
-    public:
-        AbstractGameStorage() = default;
-        virtual std::shared_ptr<Game> get(int id, json &errors) = 0;
-        virtual json createGame(const json &body) = 0;
-        virtual Game *getGame(int game_id) = 0;
-        virtual ~AbstractGameStorage() = default;
-    };
+class AbstractGameStorage {
+public:
+    AbstractGameStorage() = default;
+    virtual std::shared_ptr<Game> get(int id, json &errors) = 0;
+    virtual json createGame(const json &body) = 0;
+    virtual Game *getGame(int game_id) = 0;
+    virtual ~AbstractGameStorage() = default;
+};
 
-    class MapGameStorage final : public AbstractGameStorage {
-    public:
-        std::shared_ptr<Game> get(int id, json &errors) override;
-        json createGame(const json &body) override;
-        Game *getGame(int game_id) override {
-            return games[game_id].get();
-        }
+class MapGameStorage final : public AbstractGameStorage {
+public:
+    std::shared_ptr<Game> get(int id, json &errors) override;
+    json createGame(const json &body) override;
+    Game *getGame(int game_id) override {
+        return games[game_id].get();
+    }
 
-    private:
-        std::mutex map_mutex;
-        std::unordered_map<int, std::shared_ptr<Game>> games;
-    };
-}// namespace FastTyping::Server
+private:
+    std::mutex map_mutex;
+    std::unordered_map<int, std::shared_ptr<Game>> games;
+};
+}  // namespace FastTyping::Server
 
 #endif  // FASTTYPING_GAME_H
