@@ -16,7 +16,8 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Network REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
-#find_package(nlohmann_json 3.7.3 REQUIRED)
+find_package(nlohmann_json 3.7.3 REQUIRED)
+
 
 include_directories(include ../common/include)
 
@@ -70,7 +71,7 @@ endif ()
 
 target_link_libraries(client PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(client PRIVATE Qt${QT_VERSION_MAJOR}::Network)
-#   target_link_libraries(client PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(client PRIVATE nlohmann_json::nlohmann_json)
 
 set_target_properties(client PROPERTIES
         MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
