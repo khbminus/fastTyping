@@ -169,7 +169,7 @@ void Server::parseQuery(tcp::socket s) {
             std::cerr << e.what() << std::endl;  // process error to client
             return;
         }
-
+        // test comment. To be replaced with DB
         User &user = userStorage->get(user_name);
         json result = {{"header", {{"type", "loginSuccessfully"}}},
                        {"body", {{"name", user.name()}}}};

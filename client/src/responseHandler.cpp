@@ -15,8 +15,7 @@ std::map<std::string, ResponseType> header_to_type{
     {"leaveGame", ResponseType::blocking},
     {"createGame", ResponseType::blocking},
     {"addNewChar", ResponseType::async},
-    {"addBackspace", ResponseType::async},
-    {"getNewWord", ResponseType::async}};
+    {"addBackspace", ResponseType::async}};
 
 ResponseType APIHandler::type(QString const &line) const {
     json response = json::parse(line.toStdString());
@@ -31,17 +30,14 @@ void APIHandler::handle(QString const &line) {
     json response = json::parse(line.toStdString());
     if (response["header"]["queryType"].get<std::string>() == "addNewChar" ||
         response["header"]["queryType"].get<std::string>() == "backspace") {
-        if (response["body"]["isFullCorrect"].get<bool>()) {
+        if (response["body"]["isEnd"].get<bool>()) {
+            emit end_signal();
+        } else if (response["body"]["isFullCorrect"].get<bool>()) {
             emit correct_word_signal();
         } else if (response["body"]["isPrefixCorrect"].get<bool>()) {
             emit correct_signal();
         } else {
             emit error_signal();
-        }
-    }
-    if (response["header"]["queryType"].get<std::string>() == "getNewWord") {
-        if (response["body"]["isEnd"].get<bool>()) {
-            emit end_signal();
         }
     }
 }

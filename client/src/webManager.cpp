@@ -8,21 +8,11 @@ WebManager::WebManager(std::vector<QString> a_words)
     : dictionary(std::move(a_words)) {}
 
 void WebManager::key_pressed(QChar button) {
-    using client::queries::buffer_clear_query;
     using client::queries::key_pressed_query;
-    using client::queries::new_word_query;
-
     using client::web::socket;
 
-    if (button == ' ' && clear_buffer) {
-        clear_buffer = false;
-        inputter.clearBuffer();
-        // socket().send(buffer_clear_query());
-        socket().send(new_word_query());
-    } else {
-        inputter.addSymbol(button);
-        socket().send(key_pressed_query(QString(button)));
-    }
+    inputter.addSymbol(button);
+    socket().send(key_pressed_query(QString(button)));
 
     emit print_signal(inputter.getBuffer());
 }
@@ -32,8 +22,8 @@ void WebManager::backspace_pressed() {
     using client::web::socket;
 
     inputter.deleteSymbol();
-    emit print_signal(inputter.getBuffer());
     socket().send(backspace_pressed_query());
+    emit print_signal(inputter.getBuffer());
 }
 
 QString WebManager::get_buffer() {
@@ -48,7 +38,6 @@ std::optional<QChar> WebManager::next() {
     return std::nullopt;
 }
 
-// cppcheck-suppress unusedFunction
 void WebManager::end_slot() {
     emit end_signal();
 }
@@ -58,8 +47,8 @@ void WebManager::error_slot() {
 void WebManager::correct_slot() {
     emit correct_signal();
 }
-// cppcheck-suppress unusedFunction
 void WebManager::correct_word_slot() {
-    clear_buffer = true;
+    inputter.clearBuffer();
+    emit print_signal(inputter.getBuffer());
     emit correct_signal();
 }
