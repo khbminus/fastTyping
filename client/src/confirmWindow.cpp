@@ -11,7 +11,7 @@ bool confirm(QString title, QString text) {
     message_box.setWindowTitle(title);
 
     QPushButton *yes = message_box.addButton(QMessageBox::Yes);
-    [[maybe_unused]]QPushButton *no = message_box.addButton(QMessageBox::No);
+    [[maybe_unused]] QPushButton *no = message_box.addButton(QMessageBox::No);
 
     message_box.exec();
 
