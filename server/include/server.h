@@ -6,6 +6,8 @@
 #include <string>
 #include "game.h"
 #include "user.h"
+
+#include "database.h"
 namespace FastTyping::Server {
 using boost::asio::ip::tcp;
 
@@ -23,7 +25,7 @@ private:
     Server();
     boost::asio::io_context ioContext;
     tcp::acceptor acceptor;
-    std::unique_ptr<AbstractUserStorage> userStorage;
+    std::unique_ptr<Database> userStorage;
     std::unique_ptr<AbstractGameStorage> gameStorage;
     std::unordered_map<std::string, std::function<json(const json &, User &)>>
         commonQueriesMap;

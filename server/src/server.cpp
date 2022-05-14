@@ -7,6 +7,16 @@
 #include "game.h"
 
 namespace FastTyping::Server {
+    Server::Server() : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)), userStorage(new Database), gameStorage(new MapGameStorage) {
+        std::cout << "Listening at " << acceptor.local_endpoint() << std::endl;
+        commonQueriesMap["echo"] = [&](const json &body, User &user) {
+            return body;
+        };
+        commonQueriesMap["createGame"] = [&](const json &body, User &user) -> json {
+            // basic checks
+            if (!body.contains("dictionaryName") || !body["dictionaryName"].is_string()) {
+                return {{"header", {{"type", "wrongFormatError"}}}, {"body", {{"text", "can't find \"dictionaryName\""}}}};
+            }
 Server::Server()
     : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)),
       userStorage(new MapUserStorage),
@@ -174,11 +184,16 @@ void Server::parseQuery(tcp::socket s) {
             std::cerr << e.what() << std::endl;  // process error to client
             return;
         }
-        // test comment. To be replaced with DB
-        User &user = userStorage->get(user_name);
-        json result = {{"header", {{"type", "loginSuccessfully"}}},
-                       {"body", {{"name", user.name()}}}};
-        result["header"]["queryType"] = query["header"]["type"];
+        std::string passw = "123";// TODO parse login/register query
+        // Case 1: login:  if( userStorage->nameExist(name) == true && passw == getPassword(userStorage->getId(name)) ) go next, else send error to UI
+        // Case 2: register: if (userStorage->nameExist(name) == false) { setPassword(userStorage->getId(name))}
+        // Case 3: change password: match as in login and then setPassword
+
+        // That's not user's methods because it's hard to hold user in incorrect password cases etc
+
+
+        User user(user_name, userStorage.get());// after you parse login and register query you can simply identify user by its name
+        json result = {{"header", {{"type", "loginSuccessfully"}}}, {"body", {{"name", user.name()}}}};
         client << result << '\n';
 
         try {
