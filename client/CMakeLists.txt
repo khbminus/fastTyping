@@ -51,7 +51,6 @@ set(PROJECT_SOURCES
         include/socketWrapper.h
         include/sonicSocket.h
         include/webManager.h
-        ../common/include/json.hpp
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
