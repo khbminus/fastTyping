@@ -2,6 +2,7 @@
 #include <qqml.h>
 #include <QQuickItem>
 #include <iostream>
+#include "keyboard.h"
 #include "queryTemplates.h"
 #include "sonicSocket.h"
 #include "ui_gamewindow.h"
@@ -18,6 +19,10 @@ GameWindow::GameWindow(GameManager *manager, QWidget *parent)
                      &GameWindow::print);
 
     ui->setupUi(this);
+    ui->quickWidget->rootObject()->setProperty(
+        "keyModel",
+        QVariant::fromValue(KeyboardModel::fromFile("qwerty.json")));
+
     palette = ui->userText->palette();
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
     palette.setColor(ui->userText->foregroundRole(), Qt::black);
