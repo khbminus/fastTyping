@@ -1,4 +1,5 @@
 #include "database.h"
+#include <algorithm>
 
 namespace FastTyping::Server {
 Database::Database() : connect("dbname = fast_typing") {
@@ -39,12 +40,15 @@ Database::Database() : connect("dbname = fast_typing") {
     }
 }
 
+// cppcheck-suppress unusedFunction
 void Database::dropUsers() {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
     W.exec("DROP TABLE USERS;");
     W.commit();
 }
+
+// cppcheck-suppress unusedFunction
 void Database::dropMistakes() {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
@@ -107,6 +111,7 @@ int Database::getId(
     return id;
 }
 
+// cppcheck-suppress unusedFunction
 bool Database::nameExist(const std::string &name) {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
@@ -126,7 +131,7 @@ Database::~Database() {
 void Database::addMistake(int userId,
                           char let1,
                           char let2,
-                          std::string keyboardType) {
+                          const std::string &keyboardType) {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
     W.exec(
@@ -137,8 +142,10 @@ void Database::addMistake(int userId,
     W.commit();
 }
 
-std::vector<std::pair<char, char>>
-Database::getTopMistakes(int userId, int number, std::string keyboardType) {
+std::vector<std::pair<char, char>> Database::getTopMistakes(
+    int userId,
+    int number,
+    const std::string &keyboardType) {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
     std::vector<std::pair<char, char>> result;
@@ -150,10 +157,11 @@ Database::getTopMistakes(int userId, int number, std::string keyboardType) {
         "ORDER BY value_occurrence DESC "
         "LIMIT " +
         std::to_string(number) + ";");
-    for (auto row : find_by_name) {
-        result.push_back(
-            {row["MISTAKE"].c_str()[0], row["MISTAKE"].c_str()[1]});
-    }
+    std::for_each(find_by_name.begin(), find_by_name.end(),
+                  [&](const pqxx::row &row) {
+                      result.emplace_back(row["MISTAKE"].c_str()[0],
+                                          row["MISTAKE"].c_str()[1]);
+                  });
     W.commit();
     return result;
 }

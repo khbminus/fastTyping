@@ -17,8 +17,10 @@ public:
     bool nameExist(const std::string &);
     void dropUsers();
     // MISTAKES table
-    void addMistake(int, char, char, std::string);
-    std::vector<std::pair<char, char>> getTopMistakes(int, int, std::string);
+    void addMistake(int, char, char, const std::string &);
+    std::vector<std::pair<char, char>> getTopMistakes(int,
+                                                      int,
+                                                      const std::string &);
     void dropMistakes();
 
 private:
