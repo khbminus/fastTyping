@@ -127,59 +127,58 @@ Server::Server()
         return {};
     };
 
-
     loginQueriesMap["login"] = [&](const json &body) -> json {
-          // basic checks
-          if (!body.contains("name") ||
-              !body["name"].is_string()) {
-              return {{"header", {{"type", "wrongFormatError"}}},
-                      {"body", {{"text", "can't find \"name\""}}}};
-          }
-          std::string name = body["name"];
-          if (!body.contains("password") || !body["password"].is_string()) {
-              return {{"header", {{"type", "wrongFormatError"}}},
-                      {"body", {{"text", "can't find \"password\""}}}};
-          }
-          std::string password = body["password"];
-          auto result = userStorage->login(name, password);
-          return result;
+        // basic checks
+        if (!body.contains("name") || !body["name"].is_string()) {
+            return {{"header", {{"type", "wrongFormatError"}}},
+                    {"body", {{"text", "can't find \"name\""}}}};
+        }
+        std::string name = body["name"];
+        if (!body.contains("password") || !body["password"].is_string()) {
+            return {{"header", {{"type", "wrongFormatError"}}},
+                    {"body", {{"text", "can't find \"password\""}}}};
+        }
+        std::string password = body["password"];
+        auto result = userStorage->login(name, password);
+        return result;
     };
     loginQueriesMap["register"] = [&](const json &body) -> json {
-      // basic checks
-      if (!body.contains("name") ||
-          !body["name"].is_string()) {
-          return {{"header", {{"type", "wrongFormatError"}}},
-                  {"body", {{"text", "can't find \"name\""}}}};
-      }
-      std::string name = body["name"];
-      if (!body.contains("password") || !body["password"].is_string()) {
-          return {{"header", {{"type", "wrongFormatError"}}},
-                  {"body", {{"text", "can't find \"password\""}}}};
-      }
-      std::string password = body["password"];
-      auto result = userStorage->registration(name, password);
-      return result;
+        // basic checks
+        if (!body.contains("name") || !body["name"].is_string()) {
+            return {{"header", {{"type", "wrongFormatError"}}},
+                    {"body", {{"text", "can't find \"name\""}}}};
+        }
+        std::string name = body["name"];
+        if (!body.contains("password") || !body["password"].is_string()) {
+            return {{"header", {{"type", "wrongFormatError"}}},
+                    {"body", {{"text", "can't find \"password\""}}}};
+        }
+        std::string password = body["password"];
+        auto result = userStorage->registration(name, password);
+        return result;
     };
     loginQueriesMap["changePassword"] = [&](const json &body) -> json {
-      // basic checks
-      if (!body.contains("name") ||
-          !body["name"].is_string()) {
-          return {{"header", {{"type", "wrongFormatError"}}},
-                  {"body", {{"text", "can't find \"name\""}}}};
-      }
-      std::string name = body["name"];
-      if (!body.contains("old_password") || !body["old_password"].is_string()) {
-          return {{"header", {{"type", "wrongFormatError"}}},
-                  {"body", {{"text", "can't find \"old password\""}}}};
-      }
-      std::string old_password = body["old_password"];
-      if (!body.contains("new_password") || !body["new_password"].is_string()) {
-          return {{"header", {{"type", "wrongFormatError"}}},
-                  {"body", {{"text", "can't find \"new password\""}}}};
-      }
-      std::string new_password = body["new_password"];
-      auto result = userStorage->changePassword(name, old_password, new_password);
-      return result;
+        // basic checks
+        if (!body.contains("name") || !body["name"].is_string()) {
+            return {{"header", {{"type", "wrongFormatError"}}},
+                    {"body", {{"text", "can't find \"name\""}}}};
+        }
+        std::string name = body["name"];
+        if (!body.contains("old_password") ||
+            !body["old_password"].is_string()) {
+            return {{"header", {{"type", "wrongFormatError"}}},
+                    {"body", {{"text", "can't find \"old password\""}}}};
+        }
+        std::string old_password = body["old_password"];
+        if (!body.contains("new_password") ||
+            !body["new_password"].is_string()) {
+            return {{"header", {{"type", "wrongFormatError"}}},
+                    {"body", {{"text", "can't find \"new password\""}}}};
+        }
+        std::string new_password = body["new_password"];
+        auto result =
+            userStorage->changePassword(name, old_password, new_password);
+        return result;
     };
 }
 
@@ -204,8 +203,10 @@ void Server::parseQuery(tcp::socket s) {
         try {
             while (client) {
                 if (!std::getline(client, line)) {
-                    std::cout << "Disconnected: " << client.socket().remote_endpoint()
-                              << "->" << client.socket().local_endpoint() << std::endl;
+                    std::cout
+                        << "Disconnected: " << client.socket().remote_endpoint()
+                        << "->" << client.socket().local_endpoint()
+                        << std::endl;
                     return;
                 }
                 errors = checkQueryCorrectness(line);
@@ -222,7 +223,9 @@ void Server::parseQuery(tcp::socket s) {
                     result = it->second(queryBody);
                     result["header"]["queryType"] = queryHeader["type"];
                     client << result << '\n';
-                    if ((result["header"]["queryType"] == "login" || result["header"]["queryType"] == "register") && result["header"]["type"] == "success") {
+                    if ((result["header"]["queryType"] == "login" ||
+                         result["header"]["queryType"] == "register") &&
+                        result["header"]["type"] == "success") {
                         user_name = queryBody["name"].get<std::string>();
                         break;
                     }
@@ -231,7 +234,7 @@ void Server::parseQuery(tcp::socket s) {
         } catch (nlohmann::detail::exception &e) {
             std::cerr << e.what() << std::endl;  // process error to client
         }
-      
+
         // Case 1: login:  if( userStorage->nameExist(name) == true &&
         // passw == getPassword(userStorage->getId(name)) ) go next,
         // else send error to UI Case 2: register: if
@@ -246,9 +249,9 @@ void Server::parseQuery(tcp::socket s) {
             user_name,
             userStorage.get());  // after you parse login and register query
                                  // you can simply identify user by its name
-//        result = {{"header", {{"type", "loginSuccessfully"}}},
-//                       {"body", {{"name", user.name()}}}};
-//        client << result << '\n';
+        //        result = {{"header", {{"type", "loginSuccessfully"}}},
+        //                       {"body", {{"name", user.name()}}}};
+        //        client << result << '\n';
 
         try {
             while (client) {
