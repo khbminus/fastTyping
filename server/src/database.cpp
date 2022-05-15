@@ -115,9 +115,9 @@ bool Database::nameExist(const std::string &name) {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
     pqxx::result find_by_name = W.exec(
-        "SELECT 1 "
+        "SELECT * "
         "FROM USERS "
-        "WHERE NAME = ' + " +
+        "WHERE NAME = '" +
         W.esc(name) + "';");
     W.commit();
     return !find_by_name.empty();
@@ -166,8 +166,9 @@ std::vector<std::pair<char, char>> Database::getTopMistakes(
 }
 
 json Database::login(const std::string &name, const std::string &password) {
-    std::unique_lock l{mutex};
     int user_id;
+    std::cerr << nameExist(name) << " ";
+    std::cerr << getPassword(user_id = getId(name)) << " " << password << '\n';
     if (nameExist(name) && getPassword(user_id = getId(name)) == password) {
         return {{"header", {{"type", "success"}}}, {"body", {{"id", user_id}}}};
     }
@@ -176,7 +177,6 @@ json Database::login(const std::string &name, const std::string &password) {
 
 json Database::registration(const std::string &name,
                             const std::string &password) {
-    std::unique_lock l{mutex};
     if (!nameExist(name)) {
         int user_id = getId(name);
         setPassword(user_id, password);
@@ -189,7 +189,6 @@ json Database::registration(const std::string &name,
 json Database::changePassword(const std::string &name,
                               const std::string &old_password,
                               const std::string &new_password) {
-    std::unique_lock l{mutex};
     int user_id;
     if (nameExist(name) && getPassword(user_id = getId(name)) == old_password) {
         setPassword(user_id, new_password);

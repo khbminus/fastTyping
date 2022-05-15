@@ -38,6 +38,7 @@ TEST_CASE("DB passwords") {
     std::string name2 = "Boba";
     Database storage;
     int a = storage.getId(name1);
+    CHECK(storage.nameExist(name1) == true);
     int b = storage.getId(name2);
     CHECK(storage.getPassword(a) == "0000");
     CHECK(storage.getPassword(b) == "0000");
