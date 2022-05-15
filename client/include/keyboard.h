@@ -8,7 +8,7 @@
 #include <Qt>
 #include <string>
 
-// namespace FastTyping::Client {
+namespace FastTyping::Keyboard {
 class KeyboardButtonData : public QObject {
     Q_OBJECT
     Q_PROPERTY(QColor clr READ color CONSTANT)
@@ -67,6 +67,6 @@ private:
     KeyboardModel() = default;
 };
 
-//}  // namespace FastTyping::Client
+}  // namespace FastTyping::Keyboard
 
 #endif  // FASTTYPING_KEYBOARD_H

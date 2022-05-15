@@ -6,7 +6,7 @@
 #include <sstream>
 #include <string>
 
-// namespace FastTyping::Client {
+namespace FastTyping::Keyboard {
 KeyboardButtonData::KeyboardButtonData(const int &key, const QString &text)
     : mKey(key), mShiftKey(key), mText(text), mShiftText(text.toUpper()) {}
 KeyboardButtonData::KeyboardButtonData(const int &key,
@@ -107,4 +107,4 @@ KeyboardModel *KeyboardModel::fromFile(const std::string &path) {
     return res;
 }
 
-//}  // namespace FastTyping::Client
+}  // namespace FastTyping::Keyboard

@@ -22,7 +22,8 @@ GameWindow::GameWindow(GameManager *manager, QWidget *parent)
     ui->setupUi(this);
     ui->quickWidget->rootObject()->setProperty(
         "keyModel",
-        QVariant::fromValue(KeyboardModel::fromFile("qwerty.json")));
+        QVariant::fromValue(
+            FastTyping::Keyboard::KeyboardModel::fromFile("qwerty.json")));
 
     palette = ui->userText->palette();
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
