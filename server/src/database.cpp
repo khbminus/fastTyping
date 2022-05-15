@@ -175,7 +175,8 @@ json Database::login(const std::string &name, const std::string &password) {
     return {{"header", {{"type", "incorrectName"}}}, {"body", {{"id", -1}}}};
 }
 
-json Database::registration(const std::string &name, const std::string &password) {
+json Database::registration(const std::string &name,
+                            const std::string &password) {
     std::unique_lock l{mutex};
     if (!nameExist(name)) {
         int user_id = getId(name);
