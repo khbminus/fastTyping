@@ -170,7 +170,7 @@ json Database::login(const std::string &name, const std::string &password) {
     std::unique_lock l{mutex};
     int user_id;
     if (nameExist(name) && getPassword(user_id = getId(name)) == password) {
-        return {{"header", {{"type", "succes"}}}, {"body", {{"id", user_id}}}};
+        return {{"header", {{"type", "success"}}}, {"body", {{"id", user_id}}}};
     }
     return {{"header", {{"type", "incorrectName"}}}, {"body", {{"id", -1}}}};
 }
@@ -180,7 +180,7 @@ json Database::registration(const std::string &name, const std::string &password
     if (!nameExist(name)) {
         int user_id = getId(name);
         setPassword(user_id, password);
-        return {{"header", {{"type", "succes"}}}, {"body", {{"id", user_id}}}};
+        return {{"header", {{"type", "success"}}}, {"body", {{"id", user_id}}}};
     }
     return {{"header", {{"type", "nameAlreadyExists"}}},
             {"body", {{"id", -1}}}};
@@ -193,7 +193,7 @@ json Database::changePassword(const std::string &name,
     int user_id;
     if (nameExist(name) && getPassword(user_id = getId(name)) == old_password) {
         setPassword(user_id, new_password);
-        return {{"header", {{"type", "succes"}}}, {"body", {{"id", user_id}}}};
+        return {{"header", {{"type", "success"}}}, {"body", {{"id", user_id}}}};
     }
     return {{"header", {{"type", "incorrectName"}}}, {"body", {{"id", -1}}}};
 }
