@@ -53,7 +53,6 @@ void GameWindow::on_ReturnButton_clicked() {
     }
 }
 
-// cppcheck-suppress unusedFunction
 void GameWindow::keyPressEvent(QKeyEvent *event) {
     QString keysCombination = event->text();
     emit press(event->key());
@@ -69,7 +68,6 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-// cppcheck-suppress unusedFunction
 void GameWindow::keyReleaseEvent(QKeyEvent *event) {
     emit release(event->key());
 }
