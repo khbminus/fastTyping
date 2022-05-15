@@ -111,7 +111,6 @@ int Database::getId(
     return id;
 }
 
-// cppcheck-suppress unusedFunction
 bool Database::nameExist(const std::string &name) {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
@@ -164,6 +163,39 @@ std::vector<std::pair<char, char>> Database::getTopMistakes(
                   });
     W.commit();
     return result;
+}
+
+json Database::login(const std::string &name, const std::string &password) {
+    std::unique_lock l{mutex};
+    int user_id;
+    if (nameExist(name) && getPassword(user_id = getId(name)) == password) {
+        return {{"header", {{"type", "success"}}}, {"body", {{"id", user_id}}}};
+    }
+    return {{"header", {{"type", "incorrectName"}}}, {"body", {{"id", -1}}}};
+}
+
+json Database::registration(const std::string &name,
+                            const std::string &password) {
+    std::unique_lock l{mutex};
+    if (!nameExist(name)) {
+        int user_id = getId(name);
+        setPassword(user_id, password);
+        return {{"header", {{"type", "success"}}}, {"body", {{"id", user_id}}}};
+    }
+    return {{"header", {{"type", "nameAlreadyExists"}}},
+            {"body", {{"id", -1}}}};
+}
+
+json Database::changePassword(const std::string &name,
+                              const std::string &old_password,
+                              const std::string &new_password) {
+    std::unique_lock l{mutex};
+    int user_id;
+    if (nameExist(name) && getPassword(user_id = getId(name)) == old_password) {
+        setPassword(user_id, new_password);
+        return {{"header", {{"type", "success"}}}, {"body", {{"id", user_id}}}};
+    }
+    return {{"header", {{"type", "incorrectName"}}}, {"body", {{"id", -1}}}};
 }
 
 }  // namespace FastTyping::Server
