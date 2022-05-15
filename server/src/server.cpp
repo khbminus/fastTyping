@@ -129,6 +129,7 @@ Server::Server()
 
     loginQueriesMap["login"] = [&](const json &body) -> json {
         // basic checks
+        std::cerr << "Entered\n";
         if (!body.contains("name") || !body["name"].is_string()) {
             return {{"header", {{"type", "wrongFormatError"}}},
                     {"body", {{"text", "can't find \"name\""}}}};
@@ -139,6 +140,7 @@ Server::Server()
                     {"body", {{"text", "can't find \"password\""}}}};
         }
         std::string password = body["password"];
+        std::cerr << "Go to DB\n";
         auto result = userStorage->login(name, password);
         return result;
     };
@@ -155,6 +157,7 @@ Server::Server()
         }
         std::string password = body["password"];
         auto result = userStorage->registration(name, password);
+        BOOST_LOG_TRIVIAL(debug) << result << '\n';
         return result;
     };
     loginQueriesMap["changePassword"] = [&](const json &body) -> json {
@@ -222,6 +225,7 @@ void Server::parseQuery(tcp::socket s) {
                     it != loginQueriesMap.end()) {
                     result = it->second(queryBody);
                     result["header"]["queryType"] = queryHeader["type"];
+                    BOOST_LOG_TRIVIAL(debug) << result << '\n';
                     client << result << '\n';
                     if ((result["header"]["queryType"] == "login" ||
                          result["header"]["queryType"] == "register") &&
