@@ -37,7 +37,6 @@ QString join_query(int id) {
     return dump(result);
 }
 
-// cppcheck-suppress unusedFunction
 QString leave_query() {
     json result;
     result["header"] = {{"type", "leaveGame"}};

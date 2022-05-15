@@ -47,6 +47,7 @@ void WebManager::error_slot() {
 void WebManager::correct_slot() {
     emit correct_signal();
 }
+
 void WebManager::correct_word_slot() {
     inputter.clearBuffer();
     emit print_signal(inputter.getBuffer());

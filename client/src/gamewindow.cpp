@@ -1,5 +1,6 @@
 #include "gamewindow.h"
 #include <iostream>
+#include "confirmWindow.h"
 #include "queryTemplates.h"
 #include "sonicSocket.h"
 #include "ui_gamewindow.h"
@@ -31,8 +32,14 @@ GameWindow::~GameWindow() {
 }
 
 void GameWindow::on_ReturnButton_clicked() {
-    auto &controller = FastTyping::WindowController::getInstance();
-    controller.setActiveWindow("MainWindow");
+    using client::queries::leave_query;
+    using client::web::socket;
+
+    if (confirm("Exit", "Are you really want to exit")) {
+        qDebug() << "leave result: " << socket().query(leave_query());
+        auto &controller = FastTyping::WindowController::getInstance();
+        controller.setActiveWindow("MainWindow");
+    }
 }
 
 // cppcheck-suppress unusedFunction
