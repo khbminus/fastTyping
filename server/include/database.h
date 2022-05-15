@@ -25,11 +25,11 @@ public:
                                                       const std::string &);
     void dropMistakes();
     // Queries
-    json login(std::string &name, std::string &password);
-    json registration(std::string &name, std::string &password);
-    json changePassword(std::string &name,
-                        std::string &old_password,
-                        std::string &new_password);
+    json login(const std::string &name, const std::string &password);
+    json registration(const std::string &name, const std::string &password);
+    json changePassword(const std::string &name,
+                        const std::string &old_password,
+                        const std::string &new_password);
 
 private:
     mutable std::mutex mutex;
