@@ -166,4 +166,37 @@ std::vector<std::pair<char, char>> Database::getTopMistakes(
     return result;
 }
 
+json Database::login(std::string &name, std::string &password) {
+    std::unique_lock l{mutex};
+    int user_id;
+    if (nameExist(name) && getPassword(user_id = getId(name)) == password) {
+        return {{"header", {{"type", "succes"}}}, {"body", {{"id", user_id}}}};
+    }
+    return {{"header", {{"type", "incorrectName"}}}, {"body", {{"id", -1}}}};
+}
+
+json Database::registration(std::string &name, std::string &password) {
+    std::unique_lock l{mutex};
+    int user_id;
+    if (!nameExist(name)) {
+        user_id = getId(name);
+        setPassword(user_id, password);
+        return {{"header", {{"type", "succes"}}}, {"body", {{"id", user_id}}}};
+    }
+    return {{"header", {{"type", "nameAlreadyExists"}}},
+            {"body", {{"id", -1}}}};
+}
+
+json Database::changePassword(std::string &name,
+                              std::string &old_password,
+                              std::string &new_password) {
+    std::unique_lock l{mutex};
+    int user_id;
+    if (nameExist(name) && getPassword(user_id = getId(name)) == old_password) {
+        setPassword(user_id, new_password);
+        return {{"header", {{"type", "succes"}}}, {"body", {{"id", user_id}}}};
+    }
+    return {{"header", {{"type", "incorrectName"}}}, {"body", {{"id", -1}}}};
+}
+
 }  // namespace FastTyping::Server

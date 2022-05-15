@@ -126,6 +126,61 @@ Server::Server()
         user.setWillToExit();
         return {};
     };
+
+
+    loginQueriesMap["login"] = [&](const json &body) -> json {
+          // basic checks
+          if (!body.contains("name") ||
+              !body["name"].is_string()) {
+              return {{"header", {{"type", "wrongFormatError"}}},
+                      {"body", {{"text", "can't find \"name\""}}}};
+          }
+          std::string name = body["name"];
+          if (!body.contains("password") || !body["password"].is_string()) {
+              return {{"header", {{"type", "wrongFormatError"}}},
+                      {"body", {{"text", "can't find \"password\""}}}};
+          }
+          std::string password = body["password"];
+          auto result = userStorage->login(name, password);
+          return result;
+    };
+    loginQueriesMap["register"] = [&](const json &body) -> json {
+      // basic checks
+      if (!body.contains("name") ||
+          !body["name"].is_string()) {
+          return {{"header", {{"type", "wrongFormatError"}}},
+                  {"body", {{"text", "can't find \"name\""}}}};
+      }
+      std::string name = body["name"];
+      if (!body.contains("password") || !body["password"].is_string()) {
+          return {{"header", {{"type", "wrongFormatError"}}},
+                  {"body", {{"text", "can't find \"password\""}}}};
+      }
+      std::string password = body["password"];
+      auto result = userStorage->registration(name, password);
+      return result;
+    };
+    loginQueriesMap["changePassword"] = [&](const json &body) -> json {
+      // basic checks
+      if (!body.contains("name") ||
+          !body["name"].is_string()) {
+          return {{"header", {{"type", "wrongFormatError"}}},
+                  {"body", {{"text", "can't find \"name\""}}}};
+      }
+      std::string name = body["name"];
+      if (!body.contains("old_password") || !body["old_password"].is_string()) {
+          return {{"header", {{"type", "wrongFormatError"}}},
+                  {"body", {{"text", "can't find \"old password\""}}}};
+      }
+      std::string old_password = body["old_password"];
+      if (!body.contains("new_password") || !body["new_password"].is_string()) {
+          return {{"header", {{"type", "wrongFormatError"}}},
+                  {"body", {{"text", "can't find \"new password\""}}}};
+      }
+      std::string new_password = body["new_password"];
+      auto result = userStorage->changePassword(name, old_password, new_password);
+      return result;
+    };
 }
 
 [[noreturn]] void Server::polling() {
@@ -143,38 +198,40 @@ void Server::parseQuery(tcp::socket s) {
         std::cout << "New client: " << client.socket().remote_endpoint() << "->"
                   << client.socket().local_endpoint() << std::endl;
         std::string line;
-        if (!std::getline(client, line)) {
-            std::cout << "Disconnected: " << client.socket().remote_endpoint()
-                      << "->" << client.socket().local_endpoint() << std::endl;
-            return;
-        }
-        json query;
+        json query, result;
         std::string user_name;
-        auto errors = checkQueryCorrectness(line);
-        if (errors) {
-            client << errors.value() << '\n';
-            return;
-        }
+        std::optional<json> errors;
         try {
-            query = json::parse(line);
-            if (query["header"]["type"] != "hello") {
-                json result = {
-                    {"header", {{"type", "wrongFirstQueryError"}}},
-                    {"body", {{"text", "first query should be hello"}}}};
-                client << result << '\n';
-                return;
+            while (client) {
+                if (!std::getline(client, line)) {
+                    std::cout << "Disconnected: " << client.socket().remote_endpoint()
+                              << "->" << client.socket().local_endpoint() << std::endl;
+                    return;
+                }
+                errors = checkQueryCorrectness(line);
+                if (errors) {
+                    client << errors.value() << '\n';
+                    continue;
+                }
+                query = json::parse(line);
+                auto queryHeader = query["header"];
+                auto queryBody = query["body"];
+                BOOST_LOG_TRIVIAL(debug) << query << '\n';
+                if (auto it = loginQueriesMap.find(queryHeader["type"]);
+                    it != loginQueriesMap.end()) {
+                    result = it->second(queryBody);
+                    result["header"]["queryType"] = queryHeader["type"];
+                    client << result << '\n';
+                    if ((result["header"]["queryType"] == "login" || result["header"]["queryType"] == "register") && result["header"]["type"] == "success") {
+                        user_name = queryBody["name"].get<std::string>();
+                        break;
+                    }
+                }
             }
-            if (!query["body"]["name"].is_string()) {
-                json result = {{"header", {{"type", "wrongFormatError"}}},
-                               {"body", {{"text", "can't find \"name\""}}}};
-                client << result << '\n';
-            }
-            user_name = query["body"]["name"].get<std::string>();
         } catch (nlohmann::detail::exception &e) {
             std::cerr << e.what() << std::endl;  // process error to client
-            return;
         }
-        std::string passw = "123";  // TODO parse login/register query
+      
         // Case 1: login:  if( userStorage->nameExist(name) == true &&
         // passw == getPassword(userStorage->getId(name)) ) go next,
         // else send error to UI Case 2: register: if
@@ -189,9 +246,9 @@ void Server::parseQuery(tcp::socket s) {
             user_name,
             userStorage.get());  // after you parse login and register query
                                  // you can simply identify user by its name
-        json result = {{"header", {{"type", "loginSuccessfully"}}},
-                       {"body", {{"name", user.name()}}}};
-        client << result << '\n';
+//        result = {{"header", {{"type", "loginSuccessfully"}}},
+//                       {"body", {{"name", user.name()}}}};
+//        client << result << '\n';
 
         try {
             while (client) {
