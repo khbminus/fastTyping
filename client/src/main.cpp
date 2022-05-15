@@ -51,6 +51,6 @@ int main(int argc, char *argv[]) {
     controller.registerWindow("CreateWindow", createWindow);
     controller.registerWindow("GameWindow", gameWindow);
     controller.registerWindow("StatWindow", statWindow);
-    controller.setActiveWindow("GameWindow");
+    controller.setActiveWindow("MainWindow");
     return a.exec();
 }
