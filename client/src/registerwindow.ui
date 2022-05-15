@@ -40,7 +40,7 @@
      <string>return</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -53,14 +53,14 @@
      <item>
       <widget class="QLineEdit" name="Username">
        <property name="text">
-        <string>Username</string>
+        <string/>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLineEdit" name="Password">
        <property name="text">
-        <string>Password</string>
+        <string/>
        </property>
       </widget>
      </item>

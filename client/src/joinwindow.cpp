@@ -20,8 +20,8 @@ JoinWindow::~JoinWindow() {
 // cppcheck-suppress unusedFunction
 void JoinWindow::on_JoinButton_clicked() {
     using client::queries::join_query;
+    using client::responses::ensure_success;
     using client::responses::error_text;
-    using client::responses::is_success;
     using client::web::socket;
     using nlohmann::json;
 
@@ -37,11 +37,9 @@ void JoinWindow::on_JoinButton_clicked() {
     qDebug() << "join result: " << raw_response;
     json response = json::parse(raw_response.toStdString());
 
-    if (is_success(response)) {
+    if (ensure_success(response)) {
         auto &controller = FastTyping::WindowController::getInstance();
         controller.setActiveWindow("GameWindow");
-    } else {
-        error_alert("Join error", error_text(response));
     }
 }
 

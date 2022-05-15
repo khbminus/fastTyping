@@ -46,11 +46,27 @@ QString leave_query() {
 
 QString sign_in_query(QString const &username, QString const &password) {
     json result;
-    json words = json::array({"This", "is", "sample", "don't", "judge", "me"});
 
     result["header"] = {{"type", "login"}};
-    result["body"] = {{"username", username.toStdString()},
+    result["body"] = {{"name", username.toStdString()},
                       {"password", password.toStdString()}};
+    return dump(result);
+}
+
+QString sign_on_query(QString const &username, QString const &password) {
+    json result;
+
+    result["header"] = {{"type", "register"}};
+    result["body"] = {{"name", username.toStdString()},
+                      {"password", password.toStdString()}};
+    return dump(result);
+}
+
+QString get_line_query(QString const &username, QString const &password) {
+    json result;
+
+    result["header"] = {{"type", "getNewLine"}};
+    result["body"] = json::object();
     return dump(result);
 }
 
