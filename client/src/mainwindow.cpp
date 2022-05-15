@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <iostream>
 #include "./ui_mainwindow.h"
+#include "keyboard.h"
 #include "queryTemplates.h"
 #include "sonicSocket.h"
 #include "windowcontroller.h"
@@ -15,6 +16,19 @@ MainWindow::MainWindow(QWidget *parent)
     QString answer = socket().query(greeting_query("Aboba"));
     // socket().query(leave_query());
     qDebug() << "login result: " << answer;
+
+    ui->layoutView->setModel(
+        FastTyping::Keyboard::KeyboardModel::getInstance().tableModel());
+    ui->layoutView->horizontalHeader()->setSectionResizeMode(
+        QHeaderView::Stretch);
+    ui->layoutView->horizontalHeader()->setSectionsClickable(false);
+    connect(
+        ui->layoutView, &QTableView::doubleClicked,
+        [&](const QModelIndex &idx) {
+            FastTyping::Keyboard::KeyboardModel::getInstance().setCurrentLayout(
+                idx.row());
+            qDebug() << "changed layout to" << idx.row();
+        });
 }
 
 MainWindow::~MainWindow() {

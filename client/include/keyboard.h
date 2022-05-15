@@ -1,6 +1,6 @@
 #ifndef FASTTYPING_KEYBOARD_H
 #define FASTTYPING_KEYBOARD_H
-#include <QAbstractListModel>
+#include <QAbstractTableModel>
 #include <QColor>
 #include <QList>
 #include <QObject>
@@ -48,6 +48,36 @@ private:
     QString mText;
     QString mShiftText;
 };
+class KeyboardModel;
+class LayoutTableModel;
+
+class LayoutDescription {
+    LayoutDescription(QString path, QString name, QString description);
+    QString path;
+    QString name;
+    QString description;
+    friend struct KeyboardModel;
+    friend struct LayoutTableModel;
+};
+
+class LayoutTableModel : public QAbstractTableModel {
+    Q_OBJECT
+public:
+    [[nodiscard]] int rowCount(
+        const QModelIndex &parent = QModelIndex()) const override;
+    [[nodiscard]] int columnCount(
+        const QModelIndex &parent = QModelIndex()) const override;
+    [[nodiscard]] QVariant data(const QModelIndex &index,
+                                int role = Qt::DisplayRole) const override;
+    [[nodiscard]] QVariant headerData(int section,
+                                      Qt::Orientation orientation,
+                                      int role) const override;
+
+private:
+    explicit LayoutTableModel(KeyboardModel *model, QObject *parent = nullptr);
+    KeyboardModel *model;
+    friend struct KeyboardModel;
+};
 
 class KeyboardModel : public QObject {
     Q_OBJECT
@@ -66,6 +96,8 @@ public:
     [[nodiscard]] QQmlListProperty<KeyboardButtonData> thirdRowModel();
     [[nodiscard]] QQmlListProperty<KeyboardButtonData> numbersRowModel();
 
+    [[nodiscard]] QAbstractTableModel *tableModel();
+
     static KeyboardModel &getInstance() {
         static KeyboardModel model;
         return model;
@@ -79,25 +111,7 @@ signals:
     void rowsChanged();
 
 private:
-    struct LayoutDescription {
-        LayoutDescription(QString path, QString name, QString description);
-        QString path;
-        QString name;
-        QString description;
-    };
-
-    //    class LayoutItemModel : public QAbstractItemModel {
-    //        Q_OBJECT
-    //    public:
-    //        explicit LayoutItemModel(QObject *parent = nullptr);
-    //
-    //        QVariant data(const QModelIndex& index, int role =
-    //        Qt::DisplayRole) const override; Qt::ItemFlags flags(const
-    //        QModelIndex& index) const override;
-    //
-    //    };
-
-    qsizetype currentLayout;
+    qsizetype currentLayout = 0;
     QList<QList<KeyboardButtonData *>> mKeyboardRows;
 
     KeyboardModel() : QObject(nullptr) {}
@@ -105,6 +119,7 @@ private:
     void validate(const nlohmann::json &layout);
     // TODO: Change with SQL table
     QList<LayoutDescription> layouts;
+    friend struct LayoutTableModel;
 };
 
 }  // namespace FastTyping::Keyboard

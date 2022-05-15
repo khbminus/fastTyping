@@ -25,21 +25,43 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-      <widget class="QPushButton" name="CreateButton">
-       <property name="text">
-        <string>Create a new game</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="JoinButton">
-       <property name="text">
-        <string>Join an existing game</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+               <widget class="QPushButton" name="CreateButton">
+                   <property name="text">
+                       <string>Create a new game</string>
+                   </property>
+               </widget>
+           </item>
+           <item>
+               <widget class="QPushButton" name="JoinButton">
+                   <property name="text">
+                       <string>Join an existing game</string>
+                   </property>
+               </widget>
+           </item>
+       </layout>
    </widget>
+      <widget class="QTableView" name="layoutView">
+          <property name="geometry">
+              <rect>
+                  <x>10</x>
+                  <y>370</y>
+                  <width>771</width>
+                  <height>211</height>
+              </rect>
+          </property>
+          <property name="verticalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="sizeAdjustPolicy">
+              <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
+          <property name="editTriggers">
+              <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked</set>
+          </property>
+      </widget>
   </widget>
  </widget>
  <resources/>

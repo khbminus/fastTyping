@@ -1,4 +1,5 @@
 #include "keyboard.h"
+#include <QBrush>
 #include <QFile>
 #include <QtDebug>
 #include <QtGlobal>
@@ -71,7 +72,7 @@ void KeyboardModel::loadFromFile(const QString &path) {
 
     validate(arr);
     mKeyboardRows.clear();
-    for (const auto &rowJson : arr) {
+    for (const auto &rowJson : arr["keys"]) {
         QList<KeyboardButtonData *> rowList;
         for (const auto &keyJson : rowJson) {
             QString text =
@@ -115,8 +116,9 @@ void KeyboardModel::addPath(const QString &path) {
     nlohmann::json arr = nlohmann::json::parse(read.toStdWString());
     validate(arr);  // TODO: exception are really needed
 
-    layouts.emplace_back(path, path.split('/').last(), QString());
-    // FIXME: rly? This is disgusting
+    layouts.push_back(
+        LayoutDescription(path, QString::fromStdString(arr["name"]),
+                          QString::fromStdString(arr["description"])));
 }
 
 void KeyboardModel::removePath(const QString &path) {
@@ -126,21 +128,34 @@ void KeyboardModel::removePath(const QString &path) {
 
 void KeyboardModel::setCurrentLayout(qsizetype idx) {
     loadFromFile(layouts[idx].path);
+    currentLayout = idx;
     emit rowsChanged();
 }
 
 void KeyboardModel::validate(const nlohmann::json &layout) {
-    if (!layout.is_array()) {
-        qFatal("Invalid layout format: json is not an array");
+    if (!layout.contains("keys") || !layout.contains("name") ||
+        !layout.contains("description")) {
+        qFatal("Invalid layout format: bad format");
     }
 
-    if (layout.size() != 4) {
-        qFatal("Invalid layout format: rows count be 4");
+    if (!layout["name"].is_string()) {
+        qFatal("Invalid layout format: name must be string");
+    }
+    if (!layout["description"].is_string()) {
+        qFatal("Invalid layout format: description must be string");
+    }
+
+    if (!layout["keys"].is_array()) {
+        qFatal("Invalid layout format: keys is not an array");
+    }
+
+    if (layout["keys"].size() != 4) {
+        qFatal("Invalid layout format: rows number be 4");
     }
 
     std::size_t currentKeys = 13;
 
-    for (const auto &rowJson : layout) {
+    for (const auto &rowJson : layout["keys"]) {
         if (!rowJson.is_array()) {
             qFatal("Invalid layout format: json is not an array of arrays");
         }
@@ -168,10 +183,62 @@ qsizetype KeyboardModel::getCurrentLayout() const {
     return currentLayout;
 }
 
-KeyboardModel::LayoutDescription::LayoutDescription(QString path,
-                                                    QString name,
-                                                    QString description)
+LayoutDescription::LayoutDescription(QString path,
+                                     QString name,
+                                     QString description)
     : path(std::move(path)),
       name(std::move(name)),
       description(std::move(description)) {}
+int LayoutTableModel::rowCount(const QModelIndex &parent) const {
+    return model->layouts.size();
+}
+int LayoutTableModel::columnCount(const QModelIndex &) const {
+    return 3;
+}
+QVariant LayoutTableModel::data(const QModelIndex &index, int role) const {
+    if (role == Qt::DisplayRole) {
+        switch (index.column()) {
+            case 0:
+                return model->layouts[index.row()].name;
+            case 1:
+                return model->layouts[index.row()].description;
+            case 2:
+                return model->layouts[index.row()].path;
+        }
+    }
+    if (role == Qt::BackgroundRole && index.row() == model->currentLayout) {
+        auto res = QBrush(Qt::SolidPattern);
+        res.setColor(QColor::fromRgba64(QRgba64::fromRgba(48, 197, 255, 30)));
+        return res;
+    }
+    return {};
+}
+
+QAbstractTableModel *KeyboardModel::tableModel() {
+    auto *model = new LayoutTableModel(this, this);
+    return model;
+}
+LayoutTableModel::LayoutTableModel(KeyboardModel *model, QObject *parent)
+    : QAbstractTableModel(parent), model(model) {
+    connect(model, &KeyboardModel::rowsChanged, [&]() {
+        qDebug() << "signalled redraw!";
+        emit dataChanged(index(0, 0), index(rowCount() - 1, 2));
+    });
+}
+QVariant LayoutTableModel::headerData(int section,
+                                      Qt::Orientation orientation,
+                                      int role) const {
+    if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
+        switch (section) {
+            case 0:
+                return QString("Name");
+            case 1:
+                return QString("Description");
+            case 2:
+                return QString("Path");
+        }
+    }
+    return {};
+}
+
 }  // namespace FastTyping::Keyboard
