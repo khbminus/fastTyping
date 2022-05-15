@@ -58,6 +58,7 @@ public:
     AbstractGameStorage() = default;
     virtual std::shared_ptr<Game> get(int id, json &errors) = 0;
     virtual json createGame(const json &body) = 0;
+    virtual Game *getGame(int game_id) = 0;
     virtual ~AbstractGameStorage() = default;
 };
 
@@ -65,6 +66,9 @@ class MapGameStorage final : public AbstractGameStorage {
 public:
     std::shared_ptr<Game> get(int id, json &errors) override;
     json createGame(const json &body) override;
+    Game *getGame(int game_id) override {
+        return games[game_id].get();
+    }
 
 private:
     std::mutex map_mutex;

@@ -9,7 +9,7 @@
 namespace FastTyping::Server {
 Server::Server()
     : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)),
-      userStorage(new MapUserStorage),
+      userStorage(new Database),
       gameStorage(new MapGameStorage) {
     std::cout << "Listening at " << acceptor.local_endpoint() << std::endl;
     commonQueriesMap["echo"] = [&](const json &body, User &user) {
@@ -36,15 +36,20 @@ Server::Server()
         auto result = gameStorage->createGame(body);
         if (body.contains("autoJoin") && body["autoJoin"].is_boolean() &&
             body["autoJoin"]) {
+            if (!result["body"].contains("id") ||
+                !result["body"]["id"].is_number()) {
+                result["body"]["joined"] = false;
+                return result;
+            }
             json errors;
             auto game = gameStorage->get(result["body"]["id"], errors);
             if (game == nullptr) {
-                result["joined"] = false;
-                result["error"] = errors;
+                result["body"]["joined"] = false;
+                result["body"]["error"] = errors;
             } else {
                 user.setGame(game);
-                result["joined"] = true;
-                result["error"] = "";
+                result["body"]["joined"] = true;
+                result["body"]["error"] = "";
             }
         }
         return result;
@@ -169,11 +174,23 @@ void Server::parseQuery(tcp::socket s) {
             std::cerr << e.what() << std::endl;  // process error to client
             return;
         }
+        std::string passw = "123";  // TODO parse login/register query
+        // Case 1: login:  if( userStorage->nameExist(name) == true &&
+        // passw == getPassword(userStorage->getId(name)) ) go next,
+        // else send error to UI Case 2: register: if
+        // (userStorage->nameExist(name) == false) {
+        // setPassword(userStorage->getId(name))} Case 3: change
+        // password: match as in login and then setPassword
 
-        User &user = userStorage->get(user_name);
+        // That's not user's methods because it's hard to hold user in
+        // incorrect password cases etc
+
+        User user(
+            user_name,
+            userStorage.get());  // after you parse login and register query
+                                 // you can simply identify user by its name
         json result = {{"header", {{"type", "loginSuccessfully"}}},
                        {"body", {{"name", user.name()}}}};
-        result["header"]["queryType"] = query["header"]["type"];
         client << result << '\n';
 
         try {

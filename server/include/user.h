@@ -1,25 +1,28 @@
 #ifndef FASTTYPING_USER_H
 #define FASTTYPING_USER_H
-#include <mutex>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <thread>
 #include <unordered_map>
 #include <utility>
+#include "database.h"
 #include "game_fwd.h"
 
 using nlohmann::json;
-
 namespace FastTyping::Server {
-class User {
-public:
-    User() = default;
-    explicit User(std::string name) : userName(std::move(name)) {
-        id = nextId++;
+struct User {
+    User() = delete;
+    explicit User(std::string &name_, Database *DB)
+        : userName(name_),
+          id(DB->getId(name_)),
+          gameId(-1),
+          wantToExit(false) {}
+    [[nodiscard]] Game *getGame() const {
+        // getGameId()
+        return currentGame.get();
     }
 
-    [[nodiscard]] const std::string &name() const {
-        std::unique_lock l{mutex};
+    [[nodiscard]] const std::string &name() const noexcept {
         return userName;
     }
 
@@ -28,64 +31,35 @@ public:
     }
 
     [[nodiscard]] int isWantToExit() const noexcept {
-        return wantToExit;
+        return (wantToExit ? 1 : 0);
     }
-    [[nodiscard]] Game *getGame() const {
-        std::unique_lock l{mutex};
-        return currentGame.get();
-    }
+
     void setGame(std::shared_ptr<Game> game) {
         std::unique_lock l{mutex};
         currentGame = std::move(game);
+        // setGameId(TODO)
     }
-    void setWillToExit() {
-        std::unique_lock l{mutex};
+    void setGameId(int gameId_) noexcept {
+        gameId = gameId_;
+    }
+    [[nodiscard]] int getGameId() const noexcept {
+        return gameId;
+    }
+
+    void setWillToExit() noexcept {
         wantToExit = true;
     }
-    void clearWillToExit() {
-        std::unique_lock l{mutex};
+    void clearWillToExit() noexcept {
         wantToExit = false;
     }
 
 private:
-    std::string userName;
-    int id = 0;
-    bool wantToExit = false;
-    static inline int nextId = 0;
-
-    mutable std::mutex mutex;
     std::shared_ptr<Game> currentGame = nullptr;
-};
-
-class AbstractUserStorage {
-public:
-    AbstractUserStorage() = default;
-    virtual User &get(int) = 0;
-    virtual User &get(const std::string &) = 0;
-    virtual ~AbstractUserStorage() = default;
-};
-
-class MapUserStorage : public AbstractUserStorage {
-    // Probably should be replaced with SQL user storage
-public:
-    MapUserStorage() = default;
-    User &get(int id) override {
-        std::unique_lock l{mutex};
-        return usersById.at(id);
-    }
-    User &get(const std::string &name) override {
-        std::unique_lock l{mutex};
-        if (auto it = usersByName.find(name); it != usersByName.end()) {
-            return it->second;
-        }
-        User &user = usersByName.emplace(name, name).first->second;
-        return usersById.emplace(user.getId(), user).first->second;
-    }
-
-private:
-    std::unordered_map<std::string, User> usersByName;
-    std::unordered_map<int, User &> usersById;
     mutable std::mutex mutex;
+    std::string userName;
+    int gameId;
+    bool wantToExit;
+    int id = 0;
 };
 }  // namespace FastTyping::Server
 #endif  // FASTTYPING_USER_H
