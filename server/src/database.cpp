@@ -111,7 +111,6 @@ int Database::getId(
     return id;
 }
 
-// cppcheck-suppress unusedFunction
 bool Database::nameExist(const std::string &name) {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
