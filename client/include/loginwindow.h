@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 namespace Ui {
-    class LoginWindow;
+class LoginWindow;
 }
 
 class LoginWindow : public QMainWindow {
@@ -23,4 +23,4 @@ private:
     Ui::LoginWindow *ui;
 };
 
-#endif// LOGINWINDOW_H
+#endif  // LOGINWINDOW_H

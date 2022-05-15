@@ -3,6 +3,7 @@
 #include <map>
 #include <nlohmann/json.hpp>
 #include <string>
+#include "responseParse.h"
 
 namespace client::responses {
 
@@ -28,9 +29,11 @@ ResponseType APIHandler::type(QString const &line) const {
 }
 
 void APIHandler::handle(QString const &line) {
+    using client::responses::is_success;
     json response = json::parse(line.toStdString());
-    if (response["header"]["queryType"].get<std::string>() == "addNewChar" ||
-        response["header"]["queryType"].get<std::string>() == "backspace") {
+    if ((response["header"]["queryType"].get<std::string>() == "addNewChar" ||
+         response["header"]["queryType"].get<std::string>() == "backspace") &&
+        is_success(response)) {
         if (response["body"]["isEnd"].get<bool>()) {
             emit end_signal();
         } else if (response["body"]["isFullCorrect"].get<bool>()) {

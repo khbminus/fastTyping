@@ -44,7 +44,7 @@ QString leave_query() {
     return dump(result);
 }
 
-QString sign_in_query(QString const& username, QString const& password) {
+QString sign_in_query(QString const &username, QString const &password) {
     json result;
     json words = json::array({"This", "is", "sample", "don't", "judge", "me"});
 

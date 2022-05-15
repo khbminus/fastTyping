@@ -12,7 +12,8 @@ std::map<std::string, std::string> success_type{
     {"createGame", "GameCreatedSuccessfully"},
     {"joinGame", "GameJoinedSuccessfully"},
     {"leaveGame", "GameLeaveSuccessfully"},
-};
+    {"backspace", "checkResult"},
+    {"addNewChar", "checkResult"}};
 
 std::map<std::string, std::map<std::string, QString>> error_texts{
     {"createGame",

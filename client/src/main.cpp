@@ -4,16 +4,15 @@
 #include "gamewindow.h"
 #include "joinwindow.h"
 #include "localManager.h"
+#include "loginwindow.h"
 #include "mainwindow.h"
+#include "registerwindow.h"
 #include "responseHandler.h"
+#include "signwindow.h"
 #include "sonicSocket.h"
 #include "statwindow.h"
 #include "webManager.h"
 #include "windowcontroller.h"
-#include "registerwindow.h"
-#include "signwindow.h"
-#include "loginwindow.h"
-
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);

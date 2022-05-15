@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 namespace Ui {
-    class SignWindow;
+class SignWindow;
 }
 
 class SignWindow : public QMainWindow {
@@ -23,4 +23,4 @@ private:
     Ui::SignWindow *ui;
 };
 
-#endif// SIGNWINDOW_H
+#endif  // SIGNWINDOW_H
