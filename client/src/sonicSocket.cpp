@@ -5,7 +5,7 @@ const short port = 1337;
 
 namespace client::web {
 client::web::SocketWrapper &socket(ResponseHandler *handler) {
-    static SocketWrapper wrapper(ip, port, handler);
-    return wrapper;
+    static SocketWrapper instance(ip, port, handler);
+    return instance;
 }
 }  // namespace client::web

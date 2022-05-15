@@ -1,13 +1,23 @@
 #include "gamewindow.h"
 #include <iostream>
 #include "confirmWindow.h"
+#include "gameContextManager.h"
 #include "queryTemplates.h"
 #include "sonicSocket.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
 
-GameWindow::GameWindow(GameManager *manager, QWidget *parent)
+GameWindow::GameWindow(std::vector<GameManager *> managers,
+                       GameManager *manager,
+                       QWidget *parent)
     : QMainWindow(parent), ui(new Ui::GameWindow), main_manager(manager) {
+    for (auto man : managers) {
+        QObject::connect(this, &GameWindow::key_pressed, man,
+                         &GameManager::key_pressed);
+        QObject::connect(this, &GameWindow::backspace_pressed, man,
+                         &GameManager::backspace_pressed);
+    }
+
     QObject::connect(manager, &GameManager::correct_signal, this,
                      &GameWindow::correct_slot);
     QObject::connect(manager, &GameManager::error_signal, this,
@@ -25,6 +35,8 @@ GameWindow::GameWindow(GameManager *manager, QWidget *parent)
     ui->dictLabel->setAutoFillBackground(true);
     ui->dictLabel->setPalette(palette);
     ui->dictLabel->setText(manager->blob());
+    ui->game_id->setText(
+        QString::number(ContextManager::get_instance().get_game_id()));
 }
 
 GameWindow::~GameWindow() {
@@ -36,6 +48,7 @@ void GameWindow::on_ReturnButton_clicked() {
     using client::web::socket;
 
     if (confirm("Exit", "Are you really want to exit")) {
+        ContextManager::get_instance().reset_context();
         qDebug() << "leave result: " << socket().query(leave_query());
         auto &controller = FastTyping::WindowController::getInstance();
         controller.setActiveWindow("MainWindow");
@@ -51,9 +64,9 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
     }
 
     if (event->key() == Qt::Key_Backspace) {
-        main_manager->backspace_pressed();
+        emit backspace_pressed();
     } else {
-        main_manager->key_pressed(keysCombination[0]);
+        emit key_pressed(keysCombination[0]);
     }
 }
 

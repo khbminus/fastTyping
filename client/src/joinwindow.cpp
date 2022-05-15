@@ -3,6 +3,7 @@
 #include <nlohmann/json.hpp>
 #include "./ui_joinwindow.h"
 #include "errorHandler.h"
+#include "gameContextManager.h"
 #include "queryTemplates.h"
 #include "responseParse.h"
 #include "sonicSocket.h"
@@ -38,6 +39,8 @@ void JoinWindow::on_JoinButton_clicked() {
     json response = json::parse(raw_response.toStdString());
 
     if (ensure_success(response)) {
+        auto &context = ContextManager::get_instance();
+        context.set_context_from_create_query(response);
         auto &controller = FastTyping::WindowController::getInstance();
         controller.setActiveWindow("GameWindow");
     }

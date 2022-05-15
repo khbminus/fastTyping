@@ -62,7 +62,7 @@ QString sign_on_query(QString const &username, QString const &password) {
     return dump(result);
 }
 
-QString get_line_query(QString const &username, QString const &password) {
+QString get_line_query() {
     json result;
 
     result["header"] = {{"type", "getNewLine"}};

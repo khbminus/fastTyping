@@ -59,14 +59,27 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>50</y>
+      <x>150</x>
+      <y>40</y>
       <width>61</width>
-      <height>16</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Session ID: 0</string>
+     <string>Game Id:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="game_id">
+    <property name="geometry">
+     <rect>
+      <x>216</x>
+      <y>40</y>
+      <width>51</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>0</string>
     </property>
    </widget>
   </widget>

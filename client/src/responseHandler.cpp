@@ -18,7 +18,8 @@ std::map<std::string, ResponseType> header_to_type{
     {"addNewChar", ResponseType::async},
     {"addBackspace", ResponseType::async},
     {"login", ResponseType::blocking},
-    {"register", ResponseType::blocking}};
+    {"register", ResponseType::blocking},
+    {"getNewLine", ResponseType::blocking}};
 
 ResponseType APIHandler::type(QString const &line) const {
     json response = json::parse(line.toStdString());
@@ -46,4 +47,10 @@ void APIHandler::handle(QString const &line) {
         }
     }
 }
+
+APIHandler &handler() {
+    static APIHandler instance;
+    return instance;
+}
+
 }  // namespace client::responses
