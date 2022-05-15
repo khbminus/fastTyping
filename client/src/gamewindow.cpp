@@ -1,11 +1,11 @@
 #include "gamewindow.h"
 #include <qqml.h>
 #include <QQuickItem>
-#include "sonicSocket.h"
 #include <iostream>
 #include "confirmWindow.h"
 #include "keyboard.h"
 #include "queryTemplates.h"
+#include "sonicSocket.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
 
@@ -32,8 +32,10 @@ GameWindow::GameWindow(GameManager *manager, QWidget *parent)
     ui->dictLabel->setAutoFillBackground(true);
     ui->dictLabel->setPalette(palette);
     ui->dictLabel->setText(manager->blob());
-    connect(this, SIGNAL(press(QVariant)), ui->quickWidget->rootObject(), SLOT(pressKey(QVariant)));
-    connect(this, SIGNAL(release(QVariant)), ui->quickWidget->rootObject(), SLOT(releaseKey(QVariant)));
+    connect(this, SIGNAL(press(QVariant)), ui->quickWidget->rootObject(),
+            SLOT(pressKey(QVariant)));
+    connect(this, SIGNAL(release(QVariant)), ui->quickWidget->rootObject(),
+            SLOT(releaseKey(QVariant)));
 }
 
 GameWindow::~GameWindow() {
