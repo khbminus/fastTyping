@@ -1,11 +1,10 @@
 #include "registerwindow.h"
+#include <iostream>
 #include "ui_registerwindow.h"
 #include "windowcontroller.h"
-#include <iostream>
 
-
-RegisterWindow::RegisterWindow(QWidget *parent) : QMainWindow(parent),
-                                                  ui(new Ui::RegisterWindow) {
+RegisterWindow::RegisterWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::RegisterWindow) {
     ui->setupUi(this);
 }
 
@@ -19,7 +18,6 @@ void RegisterWindow::on_SubmitButton_clicked() {
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("MainWindow");
 }
-
 
 void RegisterWindow::on_ReturnButton_clicked() {
     auto &controller = FastTyping::WindowController::getInstance();

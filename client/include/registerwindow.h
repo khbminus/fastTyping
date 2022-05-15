@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 namespace Ui {
-    class RegisterWindow;
+class RegisterWindow;
 }
 
 class RegisterWindow : public QMainWindow {
@@ -23,4 +23,4 @@ private:
     Ui::RegisterWindow *ui;
 };
 
-#endif// REGISTERWINDOW_H
+#endif  // REGISTERWINDOW_H
