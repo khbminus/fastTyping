@@ -1,14 +1,17 @@
 #ifndef FASTTYPING_KEYBOARD_H
 #define FASTTYPING_KEYBOARD_H
+#include <QAbstractListModel>
 #include <QColor>
 #include <QList>
 #include <QObject>
 #include <QQmlEngine>
 #include <QQmlListProperty>
 #include <Qt>
+#include <nlohmann/json_fwd.hpp>
 #include <string>
 
 namespace FastTyping::Keyboard {
+Q_NAMESPACE
 class KeyboardButtonData : public QObject {
     Q_OBJECT
     Q_PROPERTY(QColor clr READ color CONSTANT)
@@ -21,12 +24,15 @@ class KeyboardButtonData : public QObject {
     // contains only necessary data
 public:
     // some alphabetic key. ShiftKey = key.toUpper()
-    KeyboardButtonData(const int &key, const QString &text);
+    KeyboardButtonData(const int &key,
+                       const QString &text,
+                       QObject *parent = nullptr);
     // key with different symbol at shift, e.g. tick, comma, period, digits
     KeyboardButtonData(const int &key,
                        QString text,
                        const int &shiftKey,
-                       QString shiftText);
+                       QString shiftText,
+                       QObject *parent = nullptr);
 
     void setColor(const QColor &newColor);
     [[nodiscard]] QColor color() const;
@@ -46,13 +52,13 @@ private:
 class KeyboardModel : public QObject {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<KeyboardButtonData> firstRowModel READ
-                   firstRowModel CONSTANT)
+                   firstRowModel NOTIFY rowsChanged)
     Q_PROPERTY(QQmlListProperty<KeyboardButtonData> secondRowModel READ
-                   secondRowModel CONSTANT)
+                   secondRowModel NOTIFY rowsChanged)
     Q_PROPERTY(QQmlListProperty<KeyboardButtonData> thirdRowModel READ
-                   thirdRowModel CONSTANT)
+                   thirdRowModel NOTIFY rowsChanged)
     Q_PROPERTY(QQmlListProperty<KeyboardButtonData> numbersRowModel READ
-                   numbersRowModel CONSTANT)
+                   numbersRowModel NOTIFY rowsChanged)
     QML_ELEMENT
 public:
     [[nodiscard]] QQmlListProperty<KeyboardButtonData> firstRowModel();
@@ -60,11 +66,45 @@ public:
     [[nodiscard]] QQmlListProperty<KeyboardButtonData> thirdRowModel();
     [[nodiscard]] QQmlListProperty<KeyboardButtonData> numbersRowModel();
 
-    static KeyboardModel *fromFile(const std::string &path);
+    static KeyboardModel &getInstance() {
+        static KeyboardModel model;
+        return model;
+    }
+
+    void addPath(const QString &path);
+    void removePath(const QString &path);
+    void setCurrentLayout(qsizetype idx);
+    [[nodiscard]] qsizetype getCurrentLayout() const;
+signals:
+    void rowsChanged();
 
 private:
+    struct LayoutDescription {
+        LayoutDescription(QString path, QString name, QString description);
+        QString path;
+        QString name;
+        QString description;
+    };
+
+    //    class LayoutItemModel : public QAbstractItemModel {
+    //        Q_OBJECT
+    //    public:
+    //        explicit LayoutItemModel(QObject *parent = nullptr);
+    //
+    //        QVariant data(const QModelIndex& index, int role =
+    //        Qt::DisplayRole) const override; Qt::ItemFlags flags(const
+    //        QModelIndex& index) const override;
+    //
+    //    };
+
+    qsizetype currentLayout;
     QList<QList<KeyboardButtonData *>> mKeyboardRows;
-    KeyboardModel() = default;
+
+    KeyboardModel() : QObject(nullptr) {}
+    void loadFromFile(const QString &path);
+    void validate(const nlohmann::json &layout);
+    // TODO: Change with SQL table
+    QList<LayoutDescription> layouts;
 };
 
 }  // namespace FastTyping::Keyboard

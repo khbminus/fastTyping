@@ -65,15 +65,28 @@
       <height>261</height>
      </rect>
     </property>
-    <property name="resizeMode">
-     <enum>QQuickWidget::SizeRootObjectToView</enum>
-    </property>
-    <property name="source">
-     <url>
-      <string>qrc:/Keyboard.qml</string>
-     </url>
-    </property>
+       <property name="resizeMode">
+           <enum>QQuickWidget::SizeRootObjectToView</enum>
+       </property>
+       <property name="source">
+           <url>
+               <string>qrc:/Keyboard.qml</string>
+           </url>
+       </property>
    </widget>
+      <widget class="QComboBox" name="comboBox">
+          <property name="geometry">
+              <rect>
+                  <x>630</x>
+                  <y>50</y>
+                  <width>72</width>
+                  <height>25</height>
+              </rect>
+          </property>
+          <property name="insertPolicy">
+              <enum>QComboBox::InsertAlphabetically</enum>
+          </property>
+      </widget>
   </widget>
  </widget>
  <customwidgets>

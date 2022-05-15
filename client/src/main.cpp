@@ -3,6 +3,7 @@
 #include "createwindow.h"
 #include "gamewindow.h"
 #include "joinwindow.h"
+#include "keyboard.h"
 #include "localManager.h"
 #include "mainwindow.h"
 #include "responseHandler.h"
@@ -13,6 +14,10 @@
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
+    auto &keyboard = FastTyping::Keyboard::KeyboardModel::getInstance();
+    keyboard.addPath("qwerty.json");
+    keyboard.addPath("test.json");
+    keyboard.setCurrentLayout(0);
 
     client::responses::APIHandler response_handler;
     client::web::socket(&response_handler);
