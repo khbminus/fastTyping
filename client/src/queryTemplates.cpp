@@ -44,6 +44,16 @@ QString leave_query() {
     return dump(result);
 }
 
+QString sign_in_query(QString const& username, QString const& password) {
+    json result;
+    json words = json::array({"This", "is", "sample", "don't", "judge", "me"});
+
+    result["header"] = {{"type", "login"}};
+    result["body"] = {{"username", username.toStdString()},
+                      {"password", password.toStdString()}};
+    return dump(result);
+}
+
 QString create_game_query(bool auto_join) {
     json result;
     json words = json::array({"This", "is", "sample", "don't", "judge", "me"});

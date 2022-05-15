@@ -10,6 +10,10 @@
 #include "statwindow.h"
 #include "webManager.h"
 #include "windowcontroller.h"
+#include "registerwindow.h"
+#include "signwindow.h"
+#include "loginwindow.h"
+
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -35,16 +39,24 @@ int main(int argc, char *argv[]) {
                      &manager, &WebManager::correct_word_slot);
     //*/
     auto &controller = FastTyping::WindowController::getInstance();
+
     auto mainWindow = QSharedPointer<QMainWindow>(new MainWindow());
     auto joinWindow = QSharedPointer<QMainWindow>(new JoinWindow());
     auto createWindow = QSharedPointer<QMainWindow>(new CreateWindow());
     auto gameWindow = QSharedPointer<QMainWindow>(new GameWindow(&manager));
     auto statWindow = QSharedPointer<QMainWindow>(new StatWindow());
+    auto loginWindow = QSharedPointer<QMainWindow>(new LoginWindow());
+    auto signWindow = QSharedPointer<QMainWindow>(new SignWindow());
+    auto registerWindow = QSharedPointer<QMainWindow>(new RegisterWindow());
+
+    controller.registerWindow("LoginWindow", loginWindow);
+    controller.registerWindow("SignWindow", signWindow);
+    controller.registerWindow("RegisterWindow", registerWindow);
     controller.registerWindow("MainWindow", mainWindow);
     controller.registerWindow("JoinWindow", joinWindow);
     controller.registerWindow("CreateWindow", createWindow);
     controller.registerWindow("GameWindow", gameWindow);
     controller.registerWindow("StatWindow", statWindow);
-    controller.setActiveWindow("MainWindow");
+    controller.setActiveWindow("LoginWindow");
     return a.exec();
 }
