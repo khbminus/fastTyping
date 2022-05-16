@@ -12,7 +12,7 @@ Server::Server()
       userStorage(new Database),
       gameStorage(new MapGameStorage) {
     std::cout << "Listening at " << acceptor.local_endpoint() << std::endl;
-    commonQueriesMap["echo"] = [&](const json &body, User &user) {
+    commonQueriesMap["echo"] = [&](const json &body, User &user) -> json {
         return body;
     };
     commonQueriesMap["createGame"] = [&](const json &body, User &user) -> json {
@@ -230,35 +230,26 @@ void Server::parseQuery(tcp::socket s) {
                     if ((result["header"]["queryType"] == "login" ||
                          result["header"]["queryType"] == "register") &&
                         result["header"]["type"] == "success") {
+                        std::cerr << "successfully registered/logged in\n";
                         user_name = queryBody["name"].get<std::string>();
                         break;
                     }
+                } else {
+                    json header = json({{"type", "unknownQueryError"}});
+                    json body = json();
+                    client << json({{"header", header}, {"body", body}})
+                           << '\n';
                 }
             }
         } catch (nlohmann::detail::exception &e) {
             std::cerr << e.what() << std::endl;  // process error to client
         }
 
-        // Case 1: login:  if( userStorage->nameExist(name) == true &&
-        // passw == getPassword(userStorage->getId(name)) ) go next,
-        // else send error to UI Case 2: register: if
-        // (userStorage->nameExist(name) == false) {
-        // setPassword(userStorage->getId(name))} Case 3: change
-        // password: match as in login and then setPassword
-
-        // That's not user's methods because it's hard to hold user in
-        // incorrect password cases etc
-
-        User user(
-            user_name,
-            userStorage.get());  // after you parse login and register query
-                                 // you can simply identify user by its name
-        //        result = {{"header", {{"type", "loginSuccessfully"}}},
-        //                       {"body", {{"name", user.name()}}}};
-        //        client << result << '\n';
+        User user(user_name, userStorage.get());
 
         try {
             while (client) {
+                std::cerr << "waiting line...\n";
                 if (!std::getline(client, line)) {
                     break;
                 }
@@ -280,6 +271,11 @@ void Server::parseQuery(tcp::socket s) {
                         break;
                     }
                     client << result << '\n';
+                } else {
+                    json header = json({{"type", "unknownQueryError"}});
+                    json body = json();
+                    client << json({{"header", header}, {"body", body}})
+                           << '\n';
                 }
             }
         } catch (nlohmann::detail::exception &e) {
