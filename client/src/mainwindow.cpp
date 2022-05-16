@@ -13,8 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
     using client::web::socket;
 
     ui->setupUi(this);
-    QString answer = socket().query(greeting_query("Aboba"));
+    // QString answer = socket().query(greeting_query("Aboba"));
     // socket().query(leave_query());
+    // qDebug() << "login result: " << answer;
     qDebug() << "login result: " << answer;
 
     ui->layoutView->setModel(

@@ -2,9 +2,11 @@
 #define FASTTYPING_DATABASE_H
 #include <iostream>
 #include <mutex>
+#include <nlohmann/json.hpp>
 #include <pqxx/pqxx>
 
 namespace FastTyping::Server {
+using nlohmann::json;
 struct Database {
 public:
     Database();
@@ -22,6 +24,12 @@ public:
                                                       int,
                                                       const std::string &);
     void dropMistakes();
+    // Queries
+    json login(const std::string &name, const std::string &password);
+    json registration(const std::string &name, const std::string &password);
+    json changePassword(const std::string &name,
+                        const std::string &old_password,
+                        const std::string &new_password);
 
 private:
     mutable std::mutex mutex;

@@ -20,11 +20,12 @@ class GameManager : public QObject {
     Q_OBJECT
 public:
     virtual ~GameManager() {}
-    virtual void key_pressed(QChar button) = 0;
-    virtual void backspace_pressed() = 0;
     virtual QString get_buffer() = 0;
     virtual std::optional<QChar> next() = 0;
     virtual QString blob() = 0;
+public slots:
+    virtual void key_pressed(QChar button) = 0;
+    virtual void backspace_pressed() = 0;
 signals:
     void error_signal();
     void correct_signal();

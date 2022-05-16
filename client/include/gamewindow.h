@@ -18,7 +18,9 @@ class GameWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit GameWindow(GameManager *manager, QWidget *parent = nullptr);
+    explicit GameWindow(std::vector<GameManager *> managers,
+                        GameManager *manager,
+                        QWidget *parent = nullptr);
     ~GameWindow();
 
 private:
@@ -43,6 +45,9 @@ private slots:
     void correct_slot();
     void print(QString const &line);
     void end();
+signals:
+    void backspace_pressed();
+    void key_pressed(QChar button);
 };
 
 #endif  // GAMEWINDOW_H

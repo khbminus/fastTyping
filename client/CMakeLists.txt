@@ -32,6 +32,12 @@ set(PROJECT_SOURCES
         include/gamewindow.h
         src/statwindow.cpp
         include/statwindow.h
+        src/registerwindow.cpp
+        include/registerwindow.h
+        src/loginwindow.cpp
+        include/loginwindow.h
+        src/signwindow.cpp
+        include/signwindow.h
         src/errorHandler.cpp
         src/queryTemplates.cpp
         src/localManager.cpp
@@ -41,6 +47,7 @@ set(PROJECT_SOURCES
         src/webManager.cpp
         src/confirmWindow.cpp
         src/responseParse.cpp
+        src/gameContextManager.cpp
         include/gameManager.h
         include/errorHandler.h
         include/localManager.h
@@ -61,6 +68,7 @@ set(PROJECT_SOURCES
 
         include/keyboard.h
         src/keyboard.cpp
+        include/gameContextManager.h
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

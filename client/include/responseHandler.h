@@ -17,6 +17,8 @@ signals:
     void end_signal();
     void correct_word_signal();
 };
+
+APIHandler &handler();
 }  // namespace client::responses
 
 #endif
