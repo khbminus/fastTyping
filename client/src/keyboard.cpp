@@ -135,9 +135,9 @@ void KeyboardModel::addPath(const QString &path) {
     nlohmann::json arr = nlohmann::json::parse(read.toStdWString());
     validate(arr);  // TODO: exception are really needed
 
-    layouts.push_back(
-        LayoutDescription(path, QString::fromStdString(arr["name"]),
-                          QString::fromStdString(arr["description"])));
+    layouts.push_back(LayoutDescription(
+        path, QString::fromStdString(arr["name"].get<std::string>()),
+        QString::fromStdString(arr["description"].get<std::string>())));
 }
 
 void KeyboardModel::removePath(const QString &path) {
