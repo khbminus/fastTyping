@@ -38,7 +38,9 @@ SocketWrapper::SocketWrapper(QString ip, short port, ResponseHandler *a_handler)
         QObject::connect(
             socket, &QTcpSocket::readyRead, &socket_thread,
             [this, socket, &buffer]() {
-                buffer += socket->readLine();
+                QString received = socket->readLine();
+                buffer += received;
+                // qDebug() << "raw: " << received;
 
                 // I think that `.split()` is amgisious - Qt should call it on
                 // every line, that ends with '\n'

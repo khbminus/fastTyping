@@ -1,5 +1,6 @@
 #include "windowcontroller.h"
 #include <utility>
+
 namespace FastTyping {
 void WindowController::setActiveWindow(const std::string &windowName) {
     if (activeWindow) {

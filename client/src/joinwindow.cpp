@@ -3,6 +3,7 @@
 #include <nlohmann/json.hpp>
 #include "./ui_joinwindow.h"
 #include "errorHandler.h"
+#include "gameContextManager.h"
 #include "queryTemplates.h"
 #include "responseParse.h"
 #include "sonicSocket.h"
@@ -19,8 +20,8 @@ JoinWindow::~JoinWindow() {
 
 void JoinWindow::on_JoinButton_clicked() {
     using client::queries::join_query;
+    using client::responses::ensure_success;
     using client::responses::error_text;
-    using client::responses::is_success;
     using client::web::socket;
     using nlohmann::json;
 
@@ -36,11 +37,11 @@ void JoinWindow::on_JoinButton_clicked() {
     qDebug() << "join result: " << raw_response;
     json response = json::parse(raw_response.toStdString());
 
-    if (is_success(response)) {
+    if (ensure_success(response)) {
+        auto &context = ContextManager::get_instance();
+        context.set_context_from_create_query(response);
         auto &controller = FastTyping::WindowController::getInstance();
         controller.setActiveWindow("GameWindow");
-    } else {
-        error_alert("Join error", error_text(response));
     }
 }
 
