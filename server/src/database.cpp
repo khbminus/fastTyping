@@ -40,7 +40,6 @@ Database::Database() : connect("dbname = fast_typing") {
     }
 }
 
-// cppcheck-suppress unusedFunction
 void Database::dropUsers() {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
@@ -48,7 +47,6 @@ void Database::dropUsers() {
     W.commit();
 }
 
-// cppcheck-suppress unusedFunction
 void Database::dropMistakes() {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
@@ -111,14 +109,13 @@ int Database::getId(
     return id;
 }
 
-// cppcheck-suppress unusedFunction
 bool Database::nameExist(const std::string &name) {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
     pqxx::result find_by_name = W.exec(
-        "SELECT 1 "
+        "SELECT * "
         "FROM USERS "
-        "WHERE NAME = ' + " +
+        "WHERE NAME = '" +
         W.esc(name) + "';");
     W.commit();
     return !find_by_name.empty();
@@ -164,6 +161,38 @@ std::vector<std::pair<char, char>> Database::getTopMistakes(
                   });
     W.commit();
     return result;
+}
+
+json Database::login(const std::string &name, const std::string &password) {
+    int user_id;
+    std::cerr << nameExist(name) << " ";
+    std::cerr << getPassword(user_id = getId(name)) << " " << password << '\n';
+    if (nameExist(name) && getPassword(user_id = getId(name)) == password) {
+        return {{"header", {{"type", "success"}}}, {"body", {{"id", user_id}}}};
+    }
+    return {{"header", {{"type", "incorrectName"}}}, {"body", {{"id", -1}}}};
+}
+
+json Database::registration(const std::string &name,
+                            const std::string &password) {
+    if (!nameExist(name)) {
+        int user_id = getId(name);
+        setPassword(user_id, password);
+        return {{"header", {{"type", "success"}}}, {"body", {{"id", user_id}}}};
+    }
+    return {{"header", {{"type", "nameAlreadyExists"}}},
+            {"body", {{"id", -1}}}};
+}
+
+json Database::changePassword(const std::string &name,
+                              const std::string &old_password,
+                              const std::string &new_password) {
+    int user_id;
+    if (nameExist(name) && getPassword(user_id = getId(name)) == old_password) {
+        setPassword(user_id, new_password);
+        return {{"header", {{"type", "success"}}}, {"body", {{"id", user_id}}}};
+    }
+    return {{"header", {{"type", "incorrectName"}}}, {"body", {{"id", -1}}}};
 }
 
 }  // namespace FastTyping::Server

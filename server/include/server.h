@@ -28,7 +28,8 @@ private:
     std::unique_ptr<AbstractGameStorage> gameStorage;
     std::unordered_map<std::string, std::function<json(const json &, User &)>>
         commonQueriesMap;
-
+    std::unordered_map<std::string, std::function<json(const json &)>>
+        loginQueriesMap;
     void parseQuery(tcp::socket);
 
     std::optional<json> checkQueryCorrectness(const std::string &queryString);
