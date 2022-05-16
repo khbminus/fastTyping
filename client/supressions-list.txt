@@ -1,0 +1,3 @@
+unusedFunction:*
+unmatchedSuppression:*
+unknownMacro:*
