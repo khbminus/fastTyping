@@ -5,7 +5,6 @@ option(BUILD_SERVER "Enable building server" OFF)
 option(BUILD_CLIENT "Enable building client" OFF)
 option(BUILD_ALL "Enable building all" OFF)
 
-add_compile_options(-O0 -ggdb)
 
 if (BUILD_SERVER OR BUILD_ALL)
     add_subdirectory(server)
