@@ -249,7 +249,6 @@ void Server::parseQuery(tcp::socket s) {
 
         try {
             while (client) {
-                std::cerr << "waiting line...\n";
                 if (!std::getline(client, line)) {
                     break;
                 }
