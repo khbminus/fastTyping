@@ -40,7 +40,6 @@ Database::Database() : connect("dbname = fast_typing") {
     }
 }
 
-// cppcheck-suppress unusedFunction
 void Database::dropUsers() {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
@@ -48,7 +47,6 @@ void Database::dropUsers() {
     W.commit();
 }
 
-// cppcheck-suppress unusedFunction
 void Database::dropMistakes() {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
