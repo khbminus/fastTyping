@@ -3,7 +3,7 @@ import json
 import socket
 
 s = socket.socket()
-s.connect(('localhost', 1337))
+s.connect(('46.17.248.131', 1337))
 f = s.makefile(mode='rw')
 
 
