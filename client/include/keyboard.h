@@ -106,6 +106,7 @@ public:
     void addPath(const QString &path);
     void removePath(const QString &path);
     void setCurrentLayout(qsizetype idx);
+    bool isUpper(QChar c);
     [[nodiscard]] qsizetype getCurrentLayout() const;
 signals:
     void rowsChanged();
@@ -113,6 +114,7 @@ signals:
 private:
     qsizetype currentLayout = 0;
     QList<QList<KeyboardButtonData *>> mKeyboardRows;
+    QHash<QChar, bool> mIsUpperMap;
 
     KeyboardModel() : QObject(nullptr) {}
     void loadFromFile(const QString &path);

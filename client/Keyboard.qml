@@ -27,6 +27,11 @@ Item {
         pressed(key);
     }
 
+    function highlightKey(key) {
+        console.log("highlighted key", key);
+        highlighted(key)
+    }
+
     function releaseKey(key) {
         console.log("released key", key);
         if (key === Qt.Key_Shift) {
@@ -35,8 +40,25 @@ Item {
         released(key);
     }
 
+    function clearHighlight() {
+        clearHighlighted()
+    }
+
+    function backspaceHighlight() {
+        backspaceHighlighted()
+    }
+
+    function shiftHighlight() {
+        if (!pimpl.capsModifier)
+            shiftHighlighted();
+    }
+
     signal pressed(int key)
     signal released(int key)
+    signal highlighted(string key)
+    signal shiftHighlighted()
+    signal clearHighlighted()
+    signal backspaceHighlighted()
 
     QtObject {
         id:pimpl
@@ -57,6 +79,8 @@ Item {
             text: (pimpl.capsModifier ? ((!pimpl.shiftModifier && keycode == shiftKeycode) || (pimpl.shiftModifier && keycode != shiftKeycode) ? shiftLetter : letter) :
                                         (pimpl.shiftModifier ? shiftLetter : letter))
             inputPanel: root
+            actualText: letter
+            actualShiftText: shiftLetter
             key: keycode
             color: clr
         }
@@ -97,6 +121,12 @@ Item {
                     text: "\x7F"
                     key: Qt.Key_Backspace
                     inputPanel: root
+                    Connections {
+                        target: root
+                        function onBackspaceHighlighted(keyPressed) {
+                            backspaceKey.isNext = true;
+                        }
+                    }
                 }
             }
             Item {
@@ -129,6 +159,8 @@ Item {
                     width: 1.5*pimpl.buttonWidth
                     height: pimpl.rowHeight
                     text: "\\"
+                    actualText: "\\"
+                    actualShiftText: "\\"
                     key: Qt.Key_Backslash
                     inputPanel: root
                 }
@@ -181,6 +213,12 @@ Item {
                     text: "\u21e7 Shift"
                     key: Qt.Key_Shift
                     inputPanel: root
+                    Connections {
+                        target: root
+                        function onShiftHighlighted(keyPressed) {
+                            leftShiftKey.isNext = true;
+                        }
+                    }
                 }
                 Row {
                     height: pimpl.rowHeight

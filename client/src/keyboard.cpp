@@ -72,26 +72,45 @@ void KeyboardModel::loadFromFile(const QString &path) {
 
     validate(arr);
     mKeyboardRows.clear();
+    mIsUpperMap.clear();
     for (const auto &rowJson : arr["keys"]) {
         QList<KeyboardButtonData *> rowList;
         for (const auto &keyJson : rowJson) {
             QString text =
                 QString::fromStdString(keyJson["text"].get<std::string>());
+
+            if (text.size() != 1) {
+                qWarning(
+                    "text size is %lld, but should be one (it can be unicode "
+                    "trouble, yea). Text: %s",
+                    text.size(), text.toLocal8Bit().data());
+            }
+            mIsUpperMap[text[0]] = false;
             int key = keyJson["key"].get<int>();
             KeyboardButtonData *btn = nullptr;
             if (keyJson.contains("shiftKey") || keyJson.contains("shiftText")) {
                 QString shiftText = QString::fromStdString(
                     keyJson["shiftText"].get<std::string>());
+                if (shiftText.size() != 1) {
+                    qWarning(
+                        "shiftText size is %lld, but should be one (it can be "
+                        "unicode trouble, yea). ShiftText: %s",
+                        shiftText.size(), shiftText.toLocal8Bit().data());
+                }
                 int shiftKey = keyJson["shiftKey"].get<int>();
-                btn = new KeyboardButtonData(key, text, shiftKey, shiftText);
+                btn = new KeyboardButtonData(key, text, shiftKey, shiftText,
+                                             this);
+                mIsUpperMap[shiftText[0]] = true;
+
                 qDebug() << "loading a shift-contain key: " << btn->text()
                          << " " << btn->key() << " " << btn->shiftText() << " "
                          << btn->shiftKey();
             } else {
-                btn = new KeyboardButtonData(key, text);
+                btn = new KeyboardButtonData(key, text, this);
                 qDebug() << "loading a non shift-contain key: " << btn->text()
                          << " " << btn->key() << " " << btn->shiftText() << " "
                          << btn->shiftKey();
+                mIsUpperMap[text.toUpper()[0]] = true;
             }
 
             if (keyJson.contains("color")) {
@@ -239,6 +258,10 @@ QVariant LayoutTableModel::headerData(int section,
         }
     }
     return {};
+}
+
+bool KeyboardModel::isUpper(QChar c) {
+    return mIsUpperMap[c];
 }
 
 }  // namespace FastTyping::Keyboard

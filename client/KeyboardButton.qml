@@ -9,20 +9,32 @@ Item {
     property alias displayText: txt.text
     property bool isHighlighted: false
     property bool isNext: false
+    property string actualText: text
+    property string actualShiftText: text.toUpperCase()
 
     Connections {
         target: inputPanel
         function onPressed(keyPressed) {
             if (root.key === keyPressed) {
-                console.log(text, "Pressed")
+                console.log(root.text, "Pressed")
                 root.isHighlighted = true
             }
         }
         function onReleased(keyReleased) {
             if (root.key === keyReleased) {
-                console.log(text, "Released")
+                console.log(root.text, "Released")
                 root.isHighlighted = false
             }
+        }
+
+        function onHighlighted(key) {
+            if (root.actualText === key || root.actualShiftText === key) {
+                console.log(root.text, "highlighted")
+                root.isNext = true;
+            }
+        }
+        function onClearHighlighted() {
+            root.isNext = false;
         }
     }
 

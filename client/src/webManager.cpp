@@ -1,5 +1,6 @@
 #include "webManager.h"
 #include <QDebug>
+#include <QVariant>
 #include <utility>
 #include "queryTemplates.h"
 #include "sonicSocket.h"
@@ -34,8 +35,8 @@ QString WebManager::blob() {
     return dictionary.blob();
 }
 
-std::optional<QChar> WebManager::next() {
-    return std::nullopt;
+QVariant WebManager::next() {
+    return QVariant();
 }
 
 void WebManager::end_slot() {
