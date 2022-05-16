@@ -42,7 +42,6 @@ void GameWindow::on_ReturnButton_clicked() {
     }
 }
 
-// cppcheck-suppress unusedFunction
 void GameWindow::keyPressEvent(QKeyEvent *event) {
     QString keysCombination = event->text();
 

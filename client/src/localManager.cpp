@@ -50,7 +50,6 @@ void LocalManager::backspace_pressed() {
     emit_correctness();
 }
 
-// cppcheck-suppress unusedFunction
 QString LocalManager::get_buffer() {
     return inputter.getBuffer();
 }
@@ -59,7 +58,6 @@ QString LocalManager::blob() {
     return dictionary.blob();
 }
 
-// cppcheck-suppress unusedFunction
 std::optional<QChar> LocalManager::next() {
     if (!check_prefix()) {
         return std::nullopt;

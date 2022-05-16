@@ -114,7 +114,6 @@ SocketWrapper::~SocketWrapper() {
     qDebug() << "disconnected";
 }
 
-// cppcheck-suppress unusedFunction
 QString SocketWrapper::get_response() {
     std::unique_lock l{response_mutex};
     while (responses.empty()) {
