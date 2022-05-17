@@ -5,6 +5,7 @@ Item {
     property color color: "#35322f"
     property string text
     property int key
+    property int shiftKey
     property var inputPanel
     property alias displayText: txt.text
     property bool isHighlighted: false
@@ -15,13 +16,13 @@ Item {
     Connections {
         target: inputPanel
         function onPressed(keyPressed) {
-            if (root.key === keyPressed) {
+            if (root.key === keyPressed || root.shiftKey === keyPressed) {
                 console.log(root.text, "Pressed")
                 root.isHighlighted = true
             }
         }
         function onReleased(keyReleased) {
-            if (root.key === keyReleased) {
+            if (root.key === keyReleased || root.shiftKey === keyReleased) {
                 console.log(root.text, "Released")
                 root.isHighlighted = false
             }

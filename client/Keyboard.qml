@@ -78,6 +78,7 @@ Item {
             height: pimpl.rowHeight
             text: (pimpl.capsModifier ? ((!pimpl.shiftModifier && keycode == shiftKeycode) || (pimpl.shiftModifier && keycode != shiftKeycode) ? shiftLetter : letter) :
                                         (pimpl.shiftModifier ? shiftLetter : letter))
+            shiftKey: shiftKeycode
             inputPanel: root
             actualText: letter
             actualShiftText: shiftLetter
