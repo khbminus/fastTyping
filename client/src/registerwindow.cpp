@@ -1,6 +1,7 @@
 #include "registerwindow.h"
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include "errorHandler.h"
 #include "queryTemplates.h"
 #include "responseParse.h"
 #include "sonicSocket.h"
@@ -14,6 +15,7 @@ RegisterWindow::RegisterWindow(QWidget *parent)
     ui->setupUi(this);
     ui->Password->setPlaceholderText("password");
     ui->Username->setPlaceholderText("username");
+    ui->PasswordCopy->setPlaceholderText("repeatPassword");
 }
 
 RegisterWindow::~RegisterWindow() {
@@ -28,8 +30,16 @@ void RegisterWindow::on_SubmitButton_clicked() {
 
     QString username = ui->Username->displayText();
     QString password = ui->Password->displayText();
+    QString password_copy = ui->PasswordCopy->displayText();
+
+
+    if (password_copy != password) {
+        error_alert("Wrong password", "Password copy isn't right");
+        return;
+    }
+
     QString raw_response = socket().query(sign_on_query(username, password));
-    qDebug() << "sign in result" << raw_response;
+    qDebug() << "sign on result" << raw_response;
     json response = json::parse(raw_response.toStdString());
 
     if (ensure_success(response)) {
