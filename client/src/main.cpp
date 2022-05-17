@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
     auto mainWindow = QSharedPointer<QMainWindow>(new MainWindow());
     auto joinWindow = QSharedPointer<QMainWindow>(new JoinWindow());
-    auto createWindow = QSharedPointer<QMainWindow>(new CreateWindow());
+    auto createWindow = QSharedPointer<QMainWindow>(new CreateGameWindow());
     // auto gameWindow = QSharedPointer<QMainWindow>(new GameWindow(&manager));
     auto statWindow = QSharedPointer<QMainWindow>(new StatWindow());
     auto loginWindow = QSharedPointer<QMainWindow>(new LoginWindow());
