@@ -100,7 +100,7 @@ void GameWindow::error_slot() {
     palette.setColor(ui->userText->backgroundRole(), Qt::red);
     ui->userText->setPalette(palette);
     emit clearHighlight();
-    backspaceHighlight();
+    emit backspaceHighlight();
 }
 
 void GameWindow::correct_slot() {
