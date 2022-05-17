@@ -32,7 +32,6 @@ void RegisterWindow::on_SubmitButton_clicked() {
     QString password = ui->Password->displayText();
     QString password_copy = ui->PasswordCopy->displayText();
 
-
     if (password_copy != password) {
         error_alert("Wrong password", "Password copy isn't right");
         return;
