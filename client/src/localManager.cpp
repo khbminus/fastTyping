@@ -1,5 +1,6 @@
 #include "localManager.h"
 #include <QDebug>
+#include <QVariant>
 #include <iterator>
 #include <utility>
 
@@ -58,16 +59,16 @@ QString LocalManager::blob() {
     return dictionary.blob();
 }
 
-std::optional<QChar> LocalManager::next() {
+QVariant LocalManager::next() {
     if (!check_prefix()) {
-        return std::nullopt;
+        return {};
     }
 
     QString buffer = inputter.getBuffer();
     QString sample = dictionary.getCurrentWord();
 
     if (buffer.size() == sample.size()) {
-        return ' ';
+        return QChar(' ');
     } else {
         return sample[buffer.size()];
     }

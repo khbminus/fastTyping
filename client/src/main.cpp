@@ -3,6 +3,7 @@
 #include "createwindow.h"
 #include "gamewindow.h"
 #include "joinwindow.h"
+#include "keyboard.h"
 #include "localManager.h"
 #include "loginwindow.h"
 #include "mainwindow.h"
@@ -16,6 +17,10 @@
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
+    auto &keyboard = FastTyping::Keyboard::KeyboardModel::getInstance();
+    keyboard.addPath("qwerty.json");
+    keyboard.addPath("test.json");
+    keyboard.setCurrentLayout(0);
 
     client::responses::APIHandler &response_handler =
         client::responses::handler();
@@ -41,7 +46,7 @@ int main(int argc, char *argv[]) {
 
     auto mainWindow = QSharedPointer<QMainWindow>(new MainWindow());
     auto joinWindow = QSharedPointer<QMainWindow>(new JoinWindow());
-    auto createWindow = QSharedPointer<QMainWindow>(new CreateWindow());
+    auto createWindow = QSharedPointer<QMainWindow>(new CreateGameWindow());
     // auto gameWindow = QSharedPointer<QMainWindow>(new GameWindow(&manager));
     auto statWindow = QSharedPointer<QMainWindow>(new StatWindow());
     auto loginWindow = QSharedPointer<QMainWindow>(new LoginWindow());
@@ -51,6 +56,7 @@ int main(int argc, char *argv[]) {
     controller.registerWindow("LoginWindow", loginWindow);
     controller.registerWindow("SignWindow", signWindow);
     controller.registerWindow("RegisterWindow", registerWindow);
+
     controller.registerWindow("MainWindow", mainWindow);
     controller.registerWindow("JoinWindow", joinWindow);
     controller.registerWindow("CreateWindow", createWindow);

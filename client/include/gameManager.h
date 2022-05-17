@@ -21,7 +21,7 @@ class GameManager : public QObject {
 public:
     virtual ~GameManager() {}
     virtual QString get_buffer() = 0;
-    virtual std::optional<QChar> next() = 0;
+    virtual QVariant next() = 0;
     virtual QString blob() = 0;
 public slots:
     virtual void key_pressed(QChar button) = 0;

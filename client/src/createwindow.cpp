@@ -8,21 +8,21 @@
 #include "ui_createwindow.h"
 #include "windowcontroller.h"
 
-CreateWindow::CreateWindow(QWidget *parent)
+CreateGameWindow::CreateGameWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::CreateWindow) {
     ui->setupUi(this);
 }
 
-CreateWindow::~CreateWindow() {
+CreateGameWindow::~CreateGameWindow() {
     delete ui;
 }
 
-void CreateWindow::on_ReturnButton_clicked() {
+void CreateGameWindow::on_ReturnButton_clicked() {
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("MainWindow");
 }
 
-void CreateWindow::on_CreateButton_clicked() {
+void CreateGameWindow::on_CreateButton_clicked() {
     using client::responses::ensure_success;
     using client::responses::error_text;
     using nlohmann::json;

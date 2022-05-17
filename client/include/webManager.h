@@ -18,7 +18,7 @@ public:
     void key_pressed(QChar button) override;
     void backspace_pressed() override;
     QString get_buffer() override;
-    std::optional<QChar> next() override;
+    QVariant next() override;
     QString blob() override;
 public slots:
     void end_slot();

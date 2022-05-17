@@ -1,7 +1,10 @@
 #include "gamewindow.h"
+#include <qqml.h>
+#include <QQuickItem>
 #include <iostream>
 #include "confirmWindow.h"
 #include "gameContextManager.h"
+#include "keyboard.h"
 #include "queryTemplates.h"
 #include "sonicSocket.h"
 #include "ui_gamewindow.h"
@@ -27,6 +30,11 @@ GameWindow::GameWindow(std::vector<GameManager *> managers,
                      &GameWindow::print);
 
     ui->setupUi(this);
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    ui->quickWidget->rootObject()->setProperty(
+        "keyModel", QVariant::fromValue(
+                        &FastTyping::Keyboard::KeyboardModel::getInstance()));
+
     palette = ui->userText->palette();
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
     palette.setColor(ui->userText->foregroundRole(), Qt::black);
@@ -35,8 +43,23 @@ GameWindow::GameWindow(std::vector<GameManager *> managers,
     ui->dictLabel->setAutoFillBackground(true);
     ui->dictLabel->setPalette(palette);
     ui->dictLabel->setText(manager->blob());
+    connect(this, SIGNAL(press(QVariant)), ui->quickWidget->rootObject(),
+            SLOT(pressKey(QVariant)));
+    connect(this, SIGNAL(release(QVariant)), ui->quickWidget->rootObject(),
+            SLOT(releaseKey(QVariant)));
+    connect(this, SIGNAL(highlight(QVariant)), ui->quickWidget->rootObject(),
+            SLOT(highlightKey(QVariant)));
+    connect(this, SIGNAL(shiftHighlight()), ui->quickWidget->rootObject(),
+            SLOT(shiftHighlight()));
+    connect(this, SIGNAL(backspaceHighlight()), ui->quickWidget->rootObject(),
+            SLOT(backspaceHighlight()));
+    connect(this, SIGNAL(clearHighlight()), ui->quickWidget->rootObject(),
+            SLOT(clearHighlight()));
+
     ui->game_id->setText(
         QString::number(ContextManager::get_instance().get_game_id()));
+
+    highlightNextKey();
 }
 
 GameWindow::~GameWindow() {
@@ -57,7 +80,7 @@ void GameWindow::on_ReturnButton_clicked() {
 
 void GameWindow::keyPressEvent(QKeyEvent *event) {
     QString keysCombination = event->text();
-
+    emit press(event->key());
     if (keysCombination == "") {
         return;
     }
@@ -69,14 +92,21 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
     }
 }
 
+void GameWindow::keyReleaseEvent(QKeyEvent *event) {
+    emit release(event->key());
+}
+
 void GameWindow::error_slot() {
     palette.setColor(ui->userText->backgroundRole(), Qt::red);
     ui->userText->setPalette(palette);
+    emit clearHighlight();
+    emit backspaceHighlight();
 }
 
 void GameWindow::correct_slot() {
     palette.setColor(ui->userText->backgroundRole(), Qt::white);
     ui->userText->setPalette(palette);
+    highlightNextKey();
 }
 
 void GameWindow::end() {
@@ -86,4 +116,15 @@ void GameWindow::end() {
 
 void GameWindow::print(QString const &line) {
     ui->userText->setText(line);
+}
+
+void GameWindow::highlightNextKey() {
+    auto &keyboard = FastTyping::Keyboard::KeyboardModel::getInstance();
+    auto next = ContextManager::get_instance().get_local_manager()->next();
+    emit clearHighlight();
+    if (next.isValid() && keyboard.isUpper(next.toChar())) {
+        emit shiftHighlight();
+        next.setValue(next.toChar().toLower());
+    }
+    emit highlight(next);
 }
