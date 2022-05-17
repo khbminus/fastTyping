@@ -30,6 +30,7 @@ GameWindow::GameWindow(std::vector<GameManager *> managers,
                      &GameWindow::print);
 
     ui->setupUi(this);
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     ui->quickWidget->rootObject()->setProperty(
         "keyModel", QVariant::fromValue(
                         &FastTyping::Keyboard::KeyboardModel::getInstance()));
