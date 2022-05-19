@@ -1,4 +1,5 @@
 #include "server.h"
+#include <boost/locale.hpp>
 #include <boost/log/trivial.hpp>
 #include <iostream>
 #include <memory>
@@ -11,6 +12,9 @@ Server::Server()
     : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)),
       userStorage(new Database),
       gameStorage(new MapGameStorage) {
+    boost::locale::generator gen;
+    std::locale::global(gen(""));
+
     std::cout << "Listening at " << acceptor.local_endpoint() << std::endl;
     commonQueriesMap["echo"] = [&](const json &body, User &user) -> json {
         return body;
@@ -98,14 +102,23 @@ Server::Server()
             return {{"header", {{"type", "notInGameError"}}},
                     {"body", {{"text", "not in game"}}}};
         }
-        if (!body.contains("char") || !body["char"].is_string() ||
-            body["char"].get<std::string>().size() != 1) {
+        if (!body.contains("char") || !body["char"].is_string()) {
             return {{"header", {{"type", "wrongFormatError"}}},
                     {"body", {{"text", "can't find word to check"}}}};
         }
 
-        auto result = user.getGame()->addNewChar(
-            user.getId(), body["char"].get<std::string>()[0]);
+        auto normalized = boost::locale::normalize(
+            body["char"].get<std::string>(), boost::locale::norm_nfkc);
+
+        boost::locale::boundary::ssegment_index index(
+            boost::locale::boundary::character, normalized.begin(),
+            normalized.end());
+        if (std::distance(index.begin(), index.end()) != 1) {
+            return {{"header", {{"type", "notSingleChar"}}},
+                    {"body", {{"text", "can't find word to check"}}}};
+        }
+
+        auto result = user.getGame()->addNewChar(user.getId(), normalized);
         return result;
     };
     commonQueriesMap["backspace"] = [&](const json &body, User &user) -> json {

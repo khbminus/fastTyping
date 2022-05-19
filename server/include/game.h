@@ -26,7 +26,8 @@ public:
 
     bool hasUser(int uid);
 
-    json addNewChar(int uid, char c);
+    // character is a string due to UTF-8
+    json addNewChar(int uid, const std::string &c);
     json backspace(int uid);
     json check(int uid);
     json getNewLine(int uid);
@@ -44,7 +45,7 @@ private:
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;
 
     struct AdditionalUserInfo {
-        std::string currentBuffer;
+        std::vector<std::string> currentBuffer;
         int currentWord = 0;
         int lineNumber = 0;
     };

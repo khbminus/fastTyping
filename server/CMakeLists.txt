@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(fasttyping_server)
 
 set(CMAKE_CXX_STANDARD 17)
-find_package(Boost 1.71 REQUIRED system log)
+find_package(Boost 1.71 REQUIRED system log locale)
 find_package(nlohmann_json 3.7.3 REQUIRED)
 find_package(Threads)
 include(FetchContent)
@@ -14,7 +14,6 @@ FetchContent_Declare(
 set(PQXX_LIBRARIES pqxx_static)
 
 FetchContent_MakeAvailable(libpqxx)
-
 
 include_directories(include ../common/include)
 add_executable(server src/database.cpp src/main.cpp src/server.cpp src/game.cpp include/user.h)
