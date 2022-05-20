@@ -25,7 +25,6 @@ public:
 
 private:
     Ui::GameWindow *ui;
-    QPalette palette;
     void highlightNextKey();
 
     //    std::vector<game::AbstractGameManager *> handlers;
