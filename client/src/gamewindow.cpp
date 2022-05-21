@@ -12,7 +12,7 @@
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
 using FastTyping::TextScreen::TextListModel;
-GameWindow::GameWindow(std::vector<GameManager *> managers,
+GameWindow::GameWindow(const std::vector<GameManager *> &managers,
                        GameManager *manager,
                        QWidget *parent)
     : QMainWindow(parent),
@@ -20,6 +20,12 @@ GameWindow::GameWindow(std::vector<GameManager *> managers,
       main_manager(manager),
       textOut(new QQuickView),
       textModel(TextListModel(manager->blob(), this)) {
+    ui->setupUi(this);
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    ui->quickWidget->rootObject()->setProperty(
+        "keyModel", QVariant::fromValue(
+                        &FastTyping::Keyboard::KeyboardModel::getInstance()));
+
     for (auto man : managers) {
         QObject::connect(this, &GameWindow::key_pressed, man,
                          &GameManager::key_pressed);
@@ -34,16 +40,8 @@ GameWindow::GameWindow(std::vector<GameManager *> managers,
     QObject::connect(manager, &GameManager::end_signal, this, &GameWindow::end);
     QObject::connect(manager, &GameManager::print_signal, this,
                      &GameWindow::print);
-
     QObject::connect(manager, &GameManager::print_signal, &textModel,
                      &TextListModel::onMove);
-
-    ui->setupUi(this);
-    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
-    ui->quickWidget->rootObject()->setProperty(
-        "keyModel", QVariant::fromValue(
-                        &FastTyping::Keyboard::KeyboardModel::getInstance()));
-
     connect(this, SIGNAL(press(QVariant)), ui->quickWidget->rootObject(),
             SLOT(pressKey(QVariant)));
     connect(this, SIGNAL(release(QVariant)), ui->quickWidget->rootObject(),

@@ -20,7 +20,7 @@ class GameWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit GameWindow(std::vector<GameManager *> managers,
+    explicit GameWindow(const std::vector<GameManager *> &managers,
                         GameManager *manager,
                         QWidget *parent = nullptr);
     ~GameWindow();
