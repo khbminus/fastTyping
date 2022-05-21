@@ -6,9 +6,11 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QPushButton>
+#include <QQuickView>
 #include <QVariant>
 #include <memory>
 #include "gameManager.h"
+#include "textScreen.h"
 
 namespace Ui {
 class GameWindow;
@@ -25,6 +27,9 @@ public:
 
 private:
     Ui::GameWindow *ui;
+    QQuickView *textOut;
+    FastTyping::TextScreen::TextListModel textModel;
+
     void highlightNextKey();
 
     //    std::vector<game::AbstractGameManager *> handlers;
@@ -49,7 +54,7 @@ private slots:
     void on_ReturnButton_clicked();
     void error_slot();
     void correct_slot();
-    void print(QString const &line);
+    void print(QString const &line, int);
     void end();
 };
 

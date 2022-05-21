@@ -1,19 +1,25 @@
 #include "gamewindow.h"
 #include <qqml.h>
 #include <QQuickItem>
+#include <QQuickView>
 #include <iostream>
 #include "confirmWindow.h"
 #include "gameContextManager.h"
 #include "keyboard.h"
 #include "queryTemplates.h"
 #include "sonicSocket.h"
+#include "textScreen.h"
 #include "ui_gamewindow.h"
 #include "windowcontroller.h"
-
+using FastTyping::TextScreen::TextListModel;
 GameWindow::GameWindow(std::vector<GameManager *> managers,
                        GameManager *manager,
                        QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::GameWindow), main_manager(manager) {
+    : QMainWindow(parent),
+      ui(new Ui::GameWindow),
+      main_manager(manager),
+      textOut(new QQuickView),
+      textModel(TextListModel(manager->blob(), this)) {
     for (auto man : managers) {
         QObject::connect(this, &GameWindow::key_pressed, man,
                          &GameManager::key_pressed);
@@ -29,20 +35,15 @@ GameWindow::GameWindow(std::vector<GameManager *> managers,
     QObject::connect(manager, &GameManager::print_signal, this,
                      &GameWindow::print);
 
+    QObject::connect(manager, &GameManager::print_signal, &textModel,
+                     &TextListModel::onMove);
+
     ui->setupUi(this);
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     ui->quickWidget->rootObject()->setProperty(
         "keyModel", QVariant::fromValue(
                         &FastTyping::Keyboard::KeyboardModel::getInstance()));
 
-    palette = ui->userText->palette();
-    palette.setColor(ui->userText->backgroundRole(), Qt::white);
-    palette.setColor(ui->userText->foregroundRole(), Qt::black);
-    ui->userText->setAutoFillBackground(true);
-    ui->userText->setPalette(palette);
-    ui->dictLabel->setAutoFillBackground(true);
-    ui->dictLabel->setPalette(palette);
-    ui->dictLabel->setText(manager->blob());
     connect(this, SIGNAL(press(QVariant)), ui->quickWidget->rootObject(),
             SLOT(pressKey(QVariant)));
     connect(this, SIGNAL(release(QVariant)), ui->quickWidget->rootObject(),
@@ -58,6 +59,15 @@ GameWindow::GameWindow(std::vector<GameManager *> managers,
 
     ui->game_id->setText(
         QString::number(ContextManager::get_instance().get_game_id()));
+    textOut->setInitialProperties({{"model", QVariant::fromValue(&textModel)}});
+    textOut->setSource(QUrl(QString::fromUtf8("qrc:/textScreen.qml")));
+
+    auto layoutWidget =
+        QWidget::createWindowContainer(textOut, ui->centralwidget);
+
+    layoutWidget->setGeometry(QRect(50, 30, 701, 51));
+    textOut->rootObject()->setProperty("width", 701);
+    textOut->rootObject()->setProperty("height", 51);
 
     highlightNextKey();
 }
@@ -97,15 +107,11 @@ void GameWindow::keyReleaseEvent(QKeyEvent *event) {
 }
 
 void GameWindow::error_slot() {
-    palette.setColor(ui->userText->backgroundRole(), Qt::red);
-    ui->userText->setPalette(palette);
     emit clearHighlight();
     emit backspaceHighlight();
 }
 
 void GameWindow::correct_slot() {
-    palette.setColor(ui->userText->backgroundRole(), Qt::white);
-    ui->userText->setPalette(palette);
     highlightNextKey();
 }
 
@@ -114,7 +120,7 @@ void GameWindow::end() {
     controller.setActiveWindow("StatWindow");
 }
 
-void GameWindow::print(QString const &line) {
+void GameWindow::print(QString const &line, int) {
     ui->userText->setText(line);
 }
 

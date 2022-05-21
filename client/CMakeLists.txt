@@ -75,6 +75,7 @@ set(PROJECT_SOURCES
         src/keyboard.cpp
 
         include/textScreen.h
+        src/textScreen.cpp
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

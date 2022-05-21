@@ -7,7 +7,7 @@
 bool LocalManager::check_prefix() {
     QString buffer = inputter.getBuffer();
     QString sample = dictionary.getCurrentWord();
-    qDebug() << "copmaparing" << buffer << " with " << sample;
+    qDebug() << "comparing" << buffer << " with " << sample;
 
     if (buffer.size() > sample.size()) {
         return false;
@@ -41,13 +41,15 @@ void LocalManager::key_pressed(QChar button) {
     } else {
         inputter.addSymbol(button);
     }
-    emit print_signal(inputter.getBuffer());
+    emit print_signal(inputter.getBuffer(), dictionary.getCompletedSize() +
+                                                inputter.getBuffer().size());
     emit_correctness();
 }
 
 void LocalManager::backspace_pressed() {
     inputter.deleteSymbol();
-    emit print_signal(inputter.getBuffer());
+    emit print_signal(inputter.getBuffer(), dictionary.getCompletedSize() +
+                                                inputter.getBuffer().size());
     emit_correctness();
 }
 

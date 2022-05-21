@@ -31,6 +31,13 @@ public:
     QString blob() {
         return whole_line;
     }
+
+    [[nodiscard]] int getCompletedSize() const {
+        return currentPosition +
+               std::accumulate(
+                   words.begin(), words.begin() + currentPosition, 0,
+                   [&](int a, const QString &b) { return a + b.size(); });
+    }
 };
 
 class LocalInputter : public Inputter {

@@ -27,19 +27,6 @@
                     <string>Start typing</string>
                 </property>
             </widget>
-            <widget class="QLabel" name="dictLabel">
-                <property name="geometry">
-                    <rect>
-                        <x>140</x>
-                        <y>20</y>
-                        <width>401</width>
-                        <height>111</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>YOU NEED TO TYPE THIS эчпочмак</string>
-                </property>
-            </widget>
             <widget class="QPushButton" name="ReturnButton">
                 <property name="geometry">
                     <rect>
@@ -59,8 +46,8 @@
             <widget class="QLabel" name="label">
                 <property name="geometry">
                     <rect>
-                        <x>150</x>
-                        <y>40</y>
+                        <x>14</x>
+                        <y>550</y>
                         <width>61</width>
                         <height>21</height>
                     </rect>
@@ -72,8 +59,8 @@
             <widget class="QLabel" name="game_id">
                 <property name="geometry">
                     <rect>
-                        <x>216</x>
-                        <y>40</y>
+                        <x>80</x>
+                        <y>550</y>
                         <width>51</width>
                         <height>21</height>
                     </rect>
@@ -102,13 +89,13 @@
             </widget>
         </widget>
     </widget>
- <customwidgets>
-  <customwidget>
-   <class>QQuickWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">QtQuickWidgets/QQuickWidget</header>
-  </customwidget>
- </customwidgets>
+    <customwidgets>
+        <customwidget>
+            <class>QQuickWidget</class>
+            <extends>QWidget</extends>
+            <header location="global">QtQuickWidgets/QQuickWidget</header>
+        </customwidget>
+    </customwidgets>
     <resources/>
     <connections/>
 </ui>
