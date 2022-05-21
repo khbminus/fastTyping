@@ -29,6 +29,8 @@ public slots:
 signals:
     void error_signal();
     void correct_signal();
+    void errorOnPositionSignal(int position);
+    void correctOnPositionSignal(int position);
     void end_signal();
     void print_signal(QString const &line, int);
 };

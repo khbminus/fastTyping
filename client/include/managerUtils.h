@@ -38,6 +38,12 @@ public:
                    words.begin(), words.begin() + currentPosition, 0,
                    [&](int a, const QString &b) { return a + b.size(); });
     }
+    [[nodiscard]] QString getCompletedLine() const {
+        QString ans = std::accumulate(
+            words.begin(), words.begin() + currentPosition, QString(),
+            [&](const QString &a, const QString &b) { return a + " " + b; });
+        return ans.trimmed();
+    }
 };
 
 class LocalInputter : public Inputter {

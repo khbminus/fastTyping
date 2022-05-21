@@ -47,6 +47,8 @@ public slots:
     void onWrongChar(int position);
     void onCorrectChar(int position);
     void onMove(const QString &buffer, int position);
+    void onNewChar(const QChar &c);
+    void onPop();
 
 protected:
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;

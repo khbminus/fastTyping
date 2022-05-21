@@ -29,6 +29,7 @@ private:
     Ui::GameWindow *ui;
     QQuickView *textOut;
     FastTyping::TextScreen::TextListModel textModel;
+    FastTyping::TextScreen::TextListModel pressedTextModel;
 
     void highlightNextKey();
 
