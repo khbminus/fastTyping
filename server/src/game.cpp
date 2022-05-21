@@ -88,7 +88,7 @@ std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
               {"body", {{"text", "Can't find game with specific id"}}}};
     return nullptr;
 }
-json MapGameStorage::createGame(const json &body) {
+json MapGameStorage::createGame(const json &body, int hostId) {
     if (body["dictionaryName"] != "const" || body["parserName"] != "simple") {
         return {{"header", {{"type", "wrongFormatError"}}},
                 {"body", {{"text", "wrong parameters"}}}};

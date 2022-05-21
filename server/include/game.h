@@ -13,8 +13,8 @@ using nlohmann::json;
 struct Game {
 public:
     Game(std::unique_ptr<FastTyping::Logic::AbstractParser> parser_,
-         std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary_)
-        : parser(std::move(parser_)), dictionary(std::move(dictionary_)) {
+         std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary_, int hostId_)
+        : parser(std::move(parser_)), dictionary(std::move(dictionary_)), hostId(hostId_) {
         id = nextId++;
     }
     [[nodiscard]] const std::string &getName() const {
@@ -37,12 +37,15 @@ private:
     bool isEndedUnsafe(int uid);
 
     std::string gameName;
+    int hostId;
     int id = 0;
     static inline int nextId = 0;
 
     std::unique_ptr<FastTyping::Logic::AbstractParser> parser;
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;
-
+    
+    std::condition_variable gameStarted;
+    
     struct AdditionalUserInfo {
         std::string currentBuffer;
         int currentWord = 0;
@@ -57,7 +60,7 @@ class AbstractGameStorage {
 public:
     AbstractGameStorage() = default;
     virtual std::shared_ptr<Game> get(int id, json &errors) = 0;
-    virtual json createGame(const json &body) = 0;
+    virtual json createGame(const json &body, int hostId) = 0;
     virtual Game *getGame(int game_id) = 0;
     virtual ~AbstractGameStorage() = default;
 };
@@ -65,7 +68,7 @@ public:
 class MapGameStorage final : public AbstractGameStorage {
 public:
     std::shared_ptr<Game> get(int id, json &errors) override;
-    json createGame(const json &body) override;
+    json createGame(const json &body, int hostId) override;
     Game *getGame(int game_id) override {
         return games[game_id].get();
     }
