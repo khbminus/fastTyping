@@ -64,7 +64,7 @@ struct AdaptiveDictionary : AbstractDictionary {
             std::vector<std::string> cur_words =
                 gen.getTop(k, true, cur_mistake);
             for (auto x : cur_words)
-                words.push_back(x);
+                words.emplace_back(x);
         }
     }
 
