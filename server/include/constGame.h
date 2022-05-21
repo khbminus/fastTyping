@@ -63,8 +63,10 @@ struct AdaptiveDictionary : AbstractDictionary {
         for (auto cur_mistake : mistakes) {
             std::vector<std::string> cur_words =
                 gen.getTop(k, true, cur_mistake);
-            for (auto x : cur_words)
+            for (auto x : cur_words) {
+                // cppcheck-suppress useStlAlgorithm
                 words.emplace_back(x);
+            }
         }
     }
 
