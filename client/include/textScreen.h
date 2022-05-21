@@ -10,7 +10,7 @@ Q_NAMESPACE
 class ScreenCharPimpl : public QObject {
     Q_OBJECT
 public:
-    ScreenCharPimpl(QChar c, QObject *parent = nullptr)
+    explicit ScreenCharPimpl(QChar c, QObject *parent = nullptr)
         : letter(c), QObject(parent) {}
 
     [[nodiscard]] QString getChar() const {
@@ -37,7 +37,7 @@ public:
         CURSOR_ROLE,
         LETTER_ROLE,
     };
-    TextListModel(const QString &words, QObject *parent = nullptr);
+    explicit TextListModel(const QString &words, QObject *parent = nullptr);
     [[nodiscard]] int rowCount(
         const QModelIndex &parent = QModelIndex()) const override;
     [[nodiscard]] QVariant data(const QModelIndex &index,
