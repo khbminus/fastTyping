@@ -2,6 +2,46 @@
 #include <algorithm>
 
 namespace FastTyping::Server {
+
+void Database::unanswered_query(std::string const &query) {
+    pqxx::work work(connect);
+    work.exec(query);
+    work.commit();
+}
+
+void Database::unanswered_query(std::vector<std::string> const &queries) {
+    pqxx::work work(connect);
+    for (auto const &query : queries) {
+        work.exec(query);
+    }
+    work.commit();
+}
+
+const std::string create_table_users_query = R"sql(
+CREATE TABLE IF NOT EXISTS USERS(
+ID SERIAL PRIMARY KEY,
+NAME           TEXT    NOT NULL,
+PASSWORD           TEXT NOT NULL);
+)sql";
+
+const std::string create_table_mistakes_query = R"sql(
+CREATE TABLE IF NOT EXISTS MISTAKES(
+ID SERIAL PRIMARY KEY,
+USER_ID INT    NOT NULL,
+KEYBOARD_TYPE TEXT NOT NULL,
+POST_DATE DATE NOT NULL DEFAULT CURRENT_DATE,
+MISTAKE  TEXT NOT NULL);
+)sql";
+
+const std::string create_table_dictionaries_query = R"sql(
+CREATE TABLE IF NOT EXISTS DICTIONARIES (
+ID SERIAL PRIMARY KEY,
+NAME TEXT,
+IS_ADAPTABLE BOOLEAN,
+TYPE TEXT
+);
+)sql";
+
 Database::Database() : connect("dbname = fast_typing") {
     try {
         if (connect.is_open()) {
@@ -11,29 +51,8 @@ Database::Database() : connect("dbname = fast_typing") {
             std::cerr << "Can't open database" << std::endl;
             std::abort();
         }
-
-        /* Create SQL statement */
-        sql =
-            "CREATE TABLE IF NOT EXISTS USERS("
-            "ID SERIAL PRIMARY KEY,"
-            "NAME           TEXT    NOT NULL,"
-            "PASSWORD           TEXT NOT NULL);";
-
-        /* Create a transactional object. */
-
-        pqxx::work W(connect);
-        /* Execute SQL query */
-        //            W.exec("DROP TABLE IF EXISTS mistakes;");
-        W.exec(sql);
-        sql =
-            "CREATE TABLE IF NOT EXISTS MISTAKES("
-            "ID SERIAL PRIMARY KEY,"
-            "USER_ID INT    NOT NULL,"
-            "KEYBOARD_TYPE TEXT NOT NULL,"
-            "POST_DATE DATE NOT NULL DEFAULT CURRENT_DATE,"
-            "MISTAKE  TEXT NOT NULL);";
-        W.exec(sql);
-        W.commit();
+        unanswered_query({create_table_users_query, create_table_mistakes_query,
+                          create_table_dictionaries_query});
         std::cerr << "Table created successfully" << std::endl;
     } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
@@ -42,17 +61,19 @@ Database::Database() : connect("dbname = fast_typing") {
 
 void Database::dropUsers() {
     std::unique_lock l{mutex};
-    pqxx::work W(connect);
-    W.exec("DROP TABLE USERS;");
-    W.commit();
+    unanswered_query("DROP TABLE USERS;");
 }
 
 void Database::dropMistakes() {
     std::unique_lock l{mutex};
-    pqxx::work W(connect);
-    W.exec("DROP TABLE MISTAKES;");
-    W.commit();
+    unanswered_query("DROP TABLE MISTAKES;");
 }
+
+void Database::dropDictionaries() {
+    std::unique_lock l{mutex};
+    unanswered_query("DROP TABLE DICTIONARIES;");
+}
+
 std::string Database::getPassword(int id) {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
@@ -113,10 +134,10 @@ bool Database::nameExist(const std::string &name) {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
     pqxx::result find_by_name = W.exec(
-        "SELECT * "
+        "SELECT 1 "
         "FROM USERS "
         "WHERE NAME = '" +
-        W.esc(name) + "';");
+        W.esc(name) + "' ;");
     W.commit();
     return !find_by_name.empty();
 }
@@ -130,13 +151,11 @@ void Database::addMistake(int userId,
                           char let2,
                           const std::string &keyboardType) {
     std::unique_lock l{mutex};
-    pqxx::work W(connect);
-    W.exec(
+    unanswered_query(
         "INSERT INTO MISTAKES(USER_ID, KEYBOARD_TYPE, MISTAKE)\n"
         "VALUES(" +
         std::to_string(userId) + ", '" + keyboardType + "', '" + let1 + let2 +
         "');");
-    W.commit();
 }
 
 std::vector<std::pair<char, char>> Database::getTopMistakes(
@@ -160,6 +179,38 @@ std::vector<std::pair<char, char>> Database::getTopMistakes(
                                           row["MISTAKE"].c_str()[1]);
                   });
     W.commit();
+    return result;
+}
+
+
+/*
+CREATE TABLE IF NOT EXISTS DICTIONARIES(
+    ID SERIAL PRIMARY KEY,
+    NAME TEXT,
+    IS_ADAPTABLE BOOLEAN,
+    TYPE TEXT,
+);
+*/
+
+void Database::addDictionary(std::string name,
+                             bool is_adaptable,
+                             std::string type) {
+    std::unique_lock l{mutex};
+    unanswered_query(
+        "INSERT INTO DICTIONARIES(NAME, IS_ADAPTABLE, TYPE)\n"
+        "VALUES('" +
+        connect.esc(name) + "', " + (is_adaptable ? "TRUE" : "FALSE") + ", '" + connect.esc(type) +
+        "');");
+}
+
+std::vector<std::string> Database::get_dictionaries() {
+    pqxx::work work(connect);
+    pqxx::result raw_result = work.exec("SELECT NAME FROM DICTIONARIES ORDER BY NAME;");
+
+    std::vector<std::string> result;
+    std::transform(raw_result.begin(), raw_result.end(),
+                   std::back_inserter(result),
+                   [](auto row) { return row["NAME"].c_str(); });
     return result;
 }
 

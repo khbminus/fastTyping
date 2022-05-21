@@ -127,6 +127,16 @@ Server::Server()
         return {};
     };
 
+    commonQueriesMap["getDictionaries"] = [&](json const &body,
+                                              User &user) -> json {
+        json result = json::object();
+        result["header"] = {{"type", "dictionaries"},
+                            {"queryType", "getDictionaries"}};
+        result["body"] = {{"list", userStorage->get_dictionaries()}};
+        BOOST_LOG_TRIVIAL(debug) << result << "\n";
+        return result;
+    };
+
     loginQueriesMap["login"] = [&](const json &body) -> json {
         // basic checks
         std::cerr << "Entered\n";

@@ -1,5 +1,6 @@
 #include <nlohmann/json.hpp>
 #include <type_traits>
+#include <iostream>
 #include "doctest.h"
 #include "user.h"
 using namespace FastTyping::Server;
@@ -14,6 +15,20 @@ TEST_CASE("user from string") {
     CHECK(u1.name() == name1);
     CHECK(u2.name() == name2);
     delete db;
+}
+
+TEST_CASE("Dictionaries") {
+    Database flusher;
+    flusher.dropDictionaries();
+    Database storage;
+    storage.addDictionary("Aboba", true, "Const");
+    storage.addDictionary("Boba", true, "Const");
+    auto dictionaries = storage.get_dictionaries();
+    for (auto const& dictionary : dictionaries) {
+        std::cout << "Dictionary: '" << dictionary << "'" <<std::endl;
+    }
+    //storage.dropDictionaries();
+    CHECK(dictionaries == std::vector{std::string("Aboba"), std::string("Boba")});
 }
 
 TEST_CASE("Database") {
