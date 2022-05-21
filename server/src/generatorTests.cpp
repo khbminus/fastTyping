@@ -1,9 +1,7 @@
 #include "doctest.h"
 #include "generator.h"
 
-
 std::string path = "../../common/dictionary/english_top1000.txt";
-
 
 generator::TextGenerator gen(path);
 
