@@ -182,7 +182,6 @@ std::vector<std::pair<char, char>> Database::getTopMistakes(
     return result;
 }
 
-
 /*
 CREATE TABLE IF NOT EXISTS DICTIONARIES(
     ID SERIAL PRIMARY KEY,
@@ -199,13 +198,14 @@ void Database::addDictionary(std::string name,
     unanswered_query(
         "INSERT INTO DICTIONARIES(NAME, IS_ADAPTABLE, TYPE)\n"
         "VALUES('" +
-        connect.esc(name) + "', " + (is_adaptable ? "TRUE" : "FALSE") + ", '" + connect.esc(type) +
-        "');");
+        connect.esc(name) + "', " + (is_adaptable ? "TRUE" : "FALSE") + ", '" +
+        connect.esc(type) + "');");
 }
 
 std::vector<std::string> Database::get_dictionaries() {
     pqxx::work work(connect);
-    pqxx::result raw_result = work.exec("SELECT NAME FROM DICTIONARIES ORDER BY NAME;");
+    pqxx::result raw_result =
+        work.exec("SELECT NAME FROM DICTIONARIES ORDER BY NAME;");
 
     std::vector<std::string> result;
     std::transform(raw_result.begin(), raw_result.end(),

@@ -1,6 +1,6 @@
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <type_traits>
-#include <iostream>
 #include "doctest.h"
 #include "user.h"
 using namespace FastTyping::Server;
@@ -24,11 +24,12 @@ TEST_CASE("Dictionaries") {
     storage.addDictionary("Aboba", true, "Const");
     storage.addDictionary("Boba", true, "Const");
     auto dictionaries = storage.get_dictionaries();
-    for (auto const& dictionary : dictionaries) {
-        std::cout << "Dictionary: '" << dictionary << "'" <<std::endl;
+    for (auto const &dictionary : dictionaries) {
+        std::cout << "Dictionary: '" << dictionary << "'" << std::endl;
     }
-    //storage.dropDictionaries();
-    CHECK(dictionaries == std::vector{std::string("Aboba"), std::string("Boba")});
+    // storage.dropDictionaries();
+    CHECK(dictionaries ==
+          std::vector{std::string("Aboba"), std::string("Boba")});
 }
 
 TEST_CASE("Database") {
