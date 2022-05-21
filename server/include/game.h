@@ -13,8 +13,11 @@ using nlohmann::json;
 struct Game {
 public:
     Game(std::unique_ptr<FastTyping::Logic::AbstractParser> parser_,
-         std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary_, int hostId_)
-        : parser(std::move(parser_)), dictionary(std::move(dictionary_)), hostId(hostId_) {
+         std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary_,
+         int hostId_)
+        : parser(std::move(parser_)),
+          dictionary(std::move(dictionary_)),
+          hostId(hostId_) {
         id = nextId++;
     }
     [[nodiscard]] const std::string &getName() const {
@@ -43,9 +46,9 @@ private:
 
     std::unique_ptr<FastTyping::Logic::AbstractParser> parser;
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;
-    
+
     std::condition_variable gameStarted;
-    
+
     struct AdditionalUserInfo {
         std::string currentBuffer;
         int currentWord = 0;
