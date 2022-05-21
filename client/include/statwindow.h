@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 namespace Ui {
-    class StatWindow;
+class StatWindow;
 }
 
 class StatWindow : public QMainWindow {
@@ -21,4 +21,4 @@ private:
     Ui::StatWindow *ui;
 };
 
-#endif// STATWINDOW_H
+#endif  // STATWINDOW_H

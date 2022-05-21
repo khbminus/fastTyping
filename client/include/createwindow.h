@@ -1,18 +1,18 @@
-#ifndef CREATEWINDOW_H
-#define CREATEWINDOW_H
+#ifndef CreateGameWindow_H
+#define CreateGameWindow_H
 
 #include <QMainWindow>
 
 namespace Ui {
-    class CreateWindow;
+class CreateWindow;
 }
 
-class CreateWindow : public QMainWindow {
+class CreateGameWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit CreateWindow(QWidget *parent = nullptr);
-    ~CreateWindow();
+    explicit CreateGameWindow(QWidget *parent = nullptr);
+    ~CreateGameWindow();
 
 private:
     Ui::CreateWindow *ui;
@@ -22,4 +22,4 @@ private slots:
     void on_CreateButton_clicked();
 };
 
-#endif// CREATEWINDOW_H
+#endif  // CreateGameWindow_H

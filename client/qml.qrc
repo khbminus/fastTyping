@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Keyboard.qml</file>
+        <file>KeyboardButton.qml</file>
+    </qresource>
+</RCC>

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.14)
 project(fasttyping_client VERSION 1.0 LANGUAGES CXX)
 
 # -*-*- QT CMake start -*-*-
@@ -7,16 +7,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Network REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Quick Widgets Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Widgets QuickWidgets Network)
 find_package(nlohmann_json 3.7.3 REQUIRED)
+
 
 include_directories(include ../common/include)
 
@@ -34,12 +32,43 @@ set(PROJECT_SOURCES
         include/gamewindow.h
         src/statwindow.cpp
         include/statwindow.h
-        src/gameLogic.cpp
-        include/gameLogic.h
-        src/tcp_client.cpp
-        include/tcp_client.h
-        src/gameClient.cpp
-        include/gameClient.h
+        src/registerwindow.cpp
+        include/registerwindow.h
+        src/loginwindow.cpp
+        include/loginwindow.h
+        src/signwindow.cpp
+        include/signwindow.h
+        src/errorHandler.cpp
+        src/queryTemplates.cpp
+        src/localManager.cpp
+        src/responseHandler.cpp
+        src/socketWrapper.cpp
+        src/sonicSocket.cpp
+        src/webManager.cpp
+        src/confirmWindow.cpp
+        src/responseParse.cpp
+        src/gameContextManager.cpp
+        include/gameManager.h
+        include/errorHandler.h
+        include/localManager.h
+        include/managerUtils.h
+        include/queryTemplates.h
+        include/responseHandler.h
+        include/socketWrapper.h
+        include/sonicSocket.h
+        include/webManager.h
+        include/confirmWindow.h
+        include/responseParse.h
+        src/createwindow.ui
+        src/gamewindow.ui
+        src/joinwindow.ui
+        src/mainwindow.ui
+        src/statwindow.ui
+        qml.qrc
+
+        include/keyboard.h
+        src/keyboard.cpp
+        include/gameContextManager.h
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -57,10 +86,25 @@ else ()
             )
 endif ()
 
-target_link_libraries(client PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(client PRIVATE Qt${QT_VERSION_MAJOR}::Network)
-target_link_libraries(client PRIVATE nlohmann_json::nlohmann_json)
+target_include_directories(client PUBLIC include ../common/include)
 
+#target_compile_definitions(client
+#        PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+target_link_libraries(client
+        PRIVATE Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Network
+        Qt${QT_VERSION_MAJOR}::Quick
+        Qt${QT_VERSION_MAJOR}::QuickWidgets)
+
+target_link_libraries(client PRIVATE nlohmann_json::nlohmann_json)
+qt_add_qml_module(client
+        URI fasttyping.keyboard
+        VERSION 1.0
+        SOURCES
+        src/keyboard.cpp
+        include/keyboard.h
+        )
 set_target_properties(client PROPERTIES
         MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
         MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -69,7 +113,7 @@ set_target_properties(client PROPERTIES
         WIN32_EXECUTABLE TRUE
         )
 
-target_include_directories(client PRIVATE include)
+target_include_directories(client PRIVATE include src .)
 
 if (QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(client)
