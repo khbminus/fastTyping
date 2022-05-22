@@ -17,7 +17,7 @@ FetchContent_MakeAvailable(libpqxx)
 
 
 include_directories(include ../common/include)
-add_executable(server src/user.cpp src/database.cpp src/main.cpp src/server.cpp src/game.cpp include/user.h)
+add_executable(server src/generator.cpp src/user.cpp src/database.cpp src/main.cpp src/server.cpp src/game.cpp include/user.h)
 target_include_directories(server PRIVATE ${Boost_INCLUDE_DIRS} include)
 target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
 target_link_libraries(server nlohmann_json::nlohmann_json)
@@ -25,3 +25,7 @@ target_link_libraries(server nlohmann_json::nlohmann_json)
 add_executable(server-tests src/database.cpp src/doctest_main.cpp src/databaseTests.cpp)
 target_include_directories(server-tests PRIVATE ${Boost_INCLUDE_DIRS} include)
 target_link_libraries(server-tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
+
+add_executable(generator-tests src/generator.cpp src/doctest_main.cpp src/generatorTests.cpp)
+target_include_directories(generator-tests PRIVATE ${Boost_INCLUDE_DIRS} include)
+target_link_libraries(generator-tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
