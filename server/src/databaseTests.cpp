@@ -30,8 +30,9 @@ TEST_CASE("Dictionaries") {
     CHECK(storage.dictionaryExists("Aboba"));
     CHECK(storage.dictionaryExists("Boba"));
     CHECK(!storage.dictionaryExists("AbobaBoba"));
-    //storage.dropDictionaries();
-    CHECK(dictionaries == std::vector{std::string("Aboba"), std::string("Boba")});
+    // storage.dropDictionaries();
+    CHECK(dictionaries ==
+          std::vector{std::string("Aboba"), std::string("Boba")});
     // storage.dropDictionaries();
     CHECK(dictionaries ==
           std::vector{std::string("Aboba"), std::string("Boba")});

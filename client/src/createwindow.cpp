@@ -41,7 +41,7 @@ void CreateGameWindow::on_CreateButton_clicked() {
     }
 }
 
-void CreateGameWindow::showEvent(QShowEvent* event) {
+void CreateGameWindow::showEvent(QShowEvent *event) {
     using client::queries::get_dictionaries_query;
     using client::web::socket;
     using nlohmann::json;
@@ -55,8 +55,7 @@ void CreateGameWindow::showEvent(QShowEvent* event) {
         response["body"]["list"].get<std::vector<std::string>>();
     QStringList dictionaries;
     std::transform(raw_dictionaries.begin(), raw_dictionaries.end(),
-                   std::back_inserter(dictionaries),
-                   QString::fromStdString);
+                   std::back_inserter(dictionaries), QString::fromStdString);
     ui->WordsBox->clear();
     ui->WordsBox->addItems(dictionaries);
 }
