@@ -1,6 +1,12 @@
 #include "startgamewindow.h"
 #include "ui_startgamewindow.h"
 #include "windowcontroller.h"
+#include <nlohmann/json.hpp>
+#include "errorHandler.h"
+#include "gameContextManager.h"
+#include "queryTemplates.h"
+#include "responseParse.h"
+#include "sonicSocket.h"
 
 StartGameWindow::StartGameWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::StartGameWindow) {
@@ -12,6 +18,19 @@ StartGameWindow::~StartGameWindow() {
 }
 
 void StartGameWindow::on_StartGameButton_clicked() {
-    auto &controller = FastTyping::WindowController::getInstance();
-    controller.setActiveWindow("GameWindow");
+    using client::queries::start_query;
+    using client::responses::ensure_success;
+    using client::responses::error_text;
+    using client::web::socket;
+    using nlohmann::json;
+    QString raw_response = socket().query(start_query());
+    qDebug() << "start result: " << raw_response;
+    json response = json::parse(raw_response.toStdString());
+
+    if (ensure_success(response)) {
+        auto &context = ContextManager::get_instance();
+        context.set_context_from_create_query(response);
+        auto &controller = FastTyping::WindowController::getInstance();
+        controller.setActiveWindow("GameWindow");
+    }
 }
