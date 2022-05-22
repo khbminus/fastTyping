@@ -1,4 +1,5 @@
 #include "createwindow.h"
+#include <algorithm>
 #include <nlohmann/json.hpp>
 #include "errorHandler.h"
 #include "gameContextManager.h"
@@ -38,4 +39,24 @@ void CreateGameWindow::on_CreateButton_clicked() {
         auto &controller = FastTyping::WindowController::getInstance();
         controller.setActiveWindow("GameWindow");
     }
+}
+
+void CreateGameWindow::showEvent(QShowEvent* event) {
+    using client::queries::get_dictionaries_query;
+    using client::web::socket;
+    using nlohmann::json;
+
+    QWidget::showEvent(event);
+
+    QString raw_response = socket().query(get_dictionaries_query());
+    qDebug() << "list of dictionaries: " << raw_response;
+    json response = json::parse(raw_response.toStdString());
+    std::vector<std::string> raw_dictionaries =
+        response["body"]["list"].get<std::vector<std::string>>();
+    QStringList dictionaries;
+    std::transform(raw_dictionaries.begin(), raw_dictionaries.end(),
+                   std::back_inserter(dictionaries),
+                   QString::fromStdString);
+    ui->WordsBox->clear();
+    ui->WordsBox->addItems(dictionaries);
 }

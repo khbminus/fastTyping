@@ -13,6 +13,7 @@ QString sign_on_query(QString const &username, QString const &password);
 QString create_game_query(bool auto_join = true);
 QString leave_query();
 QString get_line_query();
+QString get_dictionaries_query();
 }  // namespace client::queries
 
 #endif

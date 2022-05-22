@@ -23,6 +23,14 @@ QString key_pressed_query(QString const &new_char) {
     return dump(result);
 }
 
+QString get_dictionaries_query() {
+    json result;
+
+    result["header"] = {{"type", "getDictionaries"}};
+    result["body"] = json::object();
+    return dump(result);
+}
+
 QString backspace_pressed_query() {
     json result;
     result["header"] = {{"type", "backspace"}};
