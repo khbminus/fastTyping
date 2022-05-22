@@ -38,8 +38,6 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
     QObject::connect(manager, &GameManager::error_signal, this,
                      &GameWindow::error_slot);
     QObject::connect(manager, &GameManager::end_signal, this, &GameWindow::end);
-    QObject::connect(manager, &GameManager::print_signal, this,
-                     &GameWindow::print);
     QObject::connect(manager, &GameManager::print_signal, &textModel,
                      &TextListModel::onMove);
     QObject::connect(manager, &GameManager::errorOnPositionSignal, &textModel,
@@ -125,10 +123,6 @@ void GameWindow::correct_slot() {
 void GameWindow::end() {
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("StatWindow");
-}
-
-void GameWindow::print(QString const &line, int) {
-    // ui->userText->setText(line);
 }
 
 void GameWindow::highlightNextKey() {

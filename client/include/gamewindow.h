@@ -54,7 +54,6 @@ private slots:
     void on_ReturnButton_clicked();
     void error_slot();
     void correct_slot();
-    void print(QString const &line, int);
     void end();
 };
 
