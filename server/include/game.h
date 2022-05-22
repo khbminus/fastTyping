@@ -13,8 +13,11 @@ using nlohmann::json;
 struct Game {
 public:
     Game(std::unique_ptr<FastTyping::Logic::AbstractParser> parser_,
-         std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary_, int hostId_)
-        : parser(std::move(parser_)), dictionary(std::move(dictionary_)), hostId(hostId_) {
+         std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary_,
+         int hostId_)
+        : parser(std::move(parser_)),
+          dictionary(std::move(dictionary_)),
+          hostId(hostId_) {
         id = nextId++;
     }
     [[nodiscard]] const std::string &getName() const {
@@ -25,12 +28,17 @@ public:
     }
 
     bool hasUser(int uid);
-
+    bool getGameStarted();
+    int getHostId();
+    void startGame();
+    
     json addNewChar(int uid, char c);
     json backspace(int uid);
     json check(int uid);
     json getNewLine(int uid);
     json getStateOfUsers();
+
+    std::condition_variable cond_gameStarted;
 
 private:
     json checkUnsafe(int uid);  // THREAD UNSAFE
@@ -40,12 +48,10 @@ private:
     int hostId;
     int id = 0;
     static inline int nextId = 0;
-
+    bool gameStarted = false;
     std::unique_ptr<FastTyping::Logic::AbstractParser> parser;
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;
-    
-    std::condition_variable gameStarted;
-    
+
     struct AdditionalUserInfo {
         std::string currentBuffer;
         int currentWord = 0;
