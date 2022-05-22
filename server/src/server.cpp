@@ -82,25 +82,26 @@ Server::Server()
         return {{"header", {{"type", "GameJoinedSuccessfully"}}},
                 {"body", {{"id", game->getId()}}}};
     };
-    commonQueriesMap["waitGameStart"] = [&](const json &body, User &user) -> json {
-      if (user.getGame() == nullptr) {
-          return {{"header", {{"type", "notInGameError"}}},
-                  {"body", {{"text", "Not in game"}}}};
-      }
-      json errors;
-      auto game = user.getGame();
-      if (game == nullptr) {
-          return errors;
-      }
-      if (game->getHostId() == user.getId()) {
-          return {{"header", {{"type", "UserHostError"}}},
-                  {"body", {{"text", "User is a host of the game, he can't wait"}}}};
-      }
-      user.waitStartGame();
-      return {{"header", {{"type", "GameWaitedSuccessfully"}}},
-              {"body", {}}};
+    commonQueriesMap["waitGameStart"] = [&](const json &body,
+                                            User &user) -> json {
+        if (user.getGame() == nullptr) {
+            return {{"header", {{"type", "notInGameError"}}},
+                    {"body", {{"text", "Not in game"}}}};
+        }
+        json errors;
+        auto game = user.getGame();
+        if (game == nullptr) {
+            return errors;
+        }
+        if (game->getHostId() == user.getId()) {
+            return {{"header", {{"type", "UserHostError"}}},
+                    {"body",
+                     {{"text", "User is a host of the game, he can't wait"}}}};
+        }
+        user.waitStartGame();
+        return {{"header", {{"type", "GameWaitedSuccessfully"}}}, {"body", {}}};
     };
-    
+
     commonQueriesMap["startGame"] = [&](const json &body, User &user) -> json {
         if (user.getGame() == nullptr) {
             return {{"header", {{"type", "notInGameError"}}},

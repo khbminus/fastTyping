@@ -3,8 +3,6 @@
 #include "createwindow.h"
 #include "gamewindow.h"
 #include "joinwindow.h"
-#include "startgamewindow.h"
-#include "waitgamewindow.h"
 #include "keyboard.h"
 #include "localManager.h"
 #include "loginwindow.h"
@@ -13,7 +11,9 @@
 #include "responseHandler.h"
 #include "signwindow.h"
 #include "sonicSocket.h"
+#include "startgamewindow.h"
 #include "statwindow.h"
+#include "waitgamewindow.h"
 #include "webManager.h"
 #include "windowcontroller.h"
 
@@ -56,7 +56,6 @@ int main(int argc, char *argv[]) {
     auto registerWindow = QSharedPointer<QMainWindow>(new RegisterWindow());
     auto startGameWindow = QSharedPointer<QMainWindow>(new StartGameWindow());
     auto waitGameWindow = QSharedPointer<QMainWindow>(new RegisterWindow());
-
 
     controller.registerWindow("LoginWindow", loginWindow);
     controller.registerWindow("SignWindow", signWindow);
