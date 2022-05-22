@@ -1,6 +1,6 @@
 #include "database.h"
-#include "constGame.h"
 #include <algorithm>
+#include "constGame.h"
 
 namespace FastTyping::Server {
 
@@ -75,9 +75,8 @@ void Database::dropDictionaries() {
     unanswered_query("DROP TABLE DICTIONARIES;");
 }
 
-std::unique_ptr<::FastTyping::Logic::AbstractDictionary> Database::get_dictionary(
-    std::string const &name) {
-
+std::unique_ptr<::FastTyping::Logic::AbstractDictionary>
+Database::get_dictionary(std::string const &name) {
     std::unique_lock l{mutex};
     pqxx::work work(connect);
 
@@ -95,10 +94,12 @@ std::unique_ptr<::FastTyping::Logic::AbstractDictionary> Database::get_dictionar
     std::string type = dict_info[0]["TYPE"].c_str();
     if (type == "const") {
         return std::make_unique<FastTyping::Logic::Dictionary>(
-            std::vector<std::string>{"This", "is", "sample", "don't", "judge", "me"});
+            std::vector<std::string>{"This", "is", "sample", "don't", "judge",
+                                     "me"});
     }
     return std::make_unique<FastTyping::Logic::Dictionary>(
-        std::vector<std::string>{"This", "is", "sample", "don't", "judge", "me"});
+        std::vector<std::string>{"This", "is", "sample", "don't", "judge",
+                                 "me"});
 }
 
 std::string Database::getPassword(int id) {
