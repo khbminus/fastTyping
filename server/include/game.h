@@ -31,7 +31,7 @@ public:
     bool getGameStarted();
     int getHostId();
     void startGame();
-    
+
     json addNewChar(int uid, char c);
     json backspace(int uid);
     json check(int uid);

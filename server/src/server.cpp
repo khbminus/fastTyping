@@ -59,7 +59,7 @@ Server::Server()
             return {{"header", {{"type", "wrongFormatError"}}},
                     {"body", {{"text", "can't find \"id\""}}}};
         }
-        
+
         if (user.getGame() != nullptr) {
             return {{"header", {{"type", "alreadyInGameError"}}},
                     {"body", {{"text", "Already in game"}}}};
@@ -82,25 +82,25 @@ Server::Server()
                 {"body", {{"id", game->getId()}}}};
     };
     commonQueriesMap["startGame"] = [&](const json &body, User &user) -> json {
-      if (user.getGame() == nullptr) {
-          std::cerr << "WTF";
-          return {{"header", {{"type", "notInGameError"}}},
-                  {"body", {{"text", "Not in game"}}}};
-      }
-      json errors;
-      auto game = user.getGame();
-      if (game == nullptr) {
-          return errors;
-      }
-      if (game->getHostId() != user.getId()) {
-          return {{"header", {{"type", "notHostError"}}},
-                  {"body", {{"text", "User is not host of his game"}}}};
-      }
-      game->startGame();
-      return {{"header",{{"type", "GameStartedSuccessfully"}}},
-              {"body", {}}};
+        if (user.getGame() == nullptr) {
+            std::cerr << "WTF";
+            return {{"header", {{"type", "notInGameError"}}},
+                    {"body", {{"text", "Not in game"}}}};
+        }
+        json errors;
+        auto game = user.getGame();
+        if (game == nullptr) {
+            return errors;
+        }
+        if (game->getHostId() != user.getId()) {
+            return {{"header", {{"type", "notHostError"}}},
+                    {"body", {{"text", "User is not host of his game"}}}};
+        }
+        game->startGame();
+        return {{"header", {{"type", "GameStartedSuccessfully"}}},
+                {"body", {}}};
     };
-    
+
     commonQueriesMap["leaveGame"] = [&](const json &body, User &user) -> json {
         if (user.getGame() == nullptr) {
             return {{"header", {{"type", "notInGameError"}}},
@@ -339,4 +339,5 @@ std::optional<json> Server::checkQueryCorrectness(
     return {};
 }
 }  // namespace FastTyping::Server
-//{"body":{"dictionaryName":"const", "parserName":"simple", "autoJoin":true, "words":["jopa", "jopa2"]}, "header":{"type":"createGame"}}
+   //{"body":{"dictionaryName":"const", "parserName":"simple", "autoJoin":true,
+   //"words":["jopa", "jopa2"]}, "header":{"type":"createGame"}}
