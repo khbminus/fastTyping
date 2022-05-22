@@ -24,6 +24,7 @@ struct User {
     void setGame(std::shared_ptr<Game> game);
     void setWillToExit() noexcept;
     void clearWillToExit() noexcept;
+    void waitStartGame();
 
 private:
     std::shared_ptr<Game> currentGame = nullptr;

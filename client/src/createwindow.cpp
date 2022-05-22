@@ -36,6 +36,6 @@ void CreateGameWindow::on_CreateButton_clicked() {
         auto &context = ContextManager::get_instance();
         context.set_context_from_create_query(response);
         auto &controller = FastTyping::WindowController::getInstance();
-        controller.setActiveWindow("GameWindow");
+        controller.setActiveWindow("StartGameWindow");
     }
 }
