@@ -33,7 +33,7 @@ Server::Server()
                     {"body", {{"text", "Already in game"}}}};
         }
 
-        auto result = gameStorage->createGame(body);
+        auto result = gameStorage->createGame(body, userStorage->get_dictionary("Aboba"));
         if (body.contains("autoJoin") && body["autoJoin"].is_boolean() &&
             body["autoJoin"]) {
             if (!result["body"].contains("id") ||

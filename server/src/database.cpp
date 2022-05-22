@@ -82,8 +82,8 @@ std::unique_ptr<::FastTyping::Logic::AbstractDictionary> Database::get_dictionar
     pqxx::work work(connect);
 
     pqxx::result dict_info = work.exec(
-        "SELECT * FROM DICTIONARIES"
-        "WHERE NAME + '" +
+        "SELECT * FROM DICTIONARIES "
+        "WHERE NAME = '" +
         connect.esc(name) + "' LIMIT 1;");
     work.commit();
 
