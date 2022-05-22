@@ -21,12 +21,15 @@ TEST_CASE("Dictionaries") {
     Database flusher;
     flusher.dropDictionaries();
     Database storage;
-    storage.addDictionary("Aboba", true, "Const");
-    storage.addDictionary("Boba", true, "Const");
+    storage.addDictionary("Aboba", true, "const");
+    storage.addDictionary("Boba", true, "const");
     auto dictionaries = storage.get_dictionaries();
     for (auto const& dictionary : dictionaries) {
         std::cout << "Dictionary: '" << dictionary << "'" <<std::endl;
     }
+    CHECK(storage.dictionaryExists("Aboba"));
+    CHECK(storage.dictionaryExists("Boba"));
+    CHECK(!storage.dictionaryExists("AbobaBoba"));
     //storage.dropDictionaries();
     CHECK(dictionaries == std::vector{std::string("Aboba"), std::string("Boba")});
 }
