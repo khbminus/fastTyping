@@ -1,6 +1,7 @@
 #ifndef FASTTYPING_GAME_H
 #define FASTTYPING_GAME_H
 #include <abc.h>
+#include <condition_variable>
 #include <memory>
 #include <mutex>
 #include <nlohmann/json.hpp>
