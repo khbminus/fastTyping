@@ -7,8 +7,7 @@ namespace Ui {
 class WaitGameWindow;
 }
 
-class WaitGameWindow : public QMainWindow
-{
+class WaitGameWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -22,4 +21,4 @@ private:
     Ui::WaitGameWindow *ui;
 };
 
-#endif // WAITGAMEWINDOW_H
+#endif  // WAITGAMEWINDOW_H

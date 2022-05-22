@@ -7,8 +7,7 @@ namespace Ui {
 class StartGameWindow;
 }
 
-class StartGameWindow : public QMainWindow
-{
+class StartGameWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -22,4 +21,4 @@ private:
     Ui::StartGameWindow *ui;
 };
 
-#endif // STARTGAMEWINDOW_H
+#endif  // STARTGAMEWINDOW_H
