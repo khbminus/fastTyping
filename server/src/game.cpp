@@ -91,7 +91,7 @@ std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
 json MapGameStorage::createGame(
     const json &body,
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary) {
-    if (body["dictionaryName"] != "const" || body["parserName"] != "simple") {
+    if (body["parserName"] != "simple") {
         return {{"header", {{"type", "wrongFormatError"}}},
                 {"body", {{"text", "wrong parameters"}}}};
     }
