@@ -60,19 +60,7 @@ void TextListModel::onMove(const QString &buffer, int position) {
                 {CURSOR_ROLE});
     dataChanged(createIndex(currentCursor, 0), createIndex(currentCursor, 0),
                 {CURSOR_ROLE});
+    emit cursorMoved(currentCursor);
 }
 
-void TextListModel::onNewChar(const QChar &c) {
-    beginInsertRows(QModelIndex(), line.size(), line.size());
-    line << new ScreenCharPimpl(c, this);
-    endInsertRows();
-}
-void TextListModel::onPop() {
-    if (line.isEmpty()) {
-        return;
-    }
-    beginRemoveRows(QModelIndex(), line.size() - 1, line.size() - 1);
-    line.pop_back();
-    endRemoveRows();
-}
 }  // namespace FastTyping::TextScreen

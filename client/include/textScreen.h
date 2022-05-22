@@ -43,12 +43,12 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex &index,
                                 int role = Qt::DisplayRole) const override;
 
+signals:
+    void cursorMoved(QVariant position);
 public slots:
     void onWrongChar(int position);
     void onCorrectChar(int position);
     void onMove(const QString &buffer, int position);
-    void onNewChar(const QChar &c);
-    void onPop();
 
 protected:
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;

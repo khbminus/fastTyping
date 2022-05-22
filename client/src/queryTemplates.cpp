@@ -72,7 +72,8 @@ QString get_line_query() {
 
 QString create_game_query(bool auto_join) {
     json result;
-    json words = json::array({"This", "is", "sample", "don't", "judge", "me"});
+    json words = json::array({"This", "is", "veryveryveryveryvery", "long",
+                              "sample", "don't", "judge", "me"});
 
     result["header"] = {{"type", "createGame"}};
     result["body"] = {{"dictionaryName", "const"},

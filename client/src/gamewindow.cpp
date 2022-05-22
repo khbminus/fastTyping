@@ -19,8 +19,7 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
       ui(new Ui::GameWindow),
       main_manager(manager),
       textOut(new QQuickView),
-      textModel(TextListModel(manager->blob(), this)),
-      pressedTextModel(TextListModel("", this)) {
+      textModel(TextListModel(manager->blob(), this)) {
     ui->setupUi(this);
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     ui->quickWidget->rootObject()->setProperty(
@@ -47,10 +46,6 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
                      &TextListModel::onWrongChar);
     QObject::connect(manager, &GameManager::correctOnPositionSignal, &textModel,
                      &TextListModel::onCorrectChar);
-    QObject::connect(this, &GameWindow::key_pressed, &pressedTextModel,
-                     &TextListModel::onNewChar);
-    QObject::connect(this, &GameWindow::backspace_pressed, &pressedTextModel,
-                     &TextListModel::onPop);
     connect(this, SIGNAL(press(QVariant)), ui->quickWidget->rootObject(),
             SLOT(pressKey(QVariant)));
     connect(this, SIGNAL(release(QVariant)), ui->quickWidget->rootObject(),
@@ -66,17 +61,20 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
 
     ui->game_id->setText(
         QString::number(ContextManager::get_instance().get_game_id()));
-    textOut->setInitialProperties(
-        {{"model", QVariant::fromValue(&textModel)},
-         {"model2", QVariant::fromValue(&pressedTextModel)}});
+    textOut->setInitialProperties({
+        {"model", QVariant::fromValue(&textModel)},
+    });
     textOut->setSource(QUrl(QString::fromUtf8("qrc:/textScreen.qml")));
 
     auto layoutWidget =
         QWidget::createWindowContainer(textOut, ui->centralwidget);
 
-    layoutWidget->setGeometry(QRect(50, 30, 701, 102));
+    connect(&textModel, SIGNAL(cursorMoved(QVariant)), textOut->rootObject(),
+            SLOT(moveCursor1(QVariant)));
+
+    layoutWidget->setGeometry(QRect(50, 30, 701, 51));
     textOut->rootObject()->setProperty("width", 701);
-    textOut->rootObject()->setProperty("height", 102);
+    textOut->rootObject()->setProperty("height", 51);
 
     highlightNextKey();
 }
