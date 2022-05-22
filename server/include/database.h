@@ -1,6 +1,7 @@
 #ifndef FASTTYPING_DATABASE_H
 #define FASTTYPING_DATABASE_H
 #include <iostream>
+#include "abc.h"
 #include <mutex>
 #include <nlohmann/json.hpp>
 #include <pqxx/pqxx>
@@ -30,6 +31,8 @@ public:
     void dropDictionaries();
     void addDictionary(std::string name, bool is_adaptable, std::string type);
     std::vector<std::string> get_dictionaries();
+    bool dictionaryExists(std::string dictionary_name);
+    std::unique_ptr<::FastTyping::Logic::AbstractDictionary> get_dictionary(std::string const& name);
 
     // Queries
     json login(const std::string &name, const std::string &password);

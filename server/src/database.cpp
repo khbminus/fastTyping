@@ -1,4 +1,5 @@
 #include "database.h"
+#include "constGame.h"
 #include <algorithm>
 
 namespace FastTyping::Server {
@@ -74,6 +75,32 @@ void Database::dropDictionaries() {
     unanswered_query("DROP TABLE DICTIONARIES;");
 }
 
+std::unique_ptr<::FastTyping::Logic::AbstractDictionary> Database::get_dictionary(
+    std::string const &name) {
+
+    std::unique_lock l{mutex};
+    pqxx::work work(connect);
+
+    pqxx::result dict_info = work.exec(
+        "SELECT * FROM DICTIONARIES"
+        "WHERE NAME + '" +
+        connect.esc(name) + "' LIMIT 1;");
+    work.commit();
+
+    if (dict_info.empty()) {
+        // add error later
+        throw 0;
+    }
+
+    std::string type = dict_info[0]["TYPE"].c_str();
+    if (type == "const") {
+        return std::make_unique<FastTyping::Logic::Dictionary>(
+            std::vector<std::string>{"This", "is", "sample", "don't", "judge", "me"});
+    }
+    return std::make_unique<FastTyping::Logic::Dictionary>(
+        std::vector<std::string>{"This", "is", "sample", "don't", "judge", "me"});
+}
+
 std::string Database::getPassword(int id) {
     std::unique_lock l{mutex};
     pqxx::work W(connect);
@@ -137,7 +164,7 @@ bool Database::nameExist(const std::string &name) {
         "SELECT 1 "
         "FROM USERS "
         "WHERE NAME = '" +
-        W.esc(name) + "' ;");
+        W.esc(name) + "' LIMIT 1;");
     W.commit();
     return !find_by_name.empty();
 }
@@ -182,16 +209,6 @@ std::vector<std::pair<char, char>> Database::getTopMistakes(
     return result;
 }
 
-
-/*
-CREATE TABLE IF NOT EXISTS DICTIONARIES(
-    ID SERIAL PRIMARY KEY,
-    NAME TEXT,
-    IS_ADAPTABLE BOOLEAN,
-    TYPE TEXT,
-);
-*/
-
 void Database::addDictionary(std::string name,
                              bool is_adaptable,
                              std::string type) {
@@ -199,19 +216,32 @@ void Database::addDictionary(std::string name,
     unanswered_query(
         "INSERT INTO DICTIONARIES(NAME, IS_ADAPTABLE, TYPE)\n"
         "VALUES('" +
-        connect.esc(name) + "', " + (is_adaptable ? "TRUE" : "FALSE") + ", '" + connect.esc(type) +
-        "');");
+        connect.esc(name) + "', " + (is_adaptable ? "TRUE" : "FALSE") + ", '" +
+        connect.esc(type) + "');");
 }
 
 std::vector<std::string> Database::get_dictionaries() {
     pqxx::work work(connect);
-    pqxx::result raw_result = work.exec("SELECT NAME FROM DICTIONARIES ORDER BY NAME;");
+    pqxx::result raw_result =
+        work.exec("SELECT NAME FROM DICTIONARIES ORDER BY NAME;");
 
     std::vector<std::string> result;
     std::transform(raw_result.begin(), raw_result.end(),
                    std::back_inserter(result),
                    [](auto row) { return row["NAME"].c_str(); });
     return result;
+}
+
+bool Database::dictionaryExists(std::string dictionary_name) {
+    std::unique_lock l{mutex};
+    pqxx::work work(connect);
+    pqxx::result dictionary = work.exec(
+        "SELECT 1 "
+        "FROM DICTIONARIES "
+        "WHERE NAME = '" +
+        connect.esc(dictionary_name) + "' LIMIT 1;");
+    work.commit();
+    return !dictionary.empty();
 }
 
 json Database::login(const std::string &name, const std::string &password) {
