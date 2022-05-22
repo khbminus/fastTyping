@@ -15,7 +15,7 @@ void WebManager::key_pressed(QChar button) {
     inputter.addSymbol(button);
     socket().send(key_pressed_query(QString(button)));
 
-    emit print_signal(inputter.getBuffer());
+    emit print_signal(inputter.getBuffer(), 0);
 }
 
 void WebManager::backspace_pressed() {
@@ -24,7 +24,7 @@ void WebManager::backspace_pressed() {
 
     inputter.deleteSymbol();
     socket().send(backspace_pressed_query());
-    emit print_signal(inputter.getBuffer());
+    emit print_signal(inputter.getBuffer(), 0);
 }
 
 QString WebManager::get_buffer() {
@@ -51,6 +51,6 @@ void WebManager::correct_slot() {
 
 void WebManager::correct_word_slot() {
     inputter.clearBuffer();
-    emit print_signal(inputter.getBuffer());
+    emit print_signal(inputter.getBuffer(), 0);
     emit correct_signal();
 }

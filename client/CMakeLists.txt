@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(fasttyping_client VERSION 1.0 LANGUAGES CXX)
 
+add_compile_options(-O0 -ggdb)
+
 # -*-*- QT CMake start -*-*-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -59,16 +61,21 @@ set(PROJECT_SOURCES
         include/webManager.h
         include/confirmWindow.h
         include/responseParse.h
+        include/gameContextManager.h
+
         src/createwindow.ui
         src/gamewindow.ui
         src/joinwindow.ui
         src/mainwindow.ui
         src/statwindow.ui
+
         qml.qrc
 
         include/keyboard.h
         src/keyboard.cpp
-        include/gameContextManager.h
+
+        include/textScreen.h
+        src/textScreen.cpp
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

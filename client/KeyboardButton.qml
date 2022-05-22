@@ -17,20 +17,17 @@ Item {
         target: inputPanel
         function onPressed(keyPressed) {
             if (root.key === keyPressed || root.shiftKey === keyPressed) {
-                console.log(root.text, "Pressed")
                 root.isHighlighted = true
             }
         }
         function onReleased(keyReleased) {
             if (root.key === keyReleased || root.shiftKey === keyReleased) {
-                console.log(root.text, "Released")
                 root.isHighlighted = false
             }
         }
 
         function onHighlighted(key) {
             if (root.actualText === key || root.actualShiftText === key) {
-                console.log(root.text, "highlighted")
                 root.isNext = true;
             }
         }
