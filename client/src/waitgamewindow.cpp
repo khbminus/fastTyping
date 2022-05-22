@@ -1,12 +1,12 @@
 #include "waitgamewindow.h"
-#include "ui_waitgamewindow.h"
 #include <nlohmann/json.hpp>
-#include "windowcontroller.h"
 #include "errorHandler.h"
 #include "gameContextManager.h"
 #include "queryTemplates.h"
 #include "responseParse.h"
 #include "sonicSocket.h"
+#include "ui_waitgamewindow.h"
+#include "windowcontroller.h"
 
 WaitGameWindow::WaitGameWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::WaitGameWindow) {
@@ -21,7 +21,7 @@ void WaitGameWindow::on_ReturnButton_clicked() {
     // TODO
 }
 
-void WaitGameWindow::showEvent(QShowEvent *event){
+void WaitGameWindow::showEvent(QShowEvent *event) {
     QWidget::showEvent(event);
     using client::queries::wait_game_query;
     using client::responses::ensure_success;

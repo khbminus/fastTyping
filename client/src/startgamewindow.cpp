@@ -1,12 +1,12 @@
 #include "startgamewindow.h"
-#include "ui_startgamewindow.h"
-#include "windowcontroller.h"
 #include <nlohmann/json.hpp>
 #include "errorHandler.h"
 #include "gameContextManager.h"
 #include "queryTemplates.h"
 #include "responseParse.h"
 #include "sonicSocket.h"
+#include "ui_startgamewindow.h"
+#include "windowcontroller.h"
 
 StartGameWindow::StartGameWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::StartGameWindow) {
