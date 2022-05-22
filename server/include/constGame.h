@@ -6,6 +6,7 @@
 #include <memory>
 #include <thread>
 #include "abc.h"
+#include "generator.h"
 
 namespace FastTyping::Logic {
 
@@ -20,7 +21,7 @@ struct Dictionary : AbstractDictionary {
     [[nodiscard]] size_t getWordCount() const override {
         return words.size();
     }
-    [[nodiscard]] std::vector<std::string> getLine(int) const override {
+    [[nodiscard]] std::vector<std::string> getLine(int index) const override {
         return words;
     }
     [[nodiscard]] size_t getLinesCount() const override {
@@ -51,6 +52,38 @@ struct SimpleParser : AbstractParser {
         return true;
     }
 };
+struct AdaptiveDictionary : AbstractDictionary {
+    std::vector<std::string> words;
+    explicit AdaptiveDictionary(
+        int user_id,
+        generator::TextGenerator &gen) {  // TODO may be refactor?
+        int k = 3;
+        // TODO get list of user's mistakes from DB
+        std::vector<generator::UsersTypo> mistakes = {{'a', 'b'}, {'c', 'd'}};
+        for (auto cur_mistake : mistakes) {
+            std::vector<std::string> cur_words =
+                gen.getTop(k, true, cur_mistake);
+            for (auto x : cur_words) {
+                // cppcheck-suppress useStlAlgorithm
+                words.emplace_back(x);
+            }
+        }
+    }
 
-};      // namespace FastTyping::Logic
+    [[nodiscard]] std::string getWord(int index) const override {
+        return words[index];
+    }
+
+    [[nodiscard]] size_t getWordCount() const override {
+        return words.size();
+    }
+    [[nodiscard]] std::vector<std::string> getLine(int index) const override {
+        return words;
+    }
+    [[nodiscard]] std::size_t getLinesCount() const override {
+        return 1;  // TODO lol what???
+    }
+};
+}  // namespace FastTyping::Logic
+// namespace FastTyping::Logic
 #endif  // FASTTYPING_CONSTGAME_H
