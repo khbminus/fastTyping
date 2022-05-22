@@ -14,6 +14,7 @@
 #include "signwindow.h"
 #include "sonicSocket.h"
 #include "statwindow.h"
+#include "textScreen.h"
 #include "webManager.h"
 #include "windowcontroller.h"
 

@@ -7,7 +7,7 @@
 bool LocalManager::check_prefix() {
     QString buffer = inputter.getBuffer();
     QString sample = dictionary.getCurrentWord();
-    qDebug() << "copmaparing" << buffer << " with " << sample;
+    qDebug() << "comparing" << buffer << " with " << sample;
 
     if (buffer.size() > sample.size()) {
         return false;
@@ -24,6 +24,14 @@ void LocalManager::emit_correctness() {
     }
 }
 
+bool LocalManager::check_symbol(int position) {
+    QString buffer = inputter.getBuffer();
+    QString sample = dictionary.getCurrentWord();
+    if (sample.size() <= position)
+        return false;
+    return buffer[position] == sample[position];
+}
+
 LocalManager::LocalManager(std::vector<QString> a_words)
     : dictionary(std::move(a_words)) {}
 
@@ -35,19 +43,32 @@ void LocalManager::key_pressed(QChar button) {
                 emit end_signal();
                 return;
             }
+            emit print_signal(
+                inputter.getBuffer(),
+                dictionary.getCompletedSize() + inputter.getBuffer().size());
+            emit_correctness();
+            return;
         } else {
             inputter.addSymbol(button);
         }
     } else {
         inputter.addSymbol(button);
     }
-    emit print_signal(inputter.getBuffer());
+    if (!check_symbol(inputter.getBuffer().size() - 1)) {
+        emit errorOnPositionSignal(dictionary.getCompletedSize() +
+                                   inputter.getBuffer().size() - 1);
+    }
+    emit print_signal(inputter.getBuffer(), dictionary.getCompletedSize() +
+                                                inputter.getBuffer().size());
     emit_correctness();
 }
 
 void LocalManager::backspace_pressed() {
     inputter.deleteSymbol();
-    emit print_signal(inputter.getBuffer());
+    emit correctOnPositionSignal(dictionary.getCompletedSize() +
+                                 inputter.getBuffer().size());
+    emit print_signal(inputter.getBuffer(), dictionary.getCompletedSize() +
+                                                inputter.getBuffer().size());
     emit_correctness();
 }
 
