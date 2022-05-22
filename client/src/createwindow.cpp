@@ -30,7 +30,8 @@ void CreateGameWindow::on_CreateButton_clicked() {
 
     using client::queries::create_game_query;
     using client::web::socket;
-    QString raw_response = socket().query(create_game_query(ui->WordsBox->currentText()));
+    QString raw_response =
+        socket().query(create_game_query(ui->WordsBox->currentText()));
     qDebug() << "create result:" << raw_response;
     json response = json::parse(raw_response.toStdString());
     if (ensure_success(response)) {

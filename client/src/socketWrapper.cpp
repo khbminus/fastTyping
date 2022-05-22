@@ -76,7 +76,7 @@ SocketWrapper::SocketWrapper(QString ip, short port, ResponseHandler *a_handler)
                              qDebug() << "connection lost\n";
                              socket_thread.quit();
                              exit(1);
-        });
+                         });
 
         socket_wrap = socket;
         loop_wrap = &socket_thread;
