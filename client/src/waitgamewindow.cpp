@@ -33,8 +33,6 @@ void WaitGameWindow::showEvent(QShowEvent *event) {
     json response = json::parse(raw_response.toStdString());
 
     if (ensure_success(response)) {
-        auto &context = ContextManager::get_instance();
-        context.set_context_from_create_query(response);
         auto &controller = FastTyping::WindowController::getInstance();
         controller.setActiveWindow("GameWindow");
     }

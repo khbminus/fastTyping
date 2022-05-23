@@ -107,6 +107,10 @@ Server::Server()
             return {{"header", {{"type", "notInGameError"}}},
                     {"body", {{"text", "Not in game"}}}};
         }
+        if (user.getGame()->getGameStarted()) {
+            return {{"header", {{"type", "gameStarted"}}},
+                    {"body", {{"text", "Game already started"}}}};
+        }
         json errors;
         auto game = user.getGame();
         if (game == nullptr) {
