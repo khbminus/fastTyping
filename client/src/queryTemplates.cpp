@@ -40,14 +40,14 @@ QString join_query(int id) {
 QString start_query() {
     json result;
     result["header"] = {{"type", "startGame"}};
-    result["body"] = {{}};
+    result["body"] = json::object();
     return dump(result);
 }
 
 QString wait_game_query() {
     json result;
     result["header"] = {{"type", "waitGameStart"}};
-    result["body"] = {{}};
+    result["body"] = json::object();
     return dump(result);
 }
 
