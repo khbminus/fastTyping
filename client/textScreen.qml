@@ -13,6 +13,13 @@ ListView {
     flickableDirection: Flickable.AutoFlickDirection
 
     z:-1
+    function moveCursor1(position) {
+            if (position >= 1) {
+                position--
+            }
+            console.log("move at position ", position)
+            positionViewAtIndex(position, ListView.Center)
+        }
 
     delegate: Rectangle {
         required property bool isCorrect
