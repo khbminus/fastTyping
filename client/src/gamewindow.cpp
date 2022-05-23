@@ -1,5 +1,6 @@
 #include "gamewindow.h"
 #include <qqml.h>
+#include <QQmlContext>
 #include <QQuickItem>
 #include <QQuickView>
 #include <iostream>
@@ -18,10 +19,11 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
     : QMainWindow(parent),
       ui(new Ui::GameWindow),
       main_manager(manager),
-      textOut(new QQuickView),
+      textOut(new QQuickWidget(this)),
       textModel(TextListModel(manager->blob(), this)) {
     ui->setupUi(this);
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    QQuickView::setGraphicsApi(QSGRendererInterface::OpenGL);
     ui->quickWidget->rootObject()->setProperty(
         "keyModel", QVariant::fromValue(
                         &FastTyping::Keyboard::KeyboardModel::getInstance()));
@@ -59,20 +61,16 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
 
     ui->game_id->setText(
         QString::number(ContextManager::get_instance().get_game_id()));
-    textOut->setInitialProperties({
-        {"model", QVariant::fromValue(&textModel)},
-    });
     textOut->setSource(QUrl(QString::fromUtf8("qrc:/textScreen.qml")));
-
-    auto layoutWidget =
-        QWidget::createWindowContainer(textOut, ui->centralwidget);
+    textOut->rootObject()->setProperty("model",
+                                       QVariant::fromValue(&textModel));
 
     connect(&textModel, SIGNAL(cursorMoved(QVariant)), textOut->rootObject(),
             SLOT(moveCursor1(QVariant)));
 
-    layoutWidget->setGeometry(QRect(50, 30, 701, 51));
-    textOut->rootObject()->setProperty("width", 701);
-    textOut->rootObject()->setProperty("height", 51);
+    textOut->setGeometry(QRect(50, 30, 701, 51));
+    //    textOut->rootObject()->setProperty("width", 701);
+    //    textOut->rootObject()->setProperty("height", 51);
 
     highlightNextKey();
 }

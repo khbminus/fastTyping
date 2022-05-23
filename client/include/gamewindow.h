@@ -6,7 +6,7 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QPushButton>
-#include <QQuickView>
+#include <QQuickWidget>
 #include <QVariant>
 #include <memory>
 #include "gameManager.h"
@@ -27,7 +27,7 @@ public:
 
 private:
     Ui::GameWindow *ui;
-    QQuickView *textOut;
+    QQuickWidget *textOut;
     FastTyping::TextScreen::TextListModel textModel;
 
     void highlightNextKey();
