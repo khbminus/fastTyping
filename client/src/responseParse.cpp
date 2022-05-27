@@ -16,7 +16,9 @@ std::map<std::string, std::string> success_type{
     {"backspace", "checkResult"},
     {"addNewChar", "checkResult"},
     {"login", "success"},
-    {"register", "success"}};
+    {"register", "success"},
+    {"startGame", "GameStartedSuccessfully"},
+    {"waitGameStart", "GameWaitedSuccessfully"}};
 
 std::map<std::string, std::map<std::string, QString>> error_texts{
     {"createGame",
@@ -26,9 +28,17 @@ std::map<std::string, std::map<std::string, QString>> error_texts{
      {{"alreadyInGame", "You are already in game. Wait until it ends"},
       {"wrongFormatError", "Internal error"},
       {"connectAfterLeaveError", "You are trying to join game after leave"},
-      {"wrongIdError", "There no game with this Id"}}},
+      {"wrongIdError", "There no game with this Id"},
+      {"connectAfterStartError", "Try connect after game started"}}},
     {"register", {{"nameAlreadyExists", "User with this name already exists"}}},
-    {"login", {{"incorrectName", "Invalid name or password"}}}};
+    {"login", {{"incorrectName", "Invalid name or password"}}},
+    {"startGame",
+     {{"notInGameError", "Not in game"},
+      {"notHostError", "User is not host of his game"},
+      {"gameStarted", "Game already started"}}},
+    {"waitGameStart",
+     {{"notInGameError", "Not in game"},
+      {"UserHostError", "User is a host of the game, he can't wait"}}}};
 
 std::map<std::string, QString> error_titles{
     {"createGame", "Error on game create"},

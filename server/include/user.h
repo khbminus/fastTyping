@@ -17,41 +17,14 @@ struct User {
           id(DB->getId(name_)),
           gameId(-1),
           wantToExit(false) {}
-    [[nodiscard]] Game *getGame() const {
-        // getGameId()
-        return currentGame.get();
-    }
-
-    [[nodiscard]] const std::string &name() const noexcept {
-        return userName;
-    }
-
-    [[nodiscard]] int getId() const noexcept {
-        return id;
-    }
-
-    [[nodiscard]] int isWantToExit() const noexcept {
-        return (wantToExit ? 1 : 0);
-    }
-
-    void setGame(std::shared_ptr<Game> game) {
-        std::unique_lock l{mutex};
-        currentGame = std::move(game);
-        // setGameId(TODO)
-    }
-    void setGameId(int gameId_) noexcept {
-        gameId = gameId_;
-    }
-    [[nodiscard]] int getGameId() const noexcept {
-        return gameId;
-    }
-
-    void setWillToExit() noexcept {
-        wantToExit = true;
-    }
-    void clearWillToExit() noexcept {
-        wantToExit = false;
-    }
+    [[nodiscard]] Game *getGame() const;
+    [[nodiscard]] const std::string &name() const noexcept;
+    [[nodiscard]] int getId() const noexcept;
+    [[nodiscard]] int isWantToExit() const noexcept;
+    void setGame(std::shared_ptr<Game> game);
+    void setWillToExit() noexcept;
+    void clearWillToExit() noexcept;
+    void waitStartGame();
 
 private:
     std::shared_ptr<Game> currentGame = nullptr;

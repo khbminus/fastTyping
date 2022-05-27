@@ -11,8 +11,10 @@
 #include "responseHandler.h"
 #include "signwindow.h"
 #include "sonicSocket.h"
+#include "startgamewindow.h"
 #include "statwindow.h"
 #include "textScreen.h"
+#include "waitgamewindow.h"
 #include "webManager.h"
 #include "windowcontroller.h"
 
@@ -54,10 +56,14 @@ int main(int argc, char *argv[]) {
     auto loginWindow = QSharedPointer<QMainWindow>(new LoginWindow());
     auto signWindow = QSharedPointer<QMainWindow>(new SignWindow());
     auto registerWindow = QSharedPointer<QMainWindow>(new RegisterWindow());
+    auto startGameWindow = QSharedPointer<QMainWindow>(new StartGameWindow());
+    auto waitGameWindow = QSharedPointer<QMainWindow>(new RegisterWindow());
 
     controller.registerWindow("LoginWindow", loginWindow);
     controller.registerWindow("SignWindow", signWindow);
     controller.registerWindow("RegisterWindow", registerWindow);
+    controller.registerWindow("StartGameWindow", startGameWindow);
+    controller.registerWindow("WaitGameWindow", waitGameWindow);
 
     controller.registerWindow("MainWindow", mainWindow);
     controller.registerWindow("JoinWindow", joinWindow);

@@ -13,6 +13,18 @@ bool Game::isEndedUnsafe(int uid) {
     return additionalInfo[uid].currentWord == dictionary->getWordCount();
 }
 
+bool Game::getGameStarted() {
+    return gameStarted;
+}
+
+int Game::getHostId() {
+    return hostId;
+}
+
+void Game::startGame() {
+    gameStarted = true;
+    cond_gameStarted.notify_all();
+}
 json Game::checkUnsafe(int uid) {
     json result;
     std::string rightWord =
@@ -88,7 +100,7 @@ std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
               {"body", {{"text", "Can't find game with specific id"}}}};
     return nullptr;
 }
-json MapGameStorage::createGame(const json &body) {
+json MapGameStorage::createGame(const json &body, int hostId) {
     if (body["dictionaryName"] != "const" || body["parserName"] != "simple") {
         return {{"header", {{"type", "wrongFormatError"}}},
                 {"body", {{"text", "wrong parameters"}}}};
@@ -100,7 +112,8 @@ json MapGameStorage::createGame(const json &body) {
     std::shared_ptr<Game> game = std::make_shared<Game>(
         std::make_unique<Logic::SimpleParser>(),
         std::make_unique<Logic::Dictionary>(
-            body["words"].get<std::vector<std::string>>()));
+            body["words"].get<std::vector<std::string>>()),
+        hostId);
     {
         std::unique_lock l{map_mutex};
         games[game->getId()] = game;
