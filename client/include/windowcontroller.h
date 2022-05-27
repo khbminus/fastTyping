@@ -23,6 +23,7 @@ public:
     void registerWindow(const std::string &windowName,
                         QSharedPointer<QMainWindow> window);
     void setActiveWindow(const std::string &windowName);
+    void dropWindow(std::string const& window_name);
 
 private:
     std::unordered_map<std::string, QSharedPointer<QMainWindow>> windows;
