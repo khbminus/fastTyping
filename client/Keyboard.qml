@@ -9,9 +9,6 @@ Item {
     property KeyboardModel keyModel
 
     function pressKey(key) {
-        console.log("pressed key", key);
-        console.log("debug text", root.keyModel.firstRowModel);
-
         if (pimpl.shiftModifier < 0) {
             releaseKey(Qt.Key_Shift);
             pimpl.shiftModifier = 0;
@@ -28,12 +25,12 @@ Item {
     }
 
     function highlightKey(key) {
-        console.log("highlighted key", key);
+        //console.log("highlighted key", key);
         highlighted(key)
     }
 
     function releaseKey(key) {
-        console.log("released key", key);
+        //console.log("released key", key);
         if (key === Qt.Key_Shift) {
             pimpl.shiftModifier--;
         }

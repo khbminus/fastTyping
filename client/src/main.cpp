@@ -12,11 +12,13 @@
 #include "signwindow.h"
 #include "sonicSocket.h"
 #include "statwindow.h"
+#include "textScreen.h"
 #include "webManager.h"
 #include "windowcontroller.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
+    QApplication::setAttribute(Qt::AA_ForceRasterWidgets, false);
     auto &keyboard = FastTyping::Keyboard::KeyboardModel::getInstance();
     keyboard.addPath("qwerty.json");
     keyboard.addPath("test.json");
