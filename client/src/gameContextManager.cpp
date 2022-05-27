@@ -75,7 +75,9 @@ void ContextManager::set_context_from_join_query(json const &response) {
 }
 
 void ContextManager::reset_context() {
-    local_manager.reset();
-    remote_manager.reset();
+    local_manager.clear();
+    remote_manager.clear();
+    auto &controller = FastTyping::WindowController::getInstance();
+    controller.dropWindow("GameWindow");
     window.reset();
 }
