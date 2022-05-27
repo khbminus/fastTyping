@@ -14,4 +14,9 @@ void WindowController::registerWindow(const std::string &windowName,
                                       QSharedPointer<QMainWindow> window) {
     windows[windowName] = std::move(window);
 }
+
+void WindowController::dropWindow(std::string const &window_name) {
+    windows[window_name].clear();
+}
+
 }  // namespace FastTyping

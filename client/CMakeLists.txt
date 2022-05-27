@@ -28,6 +28,10 @@ set(PROJECT_SOURCES
         include/joinwindow.h
         src/createwindow.cpp
         include/createwindow.h
+        src/startgamewindow.cpp
+        include/startgamewindow.h
+        src/waitgamewindow.cpp
+        include/waitgamewindow.h
         src/windowcontroller.cpp
         include/windowcontroller.h
         src/gamewindow.cpp
@@ -68,7 +72,12 @@ set(PROJECT_SOURCES
         src/joinwindow.ui
         src/mainwindow.ui
         src/statwindow.ui
-
+        src/loginwindow.ui
+        src/registerwindow.ui
+        src/signwindow.ui
+        src/startgamewindow.ui
+        src/waitgamewindow.ui
+        
         qml.qrc
 
         include/keyboard.h

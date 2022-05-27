@@ -27,7 +27,7 @@ ListView {
         required property bool isCursor
         required property string letter
         id: wrapper
-        color: (isCursor ? "#CC747474" : ((letter === " " && !isCorrect) ? "#CC8B0000" : "#00747474"))
+        color: (isCursor ? "#CC747474" : ((!isCorrect) ? "#CC8B0000" : "#00747474"))
         height: parent.height
         width: charText.width
 
@@ -37,8 +37,8 @@ ListView {
             anchors.top: parent.top
             id: charText
             text: parent.letter
-            color: (parent.isCorrect ? "black" : "darkRed")
-            font.family: "Courier"
+            color: (parent.isCorrect ? "black" : "white")
+            font.family: "monospace"
             font.pixelSize: 34
         }
     }

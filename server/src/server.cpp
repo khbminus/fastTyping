@@ -32,7 +32,6 @@ Server::Server()
             return {{"header", {{"type", "alreadyInGameError"}}},
                     {"body", {{"text", "Already in game"}}}};
         }
-
         std::string dictionary_name = body["dictionaryName"].get<std::string>();
 
         auto result = gameStorage->createGame(
@@ -57,6 +56,7 @@ Server::Server()
         }
         return result;
     };
+    //{"body":{"id":0},"header":{"type":"joinGame"}}
     commonQueriesMap["joinGame"] = [&](const json &body, User &user) -> json {
         if (!body.contains("id") || !body["id"].is_number_unsigned()) {
             return {{"header", {{"type", "wrongFormatError"}}},
@@ -72,6 +72,10 @@ Server::Server()
         if (game == nullptr) {
             return errors;
         }
+        if (game->getGameStarted()) {
+            return {{"header", {{"type", "connectAfterStartError"}}},
+                    {"body", {{"text", "Try connect after game started"}}}};
+        }
         if (game->hasUser(user.getId())) {
             return {{"header", {{"type", "connectAfterLeaveError"}}},
                     {"body", {{"text", "Try connect after disconnect"}}}};
@@ -80,6 +84,49 @@ Server::Server()
         return {{"header", {{"type", "GameJoinedSuccessfully"}}},
                 {"body", {{"id", game->getId()}}}};
     };
+    commonQueriesMap["waitGameStart"] = [&](const json &body,
+                                            User &user) -> json {
+        if (user.getGame() == nullptr) {
+            return {{"header", {{"type", "notInGameError"}}},
+                    {"body", {{"text", "Not in game"}}}};
+        }
+        json errors;
+        auto game = user.getGame();
+        if (game == nullptr) {
+            return errors;
+        }
+        if (game->getHostId() == user.getId()) {
+            return {{"header", {{"type", "UserHostError"}}},
+                    {"body",
+                     {{"text", "User is a host of the game, he can't wait"}}}};
+        }
+        user.waitStartGame();
+        return {{"header", {{"type", "GameWaitedSuccessfully"}}}, {"body", {}}};
+    };
+
+    commonQueriesMap["startGame"] = [&](const json &body, User &user) -> json {
+        if (user.getGame() == nullptr) {
+            return {{"header", {{"type", "notInGameError"}}},
+                    {"body", {{"text", "Not in game"}}}};
+        }
+        if (user.getGame()->getGameStarted()) {
+            return {{"header", {{"type", "gameStarted"}}},
+                    {"body", {{"text", "Game already started"}}}};
+        }
+        json errors;
+        auto game = user.getGame();
+        if (game == nullptr) {
+            return errors;
+        }
+        if (game->getHostId() != user.getId()) {
+            return {{"header", {{"type", "notHostError"}}},
+                    {"body", {{"text", "User is not host of his game"}}}};
+        }
+        game->startGame();
+        return {{"header", {{"type", "GameStartedSuccessfully"}}},
+                {"body", {}}};
+    };
+
     commonQueriesMap["leaveGame"] = [&](const json &body, User &user) -> json {
         if (user.getGame() == nullptr) {
             return {{"header", {{"type", "notInGameError"}}},
@@ -328,3 +375,5 @@ std::optional<json> Server::checkQueryCorrectness(
     return {};
 }
 }  // namespace FastTyping::Server
+   //{"body":{"dictionaryName":"const", "parserName":"simple", "autoJoin":true,
+   //"words":["jopa", "jopa2"]}, "header":{"type":"createGame"}}

@@ -17,6 +17,7 @@ FetchContent_MakeAvailable(libpqxx)
 
 
 include_directories(include ../common/include)
+
 add_executable(server src/main.cpp src/generator.cpp src/database.cpp src/server.cpp src/game.cpp include/user.h src/dictionaryDB.cpp)
 target_include_directories(server PRIVATE ${Boost_INCLUDE_DIRS} include)
 target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
