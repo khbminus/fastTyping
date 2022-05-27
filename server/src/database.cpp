@@ -99,7 +99,7 @@ Database::get_dictionary(std::string const &name) {
     if (type == "const") {
         DictionariesDatabase dictionaries;
 
-        std::cout << "I'm here: " <<  name << std::endl;
+        std::cout << "I'm here: " << name << std::endl;
         std::string line = dictionaries.getLineConst(name);
         std::cout << "line = '" << line << "'" << std::endl;
 

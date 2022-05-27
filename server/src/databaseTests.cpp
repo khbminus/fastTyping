@@ -1,9 +1,9 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <type_traits>
+#include "dictionaryDB.h"
 #include "doctest.h"
 #include "user.h"
-#include "dictionaryDB.h"
 
 using namespace FastTyping::Server;
 

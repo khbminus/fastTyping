@@ -13,8 +13,9 @@ public:
     DictionariesDatabase();
     ~DictionariesDatabase();
     void dropConst();
-    void addConst(std::string const& name, std::string const& val);
-    std::string getLineConst(std::string const& name);
+    void addConst(std::string const &name, std::string const &val);
+    std::string getLineConst(std::string const &name);
+
 private:
     void unanswered_query(std::string const &query);
     void unanswered_query(std::vector<std::string> const &queries);

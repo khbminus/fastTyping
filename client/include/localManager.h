@@ -14,6 +14,7 @@ class LocalManager final : public GameManager {
     bool check_symbol(int position);
     void emit_correctness();
     bool is_correct_word();
+
 public:
     explicit LocalManager(std::vector<QString> words);
     void key_pressed(QChar button) override;

@@ -2,7 +2,6 @@
 
 using FastTyping::Server::DictionariesDatabase;
 
-
 int main() {
     DictionariesDatabase db;
     db.addConst("Aboba", "This is sample don't judge me");
