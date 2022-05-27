@@ -19,7 +19,8 @@ std::map<std::string, ResponseType> header_to_type{
     {"addBackspace", ResponseType::async},
     {"login", ResponseType::blocking},
     {"register", ResponseType::blocking},
-    {"getNewLine", ResponseType::blocking}};
+    {"getNewLine", ResponseType::blocking},
+    {"getStates", ResponseType::async}};
 
 ResponseType APIHandler::type(QString const &line) const {
     json response = json::parse(line.toStdString());
@@ -45,6 +46,9 @@ void APIHandler::handle(QString const &line) {
         } else {
             emit error_signal();
         }
+    }
+    if (response["header"]["queryType"] == "currentState") {
+        emit stateUpdated(response);
     }
 }
 

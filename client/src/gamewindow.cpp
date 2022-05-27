@@ -68,7 +68,7 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
     connect(&textModel, SIGNAL(cursorMoved(QVariant)), textOut->rootObject(),
             SLOT(moveCursor1(QVariant)));
 
-    textOut->setGeometry(QRect(50, 30, 701, 51));
+    textOut->setGeometry(QRect(50, 30, 701, 230));
     //    textOut->rootObject()->setProperty("width", 701);
     //    textOut->rootObject()->setProperty("height", 51);
 
