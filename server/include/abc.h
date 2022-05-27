@@ -21,6 +21,9 @@ struct AbstractParser {
     [[nodiscard]] virtual bool isPrefixCorrect(
         const std::string &inputWord,
         const std::string &dictionaryWord) const = 0;
+    [[nodiscard]] virtual std::size_t getCorrectPrefixLength(
+        const std::string &inputWord,
+        const std::string &dictionaryWord) const = 0;
     virtual ~AbstractParser() = default;
 };
 

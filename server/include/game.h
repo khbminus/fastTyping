@@ -31,6 +31,7 @@ public:
     json check(int uid);
     json getNewLine(int uid);
     json getStateOfUsers();
+    void joinUser(int uid);
 
 private:
     json checkUnsafe(int uid);  // THREAD UNSAFE
@@ -46,6 +47,7 @@ private:
     struct AdditionalUserInfo {
         std::string currentBuffer;
         int currentWord = 0;
+        int charsTypedCorrect = 0;
         int lineNumber = 0;
     };
 

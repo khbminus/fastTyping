@@ -74,6 +74,7 @@ Server::Server()
                     {"body", {{"text", "Try connect after disconnect"}}}};
         }
         user.setGame(game);
+        game->joinUser(user.getId());
         return {{"header", {{"type", "GameJoinedSuccessfully"}}},
                 {"body", {{"id", game->getId()}}}};
     };
