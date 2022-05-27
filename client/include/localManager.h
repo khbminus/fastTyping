@@ -12,7 +12,7 @@ class LocalManager final : public GameManager {
     LocalDictionary dictionary;
     bool check_prefix();
     void emit_correctness();
-
+    bool is_correct_word();
 public:
     explicit LocalManager(std::vector<QString> words);
     void key_pressed(QChar button) override;

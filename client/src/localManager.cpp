@@ -27,16 +27,16 @@ void LocalManager::emit_correctness() {
 LocalManager::LocalManager(std::vector<QString> a_words)
     : dictionary(std::move(a_words)) {}
 
+bool LocalManager::is_correct_word() {
+    return inputter.getBuffer() == dictionary.getCurrentWord();
+}
+
 void LocalManager::key_pressed(QChar button) {
     if (button == ' ') {
-        if (inputter.getBuffer() == dictionary.getCurrentWord()) {
-            inputter.clearBuffer();
-            if (!dictionary.nextWord()) {
-                emit end_signal();
-                return;
-            }
-        } else {
-            inputter.addSymbol(button);
+        inputter.clearBuffer();
+        if (!dictionary.nextWord()) {
+            emit end_signal();
+            return;
         }
     } else {
         inputter.addSymbol(button);
