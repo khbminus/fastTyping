@@ -38,7 +38,7 @@ ListView {
             id: charText
             text: parent.letter
             color: (parent.isCorrect ? "black" : "darkRed")
-            font.family: "monospace"
+            font.family: "Courier"
             font.pixelSize: 34
         }
     }

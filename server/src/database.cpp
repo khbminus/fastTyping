@@ -1,6 +1,7 @@
 #include "database.h"
 #include <algorithm>
 #include "constGame.h"
+#include "dictionaryDB.h"
 
 namespace FastTyping::Server {
 
@@ -92,14 +93,21 @@ Database::get_dictionary(std::string const &name) {
     }
 
     std::string type = dict_info[0]["TYPE"].c_str();
+
+    std::cout << "type = '" << type << "'" << std::endl;
+
     if (type == "const") {
+        DictionariesDatabase dictionaries;
+
+        std::cout << "I'm here: " <<  name << std::endl;
+        std::string line = dictionaries.getLineConst(name);
+        std::cout << "line = '" << line << "'" << std::endl;
+
         return std::make_unique<FastTyping::Logic::Dictionary>(
-            std::vector<std::string>{"This", "is", "sample", "don't", "judge",
-                                     "me"});
+            dictionaries.getLineConst(name));
     }
     return std::make_unique<FastTyping::Logic::Dictionary>(
-        std::vector<std::string>{"This", "is", "sample", "don't", "judge",
-                                 "me"});
+        "This is sample don't judge me");
 }
 
 std::string Database::getPassword(int id) {

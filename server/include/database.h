@@ -8,7 +8,9 @@
 #include "abc.h"
 
 namespace FastTyping::Server {
+
 using nlohmann::json;
+
 struct Database {
 public:
     Database();

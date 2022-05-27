@@ -3,6 +3,8 @@
 #include <type_traits>
 #include "doctest.h"
 #include "user.h"
+#include "dictionaryDB.h"
+
 using namespace FastTyping::Server;
 
 TEST_CASE("user from string") {
@@ -45,6 +47,8 @@ TEST_CASE("Database") {
     int a = storage.getId(name1);
     int b = storage.getId(name2);
     CHECK(a + 1 == b);
+    DictionariesDatabase d;
+    CHECK(d.getLineConst("Aboba") == "This is sample don't judge me");
     CHECK(storage.getId(name1) == a);
     CHECK(storage.getId(name1) != b);
     CHECK(b == storage.getId(name2));

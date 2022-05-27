@@ -58,6 +58,7 @@ void LocalManager::key_pressed(QChar button) {
     } else {
         inputter.addSymbol(button);
     }
+
     if (!check_symbol(inputter.getBuffer().size() - 1)) {
         emit errorOnPositionSignal(dictionary.getCompletedSize() +
                                    inputter.getBuffer().size() - 1);

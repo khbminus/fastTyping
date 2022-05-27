@@ -33,8 +33,10 @@ Server::Server()
                     {"body", {{"text", "Already in game"}}}};
         }
 
+        std::string dictionary_name = body["dictionaryName"].get<std::string>();
+
         auto result =
-            gameStorage->createGame(body, userStorage->get_dictionary("Aboba"));
+            gameStorage->createGame(body, userStorage->get_dictionary(dictionary_name));
         if (body.contains("autoJoin") && body["autoJoin"].is_boolean() &&
             body["autoJoin"]) {
             if (!result["body"].contains("id") ||
