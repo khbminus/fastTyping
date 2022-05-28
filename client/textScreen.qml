@@ -37,16 +37,15 @@ ListView {
         width: charText.width
         Rectangle {
             id: wrapper
-            color: (row.isCursor ? "#CC747474" : ((row.letter === " " && !row.isCorrect) ? "#CC8B0000" : "#00747474"))
+            color: (parent.isCursor ? "#CC747474" : ((!parent.isCorrect) ? "#CC8B0000" : "#00747474"))
             height: 51
             width: charText.width
 
             Text {
                 anchors.top: parent.top
                 id: charText
-                text: parent.letter
-
-                color: (isCursor ? "#CC747474" : ((!isCorrect) ? "#CC8B0000" : "#00747474"))
+                text: row.letter
+                color: (row.isCorrect ? "black" : "white")
                 font.family: "monospace"
                 font.pixelSize: 34
             }

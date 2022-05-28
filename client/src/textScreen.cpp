@@ -28,7 +28,7 @@ int TextListModel::rowCount(const QModelIndex &) const {
 }
 
 QVariant TextListModel::data(const QModelIndex &index, int role) const {
-    if (index.row() < 0 || index.row() > rowCount()) {
+    if (index.row() < 0 || index.row() >= rowCount()) {
         return {};
     }
     switch (role) {
