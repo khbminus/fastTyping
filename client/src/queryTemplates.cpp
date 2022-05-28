@@ -37,6 +37,20 @@ QString join_query(int id) {
     return dump(result);
 }
 
+QString start_query() {
+    json result;
+    result["header"] = {{"type", "startGame"}};
+    result["body"] = json::object();
+    return dump(result);
+}
+
+QString wait_game_query() {
+    json result;
+    result["header"] = {{"type", "waitGameStart"}};
+    result["body"] = json::object();
+    return dump(result);
+}
+
 QString leave_query() {
     json result;
     result["header"] = {{"type", "leaveGame"}};

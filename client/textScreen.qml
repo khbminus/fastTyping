@@ -44,8 +44,9 @@ ListView {
             Text {
                 anchors.top: parent.top
                 id: charText
-                text: row.letter
-                color: (row.isCorrect ? "black" : "darkRed")
+                text: parent.letter
+
+                color: (isCursor ? "#CC747474" : ((!isCorrect) ? "#CC8B0000" : "#00747474"))
                 font.family: "monospace"
                 font.pixelSize: 34
             }
