@@ -47,7 +47,7 @@ void APIHandler::handle(QString const &line) {
             emit error_signal();
         }
     }
-    if (response["header"]["queryType"] == "currentState") {
+    if (response["header"]["queryType"] == "getStates") {
         emit stateUpdated(response);
     }
 }

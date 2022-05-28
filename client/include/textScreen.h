@@ -2,6 +2,7 @@
 #define FASTTYPING_TEXTSCREEN_H
 
 #include <QAbstractListModel>
+#include <QColor>
 #include <QObject>
 #include <QQmlEngine>
 #include <QTimer>
@@ -31,6 +32,63 @@ private:
     bool mIsCorrect = true;
 };
 
+class Player {
+public:
+    Player() = default;
+    explicit Player(int userId) : userId(userId) {}
+    [[nodiscard]] QColor getColor() const {
+        return color;
+    }
+    [[nodiscard]] int getId() const {
+        return userId;
+    }
+
+    [[nodiscard]] double getOpacity() const {
+        return opacity;
+    }
+
+    void show() {
+        opacity = 1;
+    }
+    bool operator==(const Player &rhs) const;
+
+private:
+    int userId;
+    QColor color = "green";
+    double opacity = 0;
+};
+
+class ProgressListModel : public QAbstractListModel {
+    Q_OBJECT
+public:
+    enum TextRoles {
+        COLOR_ROLE = Qt::UserRole + 1,
+        OPACITY_ROLE,
+        USERNAME_ROLE
+    };
+    explicit ProgressListModel(QObject *parent = nullptr);
+    [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
+    [[nodiscard]] QVariant data(const QModelIndex &index,
+                                int role = Qt::DisplayRole) const override;
+
+    void addPlayer(const Player &player);
+    void showPlayer(const Player &player);
+    void clear();
+    void print() {
+        QString res;
+        for (const auto &x : players) {
+            res += "{" + x.getColor().name() + ", " +
+                   QString::number(x.getId()) + "}";
+        }
+        qDebug() << res;
+    }
+
+protected:
+    [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
+
+private:
+    QList<Player> players;
+};
 class TextListModel : public QAbstractListModel {
     Q_OBJECT
 public:
@@ -64,6 +122,8 @@ private:
 
     int currentCursor = 0;
     QList<ScreenCharPimpl *> line;
+    QList<ProgressListModel *> players;
+
     QTimer *statesTimer;
 };
 

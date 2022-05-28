@@ -11,7 +11,13 @@ ListView {
     flickableDirection: Flickable.AutoFlickDirection
     interactive: false
 
-    z:-1
+    function forceReload() {
+        console.log("reloaded");
+        rootList.forceLayout()
+    }
+
+    signal reload()
+
     function moveCursor1(position) {
             if (position >= 1) {
                 position--
@@ -35,7 +41,6 @@ ListView {
             height: 51
             width: charText.width
 
-            z:-100
             Text {
                 anchors.top: parent.top
                 id: charText
@@ -45,20 +50,33 @@ ListView {
                 font.pixelSize: 34
             }
         }
-
         ListView {
-            height: parent.height - wrapper.height
-            id: playersList
-            width:parent.width
+            id: playerList
+            anchors.left: wrapper.horizontalCenter
+            anchors.leftMargin: -4
+            width: parent.width
+            height: parent.height - wrapper.height - 10
             model: parent.players
-            delegate: Rectangle {
-                required property string modelData
-                anchors.horizontalCenter: parent.horizontalCenter
-                //anchors.fill: parent
-                id: playerRect
-                height: 8
-                width: 8
-                color: modelData
+            delegate: Item {
+                required property color color
+                required opacity
+                required property string username
+                width: playerRect.width + 2 + playerName.width
+                height: playerName.height
+                Rectangle {
+                    id: playerRect
+                    width: 8
+                    height: 8
+                    color:parent.color
+                }
+                Text {
+                    anchors.left: playerRect.right
+                    anchors.leftMargin: 2
+                    anchors.verticalCenter: playerRect.verticalCenter
+
+                    id: playerName
+                    text: "— " + parent.username
+                }
             }
         }
     }
