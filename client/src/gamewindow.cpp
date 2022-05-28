@@ -93,7 +93,11 @@ void GameWindow::on_ReturnButton_clicked() {
 
 void GameWindow::keyPressEvent(QKeyEvent *event) {
     QString keysCombination = event->text();
-    emit press(event->key());
+    if (event->key() != 0) {
+        emit press(event->key());
+    } else {
+        qDebug() << event->keyCombination();
+    }
     if (keysCombination == "") {
         return;
     }
