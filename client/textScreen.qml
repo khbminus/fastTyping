@@ -55,7 +55,7 @@ ListView {
             anchors.left: wrapper.horizontalCenter
             anchors.leftMargin: -4
             width: parent.width
-            height: parent.height - wrapper.height - 10
+            height: parent.height
             model: parent.players
             delegate: Item {
                 required property color color

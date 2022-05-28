@@ -37,7 +37,7 @@ public:
     Player() = default;
     explicit Player(int userId) : userId(userId) {}
     [[nodiscard]] QColor getColor() const {
-        return color;
+        return COLORS[userId % std::size(COLORS)];
     }
     [[nodiscard]] int getId() const {
         return userId;
@@ -53,8 +53,12 @@ public:
     bool operator==(const Player &rhs) const;
 
 private:
+    inline static const QColor COLORS[] = {
+        QColor::fromRgb(218, 22, 87),  QColor::fromRgb(62, 162, 80),
+        QColor::fromRgb(227, 211, 61), QColor::fromRgb(52, 162, 144),
+        QColor::fromRgb(255, 133, 13), QColor::fromRgb(140, 22, 218),
+        QColor::fromRgb(79, 54, 43),   QColor::fromRgb(0, 0, 0)};
     int userId;
-    QColor color = "green";
     double opacity = 0;
 };
 
