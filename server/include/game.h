@@ -1,12 +1,12 @@
 #ifndef FASTTYPING_GAME_H
 #define FASTTYPING_GAME_H
 #include <abc.h>
+#include <chrono>
 #include <condition_variable>
 #include <memory>
 #include <mutex>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <chrono>
 #include <unordered_map>
 #include "user.h"
 
@@ -61,7 +61,7 @@ private:
         std::string currentBuffer;
         int currentWord = 0;
         int lineNumber = 0;
-        // statistics 
+        // statistics
         int correctChars = 0;
         int totalChars = 0;
         double finishTime = -1;

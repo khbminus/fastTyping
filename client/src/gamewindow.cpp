@@ -129,8 +129,7 @@ void GameWindow::end() {
     QString raw_response = socket().query(user_finish_query());
     qDebug() << "finish result: " << raw_response;
     json response = json::parse(raw_response.toStdString());
-    
-    
+
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("StatWindow");
 }
