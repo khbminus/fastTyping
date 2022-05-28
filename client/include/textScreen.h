@@ -58,7 +58,7 @@ private:
         QColor::fromRgb(227, 211, 61), QColor::fromRgb(52, 162, 144),
         QColor::fromRgb(255, 133, 13), QColor::fromRgb(140, 22, 218),
         QColor::fromRgb(79, 54, 43),   QColor::fromRgb(0, 0, 0)};
-    int userId;
+    int userId = 0;
     double opacity = 0;
 };
 
@@ -78,14 +78,6 @@ public:
     void addPlayer(const Player &player);
     void showPlayer(const Player &player);
     void clear();
-    void print() {
-        QString res;
-        for (const auto &x : players) {
-            res += "{" + x.getColor().name() + ", " +
-                   QString::number(x.getId()) + "}";
-        }
-        qDebug() << res;
-    }
 
 protected:
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
