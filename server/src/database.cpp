@@ -165,8 +165,6 @@ std::vector<std::pair<char, char>> Database::getTopMistakes(
 
 json Database::login(const std::string &name, const std::string &password) {
     int user_id;
-    std::cerr << nameExist(name) << " ";
-    std::cerr << getPassword(user_id = getId(name)) << " " << password << '\n';
     if (nameExist(name) && getPassword(user_id = getId(name)) == password) {
         return {{"header", {{"type", "success"}}}, {"body", {{"id", user_id}}}};
     }

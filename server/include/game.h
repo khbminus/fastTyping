@@ -6,6 +6,7 @@
 #include <mutex>
 #include <nlohmann/json.hpp>
 #include <string>
+#include <chrono>
 #include <unordered_map>
 #include "user.h"
 
@@ -32,12 +33,14 @@ public:
     bool getGameStarted();
     int getHostId();
     void startGame();
+    void userFinished(int uid);
 
     json addNewChar(int uid, char c);
     json backspace(int uid);
     json check(int uid);
     json getNewLine(int uid);
     json getStateOfUsers();
+    json getStatistics(int uid);
 
     std::condition_variable cond_gameStarted;
 
@@ -50,6 +53,7 @@ private:
     int id = 0;
     static inline int nextId = 0;
     bool gameStarted = false;
+    std::chrono::high_resolution_clock::time_point gameStartTime;
     std::unique_ptr<FastTyping::Logic::AbstractParser> parser;
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;
 
@@ -57,6 +61,10 @@ private:
         std::string currentBuffer;
         int currentWord = 0;
         int lineNumber = 0;
+        // statistics 
+        int correctChars = 0;
+        int totalChars = 0;
+        double finishTime = -1;
     };
 
     mutable std::mutex mutex;

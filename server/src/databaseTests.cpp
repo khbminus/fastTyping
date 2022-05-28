@@ -2,6 +2,7 @@
 #include <type_traits>
 #include "doctest.h"
 #include "user.h"
+
 using namespace FastTyping::Server;
 
 TEST_CASE("user from string") {

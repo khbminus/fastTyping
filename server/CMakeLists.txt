@@ -22,7 +22,7 @@ target_include_directories(server PRIVATE ${Boost_INCLUDE_DIRS} include)
 target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
 target_link_libraries(server nlohmann_json::nlohmann_json)
 
-add_executable(server-tests src/database.cpp src/doctest_main.cpp src/databaseTests.cpp)
+add_executable(server-tests src/game.cpp src/user.cpp src/database.cpp src/doctest_main.cpp src/databaseTests.cpp)
 target_include_directories(server-tests PRIVATE ${Boost_INCLUDE_DIRS} include)
 target_link_libraries(server-tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
 

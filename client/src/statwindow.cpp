@@ -2,6 +2,8 @@
 #include "confirmWindow.h"
 #include "gameContextManager.h"
 #include "queryTemplates.h"
+#include "responseParse.h"
+#include "errorHandler.h"
 #include "sonicSocket.h"
 #include "ui_statwindow.h"
 #include "windowcontroller.h"
@@ -15,6 +17,17 @@ StatWindow::~StatWindow() {
     delete ui;
 }
 
+void StatWindow::showEvent(QShowEvent *event) {
+    QWidget::showEvent(event);
+    using client::queries::get_game_stat_query;
+    using client::responses::ensure_success;
+    using client::responses::error_text;
+    using client::web::socket;
+    using nlohmann::json;
+    QString raw_response = socket().query(get_game_stat_query());
+    qDebug() << "statistics: " << raw_response;
+    json response = json::parse(raw_response.toStdString());
+}
 void StatWindow::on_ReturnButton_clicked() {
     using client::queries::leave_query;
     using client::web::socket;

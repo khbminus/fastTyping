@@ -16,6 +16,7 @@ public:
 
 private slots:
     void on_ReturnButton_clicked();
+    void showEvent(QShowEvent *event);
 
 private:
     Ui::StatWindow *ui;

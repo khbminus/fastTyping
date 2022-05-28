@@ -24,7 +24,6 @@ void StartGameWindow::on_StartGameButton_clicked() {
     using client::web::socket;
     using nlohmann::json;
     QString raw_response = socket().query(start_query());
-    qDebug() << "YEEEES";
     qDebug() << "start result: " << raw_response;
     json response = json::parse(raw_response.toStdString());
     if (ensure_success(response)) {

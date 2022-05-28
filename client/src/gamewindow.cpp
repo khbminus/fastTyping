@@ -5,9 +5,11 @@
 #include <QQuickView>
 #include <iostream>
 #include "confirmWindow.h"
+#include "errorHandler.h"
 #include "gameContextManager.h"
 #include "keyboard.h"
 #include "queryTemplates.h"
+#include "responseParse.h"
 #include "sonicSocket.h"
 #include "textScreen.h"
 #include "ui_gamewindow.h"
@@ -119,6 +121,16 @@ void GameWindow::correct_slot() {
 }
 
 void GameWindow::end() {
+    using client::queries::user_finish_query;
+    using client::responses::ensure_success;
+    using client::responses::error_text;
+    using client::web::socket;
+    using nlohmann::json;
+    QString raw_response = socket().query(user_finish_query());
+    qDebug() << "finish result: " << raw_response;
+    json response = json::parse(raw_response.toStdString());
+    
+    
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("StatWindow");
 }
