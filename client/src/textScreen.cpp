@@ -19,7 +19,6 @@ TextListModel::TextListModel(const QString &words, QObject *parent)
                      &TextListModel::updateState);
     QObject::connect(&client::responses::handler(),
                      &client::responses::APIHandler::stateUpdated, this,
-                     // cppcheck-supress virtualCallInConstructor
                      &TextListModel::onUpdated);
     statesTimer->start(200);
 }
