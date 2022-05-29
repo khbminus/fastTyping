@@ -180,11 +180,6 @@ Server::Server()
         return user.getGame()->getStatistics(user.getId());
     };
 
-    commonQueriesMap["exit"] = [&](const json &body, User &user) -> json {
-        user.setWillToExit();
-        return {};
-    };
-
     loginQueriesMap["login"] = [&](const json &body) -> json {
         // basic checks
         std::cerr << "Entered\n";
