@@ -3,6 +3,7 @@
 #include <type_traits>
 #include "dictionaryDB.h"
 #include "doctest.h"
+#include "statisticsDB.h"
 #include "user.h"
 
 using namespace FastTyping::Server;

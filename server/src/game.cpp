@@ -30,7 +30,6 @@ void Game::startGame() {
 }
 
 void Game::userFinished(int uid) {
-    std::unique_lock l{mutex};
     using namespace std::chrono;
     assert(gameStartTime.has_value());
     duration<double> time_span = duration_cast<duration<double>>(

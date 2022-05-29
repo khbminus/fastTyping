@@ -26,6 +26,7 @@ private:
     friend struct UserStorage;
     friend struct DictionariesStorage;
     friend struct MistakesStorage;
+    friend struct StatisticsStorage;
     Database();
     std::string esc(std::string const &raw);
     template <typename T>
