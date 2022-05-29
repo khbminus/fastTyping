@@ -41,6 +41,7 @@ public:
     json getNewLine(int uid);
     json getStateOfUsers();
     json getStatistics(int uid);
+    void joinUser(int uid);
 
     std::condition_variable cond_gameStarted;
 

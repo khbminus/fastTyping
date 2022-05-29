@@ -6,6 +6,7 @@
 #define FASTTYPING_WINDOWCONTROLLER_H
 #include <QMainWindow>
 #include <QObject>
+#include <QQuickView>
 #include <QSharedPointer>
 #include <QString>
 #include <string>
@@ -20,14 +21,16 @@ public:
         return controller;
     }
 
-    void registerWindow(const std::string &windowName,
-                        QSharedPointer<QMainWindow> window);
+    void registerWindow(const std::string &windowName, QMainWindow *window);
+    void registerWindow(const std::string &windowName, QQuickView *window);
     void setActiveWindow(const std::string &windowName);
     void dropWindow(std::string const &window_name);
 
 private:
-    std::unordered_map<std::string, QSharedPointer<QMainWindow>> windows;
-    QSharedPointer<QMainWindow> activeWindow;
+    std::unordered_map<std::string, QMainWindow *> windows;
+    std::unordered_map<std::string, QQuickView *> windowsQuick;
+    QMainWindow *activeWindow;
+    QQuickView *activeQuickWindow;
 
     WindowController() = default;
 };

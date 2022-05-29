@@ -79,6 +79,7 @@ Server::Server()
                     {"body", {{"text", "Try connect after disconnect"}}}};
         }
         user.setGame(game);
+        game->joinUser(user.getId());
         return {{"header", {{"type", "GameJoinedSuccessfully"}}},
                 {"body", {{"id", game->getId()}}}};
     };
@@ -277,12 +278,10 @@ void Server::parseQuery(tcp::socket s) {
                 query = json::parse(line);
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
-                BOOST_LOG_TRIVIAL(debug) << query << '\n';
                 if (auto it = loginQueriesMap.find(queryHeader["type"]);
                     it != loginQueriesMap.end()) {
                     result = it->second(queryBody);
                     result["header"]["queryType"] = queryHeader["type"];
-                    BOOST_LOG_TRIVIAL(debug) << result << '\n';
                     client << result << '\n';
                     if ((result["header"]["queryType"] == "login" ||
                          result["header"]["queryType"] == "register") &&
@@ -317,15 +316,10 @@ void Server::parseQuery(tcp::socket s) {
                 query = json::parse(line);
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
-                BOOST_LOG_TRIVIAL(debug) << query << '\n';
                 if (auto it = commonQueriesMap.find(queryHeader["type"]);
                     it != commonQueriesMap.end()) {
                     result = it->second(queryBody, user);
                     result["header"]["queryType"] = queryHeader["type"];
-                    if (user.isWantToExit()) {
-                        user.clearWillToExit();
-                        break;
-                    }
                     client << result << '\n';
                 } else {
                     json header = json({{"type", "unknownQueryError"}});
@@ -372,5 +366,3 @@ std::optional<json> Server::checkQueryCorrectness(
     return {};
 }
 }  // namespace FastTyping::Server
-   //{"body":{"dictionaryName":"const", "parserName":"simple", "autoJoin":true,
-   //"words":["jopa", "jopa2"]}, "header":{"type":"createGame"}}

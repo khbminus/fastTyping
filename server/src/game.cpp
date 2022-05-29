@@ -117,6 +117,7 @@ json Game::getStateOfUsers() {
         userStates.back()["id"] = uid;
         userStates.back()["wordsTyped"] = info.currentWord;
         userStates.back()["linesTyped"] = info.lineNumber;
+        userStates.back()["symbolsTyped"] = info.correctChars;
     }
     return result;
 }
@@ -131,6 +132,11 @@ json Game::getStatistics(int uid) {
     result["body"]["totalChars"] = additionalInfo[uid].totalChars;
 
     return result;
+}
+
+void Game::joinUser(int uid) {
+    std::unique_lock l{mutex};
+    additionalInfo[uid] = {};
 }
 std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
     std::unique_lock l{map_mutex};
