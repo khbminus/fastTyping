@@ -24,7 +24,7 @@ private:
     Server();
     boost::asio::io_context ioContext;
     tcp::acceptor acceptor;
-    Database& userStorage;
+    Database &userStorage;
     std::unique_ptr<UserStorage> user_storage;
     std::unique_ptr<DictionariesStorage> dictionaries_storage;
     std::unique_ptr<AbstractGameStorage> gameStorage;
