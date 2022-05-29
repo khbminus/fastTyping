@@ -34,7 +34,7 @@ void StatisticsStorage::dropStatistics() {
 }
 
 void StatisticsStorage::addGame(int userId,
-                                const std::string dictName,
+                                const std::string &dictName,
                                 double wpm,
                                 double rawWpm,
                                 int correctChars,

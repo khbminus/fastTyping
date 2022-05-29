@@ -87,12 +87,13 @@ json Game::backspace(int uid) {
     std::string &word = additionalInfo[uid].currentBuffer;
     additionalInfo[uid].totalChars++;
     auto checkResult = checkUnsafe(uid);
-    if (checkResult["body"]["isPrefixCorrect"] == true) {
-        additionalInfo[uid].correctChars--;
-    }
+    
     if (word.empty()) {
         return {{"header", {{"type", "emptyBufferError"}}},
                 {"body", {{"text", "can't use backspace with empty buffer"}}}};
+    }
+    if (checkResult["body"]["isPrefixCorrect"] == true) {
+        additionalInfo[uid].correctChars--;
     }
     word.pop_back();
     return checkUnsafe(uid);
