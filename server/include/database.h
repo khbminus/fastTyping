@@ -29,8 +29,15 @@ private:
     Database();
     std::string esc(std::string const &raw);
     template <typename T>
-    T get_column(std::string const &query, std::string const &column);
-    std::string get_column(std::string const &query, std::string const &column);
+    T get_column(std::string const &query, std::string const &column) {
+        std::unique_lock l{mutex};
+        pqxx::work work(connect);
+        pqxx::result res = work.exec(query);
+        work.commit();
+        return (res.front())[column].as<T>();
+    }
+    //    std::string get_column(std::string const &query, std::string const
+    //    &column);
     // cppcheck-suppress unusedPrivateFunction
     bool record_exists(std::string const &query);
     void unanswered_query(std::string const &query);

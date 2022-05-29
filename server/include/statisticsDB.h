@@ -1,14 +1,32 @@
 #ifndef FASTTYPING_STATISTICSDB_H
 #define FASTTYPING_STATISTICSDB_H
 
-#include <mutex>
-#include <nlohmann/json.hpp>
-#include <pqxx/pqxx>
-#include <vector>
-#include "abc.h"
 #include "database.h"
 
 namespace FastTyping::Server {
+
+struct gameStatistics {
+    bool operator==(const gameStatistics &rhs) const;
+    bool operator!=(const gameStatistics &rhs) const;
+    int userId;
+    std::string dictName;
+    double wpm;
+    double rawWpm;
+    int correctChars;
+    int totalChars;
+    double finishTime;
+};
+
+struct dictStatistics {
+    bool operator==(const dictStatistics &rhs) const;
+    bool operator!=(const dictStatistics &rhs) const;
+    int userId;
+    const std::string dictName;
+    double maxWpm;
+    double avgWpm;
+    int gamesCnt;
+};
+
 struct StatisticsStorage {
     void dropStatistics();
     void addGame(int userId,
@@ -18,6 +36,15 @@ struct StatisticsStorage {
                  int correctChars,
                  int totalChars,
                  double finishTime);
+
+    double getMaxWpm(int userId);
+    double getAvgWpm(int userId);
+    int getGamesAmount(int userId);
+    std::vector<gameStatistics> getHistory(int userI, int amount = 10);
+    std::vector<dictStatistics> getUserDictStatistics(int userId);
+    std::vector<dictStatistics> getTopDictStatistics(
+        const std::string &dictName);
+
     StatisticsStorage();
 
 private:
