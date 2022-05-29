@@ -21,6 +21,7 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     QApplication::setAttribute(Qt::AA_ForceRasterWidgets, false);
+    QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
     auto &keyboard = FastTyping::Keyboard::KeyboardModel::getInstance();
     keyboard.addPath("qwerty.json");
     keyboard.addPath("test.json");
@@ -51,8 +52,8 @@ int main(int argc, char *argv[]) {
     auto mainWindow = new MainWindow;
     auto joinWindow = new JoinWindow;
     auto createWindow = new CreateGameWindow;
-    // auto gameWindow = new GameWindow(&manager));
-    auto statWindow = new StatWindow;
+    //        auto gameWindow = new GameWindow(&manager));
+    //        auto statWindow = new StatWindow;
     auto loginWindow = new LoginWindow;
     auto signWindow = new SignWindow;
     auto registerWindow = new RegisterWindow;
@@ -69,7 +70,7 @@ int main(int argc, char *argv[]) {
     controller.registerWindow("JoinWindow", joinWindow);
     controller.registerWindow("CreateWindow", createWindow);
     // controller.registerWindow("GameWindow", gameWindow);
-    controller.registerWindow("StatWindow", statWindow);
+    //    controller.registerWindow("StatWindow", statWindow);
     controller.setActiveWindow("LoginWindow");
     return a.exec();
 }

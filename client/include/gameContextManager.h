@@ -7,6 +7,7 @@
 #include "gamewindow.h"
 #include "localManager.h"
 #include "sonicSocket.h"
+#include "statwindow.h"
 #include "webManager.h"
 
 class ContextManager {
@@ -15,7 +16,8 @@ class ContextManager {
     ContextManager() = default;
     QSharedPointer<WebManager> remote_manager;
     QSharedPointer<LocalManager> local_manager;
-    GameWindow *window;
+    GameWindow *gameWindow;
+    StatWindow *statisticsWindow;
     void set_context(std::vector<QString> const &words);
 
 public:

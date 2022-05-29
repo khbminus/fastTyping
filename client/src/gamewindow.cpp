@@ -109,6 +109,7 @@ void GameWindow::correct_slot() {
 
 void GameWindow::end() {
     auto &controller = FastTyping::WindowController::getInstance();
+    textModel.stopTimer();
     controller.setActiveWindow("StatWindow");
 }
 

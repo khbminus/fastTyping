@@ -1,4 +1,5 @@
 #include "statwindow.h"
+#include <QQuickItem>
 #include "confirmWindow.h"
 #include "errorHandler.h"
 #include "gameContextManager.h"
@@ -8,13 +9,14 @@
 #include "ui_statwindow.h"
 #include "windowcontroller.h"
 
-StatWindow::StatWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::StatWindow) {
-    ui->setupUi(this);
-}
+StatWindow::StatWindow(GameManager *manager, QWindow *parent)
+    : QQuickView(parent),
+      textModel(FastTyping::TextScreen::TextListModel(manager->blob(), this)) {
+    setInitialProperties({{"textModel", QVariant::fromValue(&textModel)}});
+    setSource(QUrl(QString::fromUtf8("qrc:/StatWindow.qml")));
 
-StatWindow::~StatWindow() {
-    delete ui;
+    QObject::connect(rootObject(), SIGNAL(returnPressed()), this,
+                     SLOT(on_ReturnButton_clicked()));
 }
 
 void StatWindow::on_ReturnButton_clicked() {

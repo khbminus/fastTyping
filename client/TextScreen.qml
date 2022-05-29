@@ -7,6 +7,7 @@ Rectangle {
     border.width: 1
     opacity: 1
     clip: true
+    radius: 6
     property alias model : rootList.model
     function moveCursor1(position) {
             if (position >= 1) {
