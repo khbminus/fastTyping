@@ -15,7 +15,6 @@ NAME    TEXT    NOT NULL,
 VALUE   TEXT    NOT NULL);
 )sql";
 
-
 ConstDictionariesStorage::ConstDictionariesStorage()
     : db(Database::get_instance()) {
     try {
@@ -30,9 +29,9 @@ void ConstDictionariesStorage::dropConst() {
 }
 
 std::string ConstDictionariesStorage::getLineConst(std::string const &name) {
-    return db.get_column(
-        "SELECT VALUE FROM CONST_DICTIONARIES WHERE NAME = '" + db.esc(name) + "';",
-        "VALUE");
+    return db.get_column("SELECT VALUE FROM CONST_DICTIONARIES WHERE NAME = '" +
+                             db.esc(name) + "';",
+                         "VALUE");
 }
 
 void ConstDictionariesStorage::addConst(std::string const &name,
@@ -58,12 +57,13 @@ void FileDictionariesStorage::dropFile() {
 
 std::string FileDictionariesStorage::getFileName(std::string const &name) {
     return db.get_column(
-        "SELECT FILENAME FROM FILE_DICTIONARIES WHERE NAME = '" + db.esc(name) + "';",
+        "SELECT FILENAME FROM FILE_DICTIONARIES WHERE NAME = '" + db.esc(name) +
+            "';",
         "FILENAME");
 }
 
 void FileDictionariesStorage::addFile(std::string const &name,
-                                        std::string const &filename) {
+                                      std::string const &filename) {
     db.unanswered_query(
         "INSERT INTO CONST(NAME, FILENAME)\n"
         "VALUES('" +
@@ -88,7 +88,6 @@ std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
     }
 
     if (type == "file") {
-
     }
 
     return std::make_unique<FastTyping::Logic::Dictionary>(
