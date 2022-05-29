@@ -159,9 +159,9 @@ DictionariesStorage::DictionariesStorage() : db(Database::get_instance()) {
     }
 }
 
-void DictionariesStorage::addDictionary(std::string const& name,
+void DictionariesStorage::addDictionary(std::string const &name,
                                         bool is_adaptable,
-                                        std::string const& type) {
+                                        std::string const &type) {
     db.unanswered_query(
         "INSERT INTO DICTIONARIES(NAME, IS_ADAPTABLE, TYPE)\n"
         "VALUES('" +
