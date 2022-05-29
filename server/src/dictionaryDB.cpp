@@ -1,6 +1,7 @@
 #include "dictionaryDB.h"
 #include <algorithm>
 #include "constGame.h"
+#include "dictionaries.h"
 
 namespace FastTyping::Server {
 const std::string create_table_const_query = R"sql(
@@ -12,9 +13,8 @@ VALUE   TEXT    NOT NULL);
 const std::string create_table_file_query = R"sql(
 CREATE TABLE IF NOT EXISTS FILE_DICTIONARIES (
 NAME    TEXT    NOT NULL,
-VALUE   TEXT    NOT NULL);
+FILENAME   TEXT    NOT NULL);
 )sql";
-
 
 ConstDictionariesStorage::ConstDictionariesStorage()
     : db(Database::get_instance()) {
@@ -30,9 +30,9 @@ void ConstDictionariesStorage::dropConst() {
 }
 
 std::string ConstDictionariesStorage::getLineConst(std::string const &name) {
-    return db.get_column(
-        "SELECT VALUE FROM CONST_DICTIONARIES WHERE NAME = '" + db.esc(name) + "';",
-        "VALUE");
+    return db.get_column("SELECT VALUE FROM CONST_DICTIONARIES WHERE NAME = '" +
+                             db.esc(name) + "';",
+                         "VALUE");
 }
 
 void ConstDictionariesStorage::addConst(std::string const &name,
@@ -58,14 +58,15 @@ void FileDictionariesStorage::dropFile() {
 
 std::string FileDictionariesStorage::getFileName(std::string const &name) {
     return db.get_column(
-        "SELECT FILENAME FROM FILE_DICTIONARIES WHERE NAME = '" + db.esc(name) + "';",
+        "SELECT FILENAME FROM FILE_DICTIONARIES WHERE NAME = '" + db.esc(name) +
+            "';",
         "FILENAME");
 }
 
 void FileDictionariesStorage::addFile(std::string const &name,
-                                        std::string const &filename) {
+                                      std::string const &filename) {
     db.unanswered_query(
-        "INSERT INTO CONST(NAME, FILENAME)\n"
+        "INSERT INTO FILE_DICTIONARIES(NAME, FILENAME)\n"
         "VALUES('" +
         db.esc(name) + "', '" + db.esc(filename) + "');");
 }
@@ -88,7 +89,9 @@ std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
     }
 
     if (type == "file") {
-
+        FileDictionariesStorage filenames;
+        std::string filename = "dict/" + filenames.getFileName(name);
+        return std::make_unique<FastTyping::Logic::FileDictionary>(filename);
     }
 
     return std::make_unique<FastTyping::Logic::Dictionary>(

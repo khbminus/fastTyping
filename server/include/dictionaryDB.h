@@ -32,7 +32,6 @@ private:
     Database &db;
 };
 
-
 std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
     std::string const &name);
 

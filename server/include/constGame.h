@@ -7,6 +7,7 @@
 #include <thread>
 #include "abc.h"
 #include "boost/algorithm/string.hpp"
+#include "dictionaries.h"
 #include "generator.h"
 
 namespace FastTyping::Logic {
@@ -15,7 +16,7 @@ struct Dictionary : AbstractDictionary {
     explicit Dictionary(std::vector<std::string> words_)
         : words(std::move(words_)) {}
     explicit Dictionary(std::string const &line) {
-        boost::split(words, line, boost::is_any_of(" \t\n"));
+        words = to_words(line);
     }
 
     [[nodiscard]] std::string getWord(int index) const override {
