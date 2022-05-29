@@ -18,6 +18,7 @@ public:
         return instance;
     }
     ~Database();
+
 private:
     friend struct UserStorage;
     friend struct DictionariesStorage;
@@ -52,7 +53,9 @@ private:
 
 struct DictionariesStorage {
     void dropDictionaries();
-    void addDictionary(std::string const& name, bool is_adaptable, std::string const& type);
+    void addDictionary(std::string const &name,
+                       bool is_adaptable,
+                       std::string const &type);
     std::vector<std::string> get_dictionaries();
     bool dictionaryExists(std::string const &dictionary_name);
     std::string getType(std::string const &name);
