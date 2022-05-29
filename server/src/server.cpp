@@ -151,7 +151,6 @@ Server::Server()
             return {{"header", {{"type", "wrongFormatError"}}},
                     {"body", {{"text", "can't find word to check"}}}};
         }
-
         auto result = user.getGame()->addNewChar(
             user.getId(), body["char"].get<std::string>()[0]);
         return result;
@@ -169,17 +168,6 @@ Server::Server()
                     {"body", {{"text", "not in game"}}}};
         }
         return user.getGame()->getStateOfUsers();
-    };
-    commonQueriesMap["userFinished"] = [&](const json &body,
-                                                User &user) -> json {
-      if (user.getGame() == nullptr) {
-          return {{"header", {{"type", "notInGameError"}}},
-                  {"body", {{"text", "not in game"}}}};
-      }
-      user.getGame()->userFinished(user.getId());
-      // TODO send statistics to DB
-      return {{"header", {{"type", "success"}}},
-              {"body", {}}};
     };
     
     commonQueriesMap["getGameStatistics"] = [&](const json &body,

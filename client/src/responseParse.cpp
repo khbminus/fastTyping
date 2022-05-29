@@ -19,7 +19,6 @@ std::map<std::string, std::string> success_type{
     {"register", "success"},
     {"startGame", "GameStartedSuccessfully"},
     {"waitGameStart", "GameWaitedSuccessfully"},
-    {"userFinished", "success"},
     {"getGameStatistics", "GameStatistics"}};
 
 std::map<std::string, std::map<std::string, QString>> error_texts{
@@ -41,7 +40,6 @@ std::map<std::string, std::map<std::string, QString>> error_texts{
     {"waitGameStart",
      {{"notInGameError", "Not in game"},
       {"UserHostError", "User is a host of the game, he can't wait"}}},
-    {"userFinished", {{"notInGameError", "Not in game"}}},
     {"getGameStatistics", {{"notInGameError", "Not in game"}}}};
 
 std::map<std::string, QString> error_titles{

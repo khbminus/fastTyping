@@ -52,8 +52,7 @@ private:
     int hostId;
     int id = 0;
     static inline int nextId = 0;
-    bool gameStarted = false;
-    std::chrono::high_resolution_clock::time_point gameStartTime;
+    std::optional<std::chrono::high_resolution_clock::time_point> gameStartTime;
     std::unique_ptr<FastTyping::Logic::AbstractParser> parser;
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;
 

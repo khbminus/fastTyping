@@ -15,23 +15,26 @@ bool Game::isEndedUnsafe(int uid) {
 }
 
 bool Game::getGameStarted() {
-    return gameStarted;
+    std::unique_lock l{mutex};
+    return gameStartTime.has_value();
 }
 
 int Game::getHostId() {
+    std::unique_lock l{mutex};
     return hostId;
 }
 
 void Game::startGame() {
-    gameStarted = true;
     gameStartTime = std::chrono::high_resolution_clock::now();
     cond_gameStarted.notify_all();
 }
 
 void Game::userFinished(int uid) {
+    std::unique_lock l{mutex};
     using namespace std::chrono;
+    assert(gameStartTime.has_value());
     duration<double> time_span = duration_cast<duration<double>>(
-        high_resolution_clock::now() - gameStartTime);
+        high_resolution_clock::now() - gameStartTime.value());
     additionalInfo[uid].finishTime = time_span.count();
     std::cerr << "Finis time uf user " << uid << " "
               << additionalInfo[uid].finishTime << '\n';
@@ -72,6 +75,10 @@ json Game::addNewChar(int uid, char c) {
         info.currentBuffer.clear();
         info.currentWord++;
         checkResult["body"]["isEnd"] = isEndedUnsafe(uid);
+        if (isEndedUnsafe(uid)) {
+            userFinished(uid);
+            std::cerr << "user finished\n";
+        }
         return checkResult;
     }
     return checkResult;

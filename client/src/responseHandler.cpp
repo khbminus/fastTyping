@@ -22,7 +22,6 @@ std::map<std::string, ResponseType> header_to_type{
     {"getNewLine", ResponseType::blocking},
     {"startGame", ResponseType::blocking},
     {"waitGameStart", ResponseType::blocking},
-    {"userFinished", ResponseType::blocking},
     {"getGameStatistics", ResponseType::blocking}};
 
 ResponseType APIHandler::type(QString const &line) const {
