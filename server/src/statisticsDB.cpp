@@ -79,6 +79,7 @@ std::vector<gameStatistics> StatisticsStorage::getHistory(int userId,
         "SELECT * FROM STATISTICS WHERE USER_ID = " + std::to_string(userId) +
         " ORDER BY ID DESC LIMIT " + std::to_string(amount) + ";");
     for (auto const &row : history) {
+        // cppcheck-suppress useStlAlgorithm
         result.push_back(
             {row["USER_ID"].as<int>(), row["DICT_NAME"].as<std::string>(),
              row["WPM"].as<double>(), row["RAW_WPM"].as<double>(),
@@ -99,6 +100,7 @@ std::vector<dictStatistics> StatisticsStorage::getUserDictStatistics(
         "AS GAMES_CNT FROM STATISTICS WHERE USER_ID = " +
         std::to_string(userId) + " GROUP BY DICT_NAME;");
     for (auto const &row : history) {
+        // cppcheck-suppress useStlAlgorithm
         result.push_back({userId, row["DICT_NAME"].as<std::string>(),
                           row["MAX_WPM"].as<double>(),
                           row["AVG_WPM"].as<double>(),
@@ -118,6 +120,7 @@ std::vector<dictStatistics> StatisticsStorage::getTopDictStatistics(
         "GAMES_CNT FROM STATISTICS WHERE DICT_NAME = '" +
         db.esc(dictName) + "' GROUP BY USER_ID;");
     for (auto const &row : history) {
+        // cppcheck-suppress useStlAlgorithm
         result.push_back(
             {row["USER_ID"].as<int>(), dictName, row["MAX_WPM"].as<double>(),
              row["AVG_WPM"].as<double>(), row["GAMES_CNT"].as<int>()});
