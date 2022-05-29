@@ -6,9 +6,12 @@
 #include <thread>
 #include "game.h"
 
+namespace {}
+
 namespace FastTyping::Server {
-Server::Server()
-    : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)),
+Server::Server(boost::asio::io_context &ioContext)
+    : ioContext(ioContext),
+      acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)),
       userStorage(new Database),
       gameStorage(new MapGameStorage) {
     std::cout << "Listening at " << acceptor.local_endpoint() << std::endl;
@@ -229,103 +232,118 @@ Server::Server()
     };
 }
 
-[[noreturn]] void Server::polling() {
-    while (true) {
-        tcp::socket sock = acceptor.accept();
-        std::thread([s = std::move(sock), this]() mutable {
-            parseQuery(std::move(s));
-        }).detach();
+void Server::polling() {
+    std::cerr << "here\n";
+    auto conn = std::make_shared<Connection>(ioContext, (*this));
+    connections.push_back(conn);
+    acceptor.async_accept(
+        conn->socket(),
+        std::bind(&Server::acceptHandler, this, conn, std::placeholders::_1));
+}
+
+void Server::acceptHandler(std::shared_ptr<Connection> conn,
+                           boost::system::error_code e) {
+    std::cerr << "enter\n";
+    if (!e) {
+        std::cout << "New client: " << conn->socket().remote_endpoint() << "->"
+                  << conn->socket().local_endpoint() << std::endl;
+        conn->readLine();
     }
+    polling();
 }
 
 void Server::parseQuery(tcp::socket s) {
-    try {
-        tcp::iostream client(std::move(s));
-        std::cout << "New client: " << client.socket().remote_endpoint() << "->"
-                  << client.socket().local_endpoint() << std::endl;
-        std::string line;
-        json query, result;
-        std::string user_name;
-        std::optional<json> errors;
-        try {
-            while (client) {
-                if (!std::getline(client, line)) {
-                    std::cout
-                        << "Disconnected: " << client.socket().remote_endpoint()
-                        << "->" << client.socket().local_endpoint()
-                        << std::endl;
-                    return;
-                }
-                errors = checkQueryCorrectness(line);
-                if (errors) {
-                    client << errors.value() << '\n';
-                    continue;
-                }
-                query = json::parse(line);
-                auto queryHeader = query["header"];
-                auto queryBody = query["body"];
-                if (auto it = loginQueriesMap.find(queryHeader["type"]);
-                    it != loginQueriesMap.end()) {
-                    result = it->second(queryBody);
-                    result["header"]["queryType"] = queryHeader["type"];
-                    client << result << '\n';
-                    if ((result["header"]["queryType"] == "login" ||
-                         result["header"]["queryType"] == "register") &&
-                        result["header"]["type"] == "success") {
-                        std::cerr << "successfully registered/logged in\n";
-                        user_name = queryBody["name"].get<std::string>();
-                        break;
-                    }
-                } else {
-                    json header = json({{"type", "unknownQueryError"}});
-                    json body = json();
-                    client << json({{"header", header}, {"body", body}})
-                           << '\n';
-                }
-            }
-        } catch (nlohmann::detail::exception &e) {
-            std::cerr << e.what() << std::endl;  // process error to client
-        }
+    /* try {
+        Connection client(std::move(s), ioContext, (*this));
+        std::cout << "New client: " << client.socket().remote_endpoint() <<
+       "->"
+                 << client.socket().local_endpoint() << std::endl;
+       std::string line;
+       json query, result;
+       std::string user_name;
+       std::optional<json> errors;
+       try {
+           while (client) {
+               line = client.readLine();
+               if (!client) {
+                   std::cout
+                       << "Disconnected: " << client.socket().remote_endpoint()
+                       << "->" << client.socket().local_endpoint()
+                       << std::endl;
+                   return;
+               }
+               errors = checkQueryCorrectness(line);
+               if (errors) {
+                   client.writeLine(errors.value());
+                   continue;
+               }
+               query = json::parse(line);
+               auto queryHeader = query["header"];
+               auto queryBody = query["body"];
+               if (auto it = loginQueriesMap.find(queryHeader["type"]);
+                   it != loginQueriesMap.end()) {
+                   result = it->second(queryBody);
+                   result["header"]["queryType"] = queryHeader["type"];
+                   client.writeLine(result.dump() + '\n');
+                   if ((result["header"]["queryType"] == "login" ||
+                        result["header"]["queryType"] == "register") &&
+                       result["header"]["type"] == "success") {
+                       std::cerr << "successfully registered/logged in\n";
+                       user_name = queryBody["name"].get<std::string>();
+                       break;
+                   }
+               } else {
+                   json header = json({{"type", "unknownQueryError"}});
+                   json body = json();
+                   result = json({{"header", header}, {"body", body}});
+                   client.writeLine(result.dump() + '\n');
+               }
+           }
+       } catch (nlohmann::detail::exception &e) {
+           std::cerr << e.what() << std::endl;  // process error to client
+       }
 
-        User user(user_name, userStorage.get());
+       User user(user_name, userStorage.get());
 
-        try {
-            while (client) {
-                if (!std::getline(client, line)) {
-                    break;
-                }
-                errors = checkQueryCorrectness(line);
-                if (errors) {
-                    client << errors.value() << '\n';
-                    continue;
-                }
-                query = json::parse(line);
-                auto queryHeader = query["header"];
-                auto queryBody = query["body"];
-                if (auto it = commonQueriesMap.find(queryHeader["type"]);
-                    it != commonQueriesMap.end()) {
-                    result = it->second(queryBody, user);
-                    result["header"]["queryType"] = queryHeader["type"];
-                    client << result << '\n';
-                } else {
-                    json header = json({{"type", "unknownQueryError"}});
-                    json body = json();
-                    client << json({{"header", header}, {"body", body}})
-                           << '\n';
-                }
-            }
-        } catch (nlohmann::detail::exception &e) {
-            std::cerr << e.what() << std::endl;  // process error to client
-        }
-        user.setGame(nullptr);
-        std::cout << "Disconnected: " << client.socket().remote_endpoint()
-                  << "->" << client.socket().local_endpoint() << std::endl;
-    } catch (boost::system::system_error &e) {
-        std::cerr << "Unknown Boost::ASIO error occurred: " << e.what() << '\n';
-    }
+       try {
+           while (client) {
+               line = client.readLine();
+               if (!client) {
+                   break;
+               }
+               errors = checkQueryCorrectness(line);
+               if (errors) {
+                   client.writeLine(errors.value());
+                   continue;
+               }
+               query = json::parse(line);
+               auto queryHeader = query["header"];
+               auto queryBody = query["body"];
+               if (auto it = commonQueriesMap.find(queryHeader["type"]);
+                   it != commonQueriesMap.end()) {
+                   result = it->second(queryBody, user);
+                   result["header"]["queryType"] = queryHeader["type"];
+                   client.writeLine(result.dump() + '\n');
+               } else {
+                   json header = json({{"type", "unknownQueryError"}});
+                   json body = json();
+                   result = json({{"header", header}, {"body", body}});
+                   client.writeLine(result.dump() + '\n');
+               }
+           }
+       } catch (nlohmann::detail::exception &e) {
+           std::cerr << e.what() << std::endl;  // process error to client
+       }
+       user.setGame(nullptr);
+       std::cout << "Disconnected: " << client.socket().remote_endpoint()
+                 << "->" << client.socket().local_endpoint() << std::endl;
 }
-std::optional<json> Server::checkQueryCorrectness(
-    const std::string &queryString) {
+catch (boost::system::system_error &e) {
+    std::cerr << "Unknown Boost::ASIO error occurred: " << e.what() << '\n';
+}
+     */
+}
+std::optional<json> checkQueryCorrectness(const std::string &queryString) {
     json query;
     try {
         query = json::parse(queryString);
@@ -350,5 +368,135 @@ std::optional<json> Server::checkQueryCorrectness(
     }
 
     return {};
+}
+
+void Connection::readLine() {
+    std::cerr << "entered readLine\n";
+    boost::asio::streambuf buf;
+    boost::asio::post(context, [&]() {
+        boost::asio::async_read_until(
+            mSocket, buf, '\n',
+            [&](boost::system::error_code e, std::size_t btx) {
+                std::cerr << "doRead?\n";
+                if (e) {
+                    std::cerr << e.message() << '\n';
+                } else {
+                    std::istream is(&readBuf);
+                    std::string line;
+                    std::getline(is, line);
+                    std::cerr << line << '\n';
+
+                    std::optional<json> errors = checkQueryCorrectness(line);
+                    if (errors) {
+                        writeLine(errors.value());
+                        return;
+                    }
+                    readQueue.push_back(json::parse(line));
+                    handleRead();
+                    readLine();
+                }
+            });
+    });
+}
+
+void Connection::doWrite(boost::system::error_code e) {
+    if (e) {
+        wasDisconnect = true;
+    } else {
+        writeQueue.pop_front();
+        if (!writeQueue.empty()) {
+            boost::asio::async_write(
+                mSocket,
+                boost::asio::buffer(writeQueue.front().data(),
+                                    writeQueue.front().size()),
+                std::bind(&Connection::doWrite, this, std::placeholders::_1));
+        }
+    }
+}
+
+void Connection::writeLine(std::string line) {
+    boost::asio::post(context, [&]() {
+        bool writeProgress = !writeQueue.empty();
+        writeQueue.push_back(line);
+        if (!writeProgress) {
+            boost::asio::async_write(
+                mSocket,
+                boost::asio::buffer(writeQueue.front().data(),
+                                    writeQueue.front().size()),
+                std::bind(&Connection::doWrite, this, std::placeholders::_1));
+        }
+    });
+}
+
+void Connection::doRead(boost::system::error_code e, std::size_t btx) {
+    std::cerr << "doRead?\n";
+    if (e) {
+        wasDisconnect = true;
+    } else {
+        std::istream is(&readBuf);
+        std::string line;
+        std::getline(is, line);
+
+        std::optional<json> errors = checkQueryCorrectness(line);
+        if (errors) {
+            writeLine(errors.value());
+            return;
+        }
+        readQueue.push_back(json::parse(line));
+        handleRead();
+        readLine();
+    }
+}
+
+void Connection::handleRead() {
+    while (!readQueue.empty()) {
+        auto query = readQueue.front();
+        readQueue.pop_front();
+        if (!user) {
+            handleLogin(query);
+        } else {
+            handleCommonQuery(query);
+        }
+    }
+}
+
+void Connection::handleLogin(const json &query) {
+    auto queryHeader = query["header"];
+    auto queryBody = query["body"];
+    json result;
+    if (auto it = server.loginQueriesMap.find(queryHeader["type"]);
+        it != server.loginQueriesMap.end()) {
+        result = it->second(queryBody);
+        result["header"]["queryType"] = queryHeader["type"];
+        writeLine(result.dump() + '\n');
+        if ((result["header"]["queryType"] == "login" ||
+             result["header"]["queryType"] == "register") &&
+            result["header"]["type"] == "success") {
+            std::cerr << "successfully registered/logged in\n";
+            user.emplace(queryBody["name"].get<std::string>(),
+                         server.userStorage.get());
+        }
+    } else {
+        json header = json({{"type", "unknownQueryError"}});
+        json body = json();
+        result = json({{"header", header}, {"body", body}});
+        writeLine(result.dump() + '\n');
+    }
+}
+
+void Connection::handleCommonQuery(const json &query) {
+    auto queryHeader = query["header"];
+    auto queryBody = query["body"];
+    json result;
+    if (auto it = server.commonQueriesMap.find(queryHeader["type"]);
+        it != server.commonQueriesMap.end()) {
+        result = it->second(queryBody, user.value());
+    } else {
+        json header = json({{"type", "unknownQueryError"}});
+        json body = json();
+        result = json({{"header", header}, {"body", body}});
+    }
+    result["header"]["queryType"] = queryHeader["type"];
+    writeLine(result.dump() + '\n');
 }
 }  // namespace FastTyping::Server
