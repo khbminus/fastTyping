@@ -22,6 +22,7 @@ private:
     friend struct UserStorage;
     friend struct DictionariesStorage;
     friend struct ConstDictionariesStorage;
+    friend struct FileDictionariesStorage;
     friend struct MistakesStorage;
     Database();
     std::string esc(std::string const &raw);
