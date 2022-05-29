@@ -130,7 +130,7 @@ void TextListModel::updateState() {
 }
 
 void TextListModel::onUpdated(const nlohmann::json &query) {
-    if (query["header"] != "currentState") {
+    if (query["header"]["type"] != "currentState") {
         return;
     }
     const auto &users = query["body"]["userStates"];
