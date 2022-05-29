@@ -12,9 +12,9 @@ using nlohmann::json;
 namespace FastTyping::Server {
 struct User {
     User() = delete;
-    explicit User(std::string &name_, Database *DB)
+    explicit User(std::string &name_, UserStorage& DB)
         : userName(name_),
-          id(DB->getId(name_)),
+          id(DB.getId(name_)),
           gameId(-1),
           wantToExit(false) {}
     [[nodiscard]] Game *getGame() const;

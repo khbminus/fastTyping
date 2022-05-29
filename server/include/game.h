@@ -69,7 +69,8 @@ public:
     virtual std::shared_ptr<Game> get(int id, json &errors) = 0;
     virtual json createGame(
         const json &body,
-        std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary) = 0;
+        std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary,
+        int host_id) = 0;
     virtual Game *getGame(int game_id) = 0;
     virtual ~AbstractGameStorage() = default;
 };
@@ -79,7 +80,8 @@ public:
     std::shared_ptr<Game> get(int id, json &errors) override;
     json createGame(const json &body,
                     std::unique_ptr<FastTyping::Logic::AbstractDictionary>
-                        dictionary) override;
+                        dictionary,
+                    int host_id) override;
     Game *getGame(int game_id) override {
         return games[game_id].get();
     }

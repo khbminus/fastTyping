@@ -24,7 +24,9 @@ private:
     Server();
     boost::asio::io_context ioContext;
     tcp::acceptor acceptor;
-    std::unique_ptr<Database> userStorage;
+    Database& userStorage;
+    std::unique_ptr<UserStorage> user_storage;
+    std::unique_ptr<DictionariesStorage> dictionaries_storage;
     std::unique_ptr<AbstractGameStorage> gameStorage;
     std::unordered_map<std::string, std::function<json(const json &, User &)>>
         commonQueriesMap;

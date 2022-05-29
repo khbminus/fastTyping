@@ -8,7 +8,8 @@
 using namespace FastTyping::Server;
 
 TEST_CASE("user from string") {
-    Database *db = new Database;
+    //Database& db = Database::get_instance();
+    UserStorage db;
     std::string name1 = "aboba";
     std::string name2 = "obaba";
     User u1(name1, db);
@@ -16,34 +17,29 @@ TEST_CASE("user from string") {
     CHECK(u1.getId() + 1 == u2.getId());
     CHECK(u1.name() == name1);
     CHECK(u2.name() == name2);
-    delete db;
 }
 
 TEST_CASE("Dictionaries") {
-    Database flusher;
+    DictionariesStorage flusher;
     flusher.dropDictionaries();
-    Database storage;
+
+    DictionariesStorage storage;
     storage.addDictionary("Aboba", true, "const");
     storage.addDictionary("Boba", true, "const");
     auto dictionaries = storage.get_dictionaries();
-    for (auto const &dictionary : dictionaries) {
-        std::cout << "Dictionary: '" << dictionary << "'" << std::endl;
-    }
     CHECK(storage.dictionaryExists("Aboba"));
     CHECK(storage.dictionaryExists("Boba"));
     CHECK(!storage.dictionaryExists("AbobaBoba"));
-    // storage.dropDictionaries();
-    CHECK(dictionaries ==
-          std::vector{std::string("Aboba"), std::string("Boba")});
-    // storage.dropDictionaries();
     CHECK(dictionaries ==
           std::vector{std::string("Aboba"), std::string("Boba")});
 }
+
 
 TEST_CASE("Database") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
-    Database storage;
+    //Database& storage = Database::get_instance();
+    UserStorage storage;
     int a = storage.getId(name1);
     int b = storage.getId(name2);
     CHECK(a + 1 == b);
@@ -62,7 +58,8 @@ TEST_CASE("Database") {
 TEST_CASE("DB passwords") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
-    Database storage;
+    UserStorage storage;
+    //Database& storage = Database::get_instance();
     int a = storage.getId(name1);
     CHECK(storage.nameExist(name1) == true);
     int b = storage.getId(name2);
@@ -79,7 +76,10 @@ TEST_CASE("DB passwords") {
 }
 
 TEST_CASE("DB mistakes") {
-    Database storage;
+    MistakesStorage flusher;
+    flusher.dropMistakes();
+    MistakesStorage storage;
+
     storage.addMistake(1, 'e', 'e', "qwerty");
     storage.addMistake(0, 'c', 'b', "qwerty");
     storage.addMistake(0, 'a', 'b', "qwerty");
