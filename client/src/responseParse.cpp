@@ -43,7 +43,8 @@ std::map<std::string, std::map<std::string, QString>> error_texts{
     {"waitGameStart",
      {{"notInGameError", "Not in game"},
       {"UserHostError", "User is a host of the game, he can't wait"}}},
-    {"getGameStatistics", {{"notInGameError", "Not in game"}}}};
+    {"getGameStatistics", {{"notInGameError", "Not in game"}}},
+    {"getStates", {{"notInGameError", "Not in game"}}}};
 
 std::map<std::string, QString> error_titles{
     {"createGame", "Error on game create"},

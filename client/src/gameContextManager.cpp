@@ -79,5 +79,6 @@ void ContextManager::reset_context() {
     remote_manager.clear();
     auto &controller = FastTyping::WindowController::getInstance();
     controller.dropWindow("GameWindow");
+    delete window;
     window = nullptr;
 }
