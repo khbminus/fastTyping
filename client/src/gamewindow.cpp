@@ -15,18 +15,36 @@
 using FastTyping::TextScreen::TextListModel;
 GameWindow::GameWindow(const std::vector<GameManager *> &managers,
                        GameManager *manager,
-                       QWidget *parent)
-    : QMainWindow(parent),
-      ui(new Ui::GameWindow),
-      main_manager(manager),
-      textOut(new QQuickWidget(this)),
-      textModel(TextListModel(manager->blob(), this)) {
-    ui->setupUi(this);
+                       QWindow *parent)
+    : QQuickView(parent), textModel(TextListModel(manager->blob(), this)) {
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     QQuickView::setGraphicsApi(QSGRendererInterface::OpenGL);
-    ui->quickWidget->rootObject()->setProperty(
-        "keyModel", QVariant::fromValue(
-                        &FastTyping::Keyboard::KeyboardModel::getInstance()));
+
+    setInitialProperties(
+        {{"keyModel", QVariant::fromValue(
+                          &FastTyping::Keyboard::KeyboardModel::getInstance())},
+         {"textModel", QVariant::fromValue(&textModel)}});
+    setSource(QUrl(QString::fromUtf8("qrc:/GameWindow.qml")));
+
+    connect(this, SIGNAL(press(QVariant)), rootObject(),
+            SLOT(pressKey(QVariant)));
+    connect(this, SIGNAL(release(QVariant)), rootObject(),
+            SLOT(releaseKey(QVariant)));
+    connect(this, SIGNAL(highlight(QVariant)), rootObject(),
+            SLOT(highlightKey(QVariant)));
+    connect(this, SIGNAL(shiftHighlight()), rootObject(),
+            SLOT(shiftHighlight()));
+    connect(this, SIGNAL(backspaceHighlight()), rootObject(),
+            SLOT(backspaceHighlight()));
+    connect(this, SIGNAL(clearHighlight()), rootObject(),
+            SLOT(clearHighlight()));
+    connect(&textModel, SIGNAL(cursorMoved(QVariant)), rootObject(),
+            SLOT(moveCursor1(QVariant)));
+
+    QObject::connect(rootObject(), SIGNAL(pressedKey(int, QString)), this,
+                     SLOT(keyPress(int, QString)));
+    QObject::connect(rootObject(), SIGNAL(releasedKey(int, QString)), this,
+                     SLOT(keyRelease(int, QString)));
 
     for (auto man : managers) {
         QObject::connect(this, &GameWindow::key_pressed, man,
@@ -46,37 +64,25 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
                      &TextListModel::onWrongChar);
     QObject::connect(manager, &GameManager::correctOnPositionSignal, &textModel,
                      &TextListModel::onCorrectChar);
-    connect(this, SIGNAL(press(QVariant)), ui->quickWidget->rootObject(),
-            SLOT(pressKey(QVariant)));
-    connect(this, SIGNAL(release(QVariant)), ui->quickWidget->rootObject(),
-            SLOT(releaseKey(QVariant)));
-    connect(this, SIGNAL(highlight(QVariant)), ui->quickWidget->rootObject(),
-            SLOT(highlightKey(QVariant)));
-    connect(this, SIGNAL(shiftHighlight()), ui->quickWidget->rootObject(),
-            SLOT(shiftHighlight()));
-    connect(this, SIGNAL(backspaceHighlight()), ui->quickWidget->rootObject(),
-            SLOT(backspaceHighlight()));
-    connect(this, SIGNAL(clearHighlight()), ui->quickWidget->rootObject(),
-            SLOT(clearHighlight()));
-
-    ui->game_id->setText(
-        QString::number(ContextManager::get_instance().get_game_id()));
-    textOut->setSource(QUrl(QString::fromUtf8("qrc:/textScreen.qml")));
-    textOut->rootObject()->setProperty("model",
-                                       QVariant::fromValue(&textModel));
-
-    connect(&textModel, SIGNAL(cursorMoved(QVariant)), textOut->rootObject(),
-            SLOT(moveCursor1(QVariant)));
-
-    textOut->setGeometry(QRect(50, 30, 701, 51));
-    //    textOut->rootObject()->setProperty("width", 701);
-    //    textOut->rootObject()->setProperty("height", 51);
-
     highlightNextKey();
+    show();
 }
 
-GameWindow::~GameWindow() {
-    delete ui;
+void GameWindow::keyPress(int key, QString keysCombination) {
+    emit press(key);
+    if (keysCombination == "") {
+        return;
+    }
+
+    if (key == Qt::Key_Backspace) {
+        emit backspace_pressed();
+    } else {
+        emit key_pressed(keysCombination[0]);
+    }
+}
+
+void GameWindow::keyRelease(int key, QString text) {
+    emit release(key);
 }
 
 void GameWindow::on_ReturnButton_clicked() {
@@ -89,24 +95,6 @@ void GameWindow::on_ReturnButton_clicked() {
         auto &controller = FastTyping::WindowController::getInstance();
         controller.setActiveWindow("MainWindow");
     }
-}
-
-void GameWindow::keyPressEvent(QKeyEvent *event) {
-    QString keysCombination = event->text();
-    emit press(event->key());
-    if (keysCombination == "") {
-        return;
-    }
-
-    if (event->key() == Qt::Key_Backspace) {
-        emit backspace_pressed();
-    } else {
-        emit key_pressed(keysCombination[0]);
-    }
-}
-
-void GameWindow::keyReleaseEvent(QKeyEvent *event) {
-    emit release(event->key());
 }
 
 void GameWindow::error_slot() {
