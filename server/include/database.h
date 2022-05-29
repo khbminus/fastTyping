@@ -55,7 +55,7 @@ struct DictionariesStorage {
     void addDictionary(std::string const& name, bool is_adaptable, std::string const& type);
     std::vector<std::string> get_dictionaries();
     bool dictionaryExists(std::string const &dictionary_name);
-    std::string getType(std::string const& name);
+    std::string getType(std::string const &name);
     DictionariesStorage();
 
 private:

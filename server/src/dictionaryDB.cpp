@@ -23,20 +23,21 @@ void ConstDictionariesStorage::dropConst() {
 }
 
 std::string ConstDictionariesStorage::getLineConst(std::string const &name) {
-    return db.get_column("SELECT VALUE FROM CONST WHERE NAME = '" +
-                                 db.esc(name) + "';", "VALUE");
+    return db.get_column(
+        "SELECT VALUE FROM CONST WHERE NAME = '" + db.esc(name) + "';",
+        "VALUE");
 }
 
 void ConstDictionariesStorage::addConst(std::string const &name,
-                                    std::string const &val) {
+                                        std::string const &val) {
     db.unanswered_query(
         "INSERT INTO CONST(NAME, VALUE)\n"
         "VALUES('" +
         db.esc(name) + "', '" + db.esc(val) + "');");
 }
 
-std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(std::string const& name) {
-
+std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
+    std::string const &name) {
     std::cout << "here!" << std::endl;
     DictionariesStorage dictionaries;
 
