@@ -4,12 +4,12 @@
 #include <memory>
 #include <optional>
 #include <thread>
+#include "dictionaryDB.h"
 #include "game.h"
 
 namespace FastTyping::Server {
 Server::Server()
     : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)),
-      userStorage(Database::get_instance()),
       user_storage(new UserStorage),
       dictionaries_storage(new DictionariesStorage),
       gameStorage(new MapGameStorage) {
@@ -37,7 +37,7 @@ Server::Server()
         std::string dictionary_name = body["dictionaryName"].get<std::string>();
 
         auto result = gameStorage->createGame(
-            body, userStorage.get_dictionary(dictionary_name), user.getId());
+            body, dictionary_instance(dictionary_name), user.getId());
         if (body.contains("autoJoin") && body["autoJoin"].is_boolean() &&
             body["autoJoin"]) {
             if (!result["body"].contains("id") ||

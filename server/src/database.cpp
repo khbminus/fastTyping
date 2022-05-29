@@ -70,7 +70,7 @@ MISTAKE  TEXT NOT NULL);
 const std::string create_table_dictionaries_query = R"sql(
 CREATE TABLE IF NOT EXISTS DICTIONARIES (
 ID SERIAL PRIMARY KEY,
-NAME TEXT,
+NAME TEXT UNIQUE,
 IS_ADAPTABLE BOOLEAN,
 TYPE TEXT
 );
@@ -159,9 +159,9 @@ DictionariesStorage::DictionariesStorage() : db(Database::get_instance()) {
     }
 }
 
-void DictionariesStorage::addDictionary(std::string name,
+void DictionariesStorage::addDictionary(std::string const &name,
                                         bool is_adaptable,
-                                        std::string type) {
+                                        std::string const &type) {
     db.unanswered_query(
         "INSERT INTO DICTIONARIES(NAME, IS_ADAPTABLE, TYPE)\n"
         "VALUES('" +
@@ -179,6 +179,15 @@ bool DictionariesStorage::dictionaryExists(std::string const &dictionary_name) {
         "FROM DICTIONARIES "
         "WHERE NAME = '" +
         db.esc(dictionary_name) + "' LIMIT 1;");
+}
+
+std::string DictionariesStorage::getType(std::string const &name) {
+    return db.get_column(
+        "SELECT TYPE "
+        "FROM DICTIONARIES "
+        "WHERE NAME = '" +
+            db.esc(name) + "' LIMIT 1;",
+        "TYPE");
 }
 
 std::vector<std::string> DictionariesStorage::get_dictionaries() {
@@ -218,6 +227,7 @@ void MistakesStorage::addMistake(int userId,
         let2 + "');");
 }
 
+// TODO: refactor
 std::vector<std::pair<char, char>> MistakesStorage::getTopMistakes(
     int userId,
     int number,
@@ -241,40 +251,6 @@ std::vector<std::pair<char, char>> MistakesStorage::getTopMistakes(
                    });
     work.commit();
     return result;
-}
-
-std::unique_ptr<::FastTyping::Logic::AbstractDictionary>
-Database::get_dictionary(std::string const &name) {
-    std::unique_lock l{mutex};
-    pqxx::work work(connect);
-
-    pqxx::result dict_info = work.exec(
-        "SELECT * FROM DICTIONARIES "
-        "WHERE NAME = '" +
-        connect.esc(name) + "' LIMIT 1;");
-    work.commit();
-
-    if (dict_info.empty()) {
-        // add error later
-        throw 0;
-    }
-
-    std::string type = dict_info[0]["TYPE"].c_str();
-
-    std::cout << "type = '" << type << "'" << std::endl;
-
-    if (type == "const") {
-        DictionariesDatabase dictionaries;
-
-        std::cout << "I'm here: " << name << std::endl;
-        std::string line = dictionaries.getLineConst(name);
-        std::cout << "line = '" << line << "'" << std::endl;
-
-        return std::make_unique<FastTyping::Logic::Dictionary>(
-            dictionaries.getLineConst(name));
-    }
-    return std::make_unique<FastTyping::Logic::Dictionary>(
-        "This is sample don't judge me");
 }
 
 Database::~Database() {

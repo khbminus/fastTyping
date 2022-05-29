@@ -1,9 +1,9 @@
 #include "dictionaryDB.h"
 
-using FastTyping::Server::DictionariesDatabase;
+using namespace FastTyping::Server;
 
 int main() {
-    DictionariesDatabase db;
+    ConstDictionariesStorage db;
     db.addConst("Aboba", "This is sample don't judge me");
     db.addConst("Boba", "Sztirlic nie podumal...");
     return 0;

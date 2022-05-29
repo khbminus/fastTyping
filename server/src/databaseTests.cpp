@@ -38,12 +38,11 @@ TEST_CASE("Dictionaries") {
 TEST_CASE("Database") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
-    // Database& storage = Database::get_instance();
     UserStorage storage;
     int a = storage.getId(name1);
     int b = storage.getId(name2);
     CHECK(a + 1 == b);
-    DictionariesDatabase d;
+    ConstDictionariesStorage d;
     CHECK(d.getLineConst("Aboba") == "This is sample don't judge me");
     CHECK(storage.getId(name1) == a);
     CHECK(storage.getId(name1) != b);
