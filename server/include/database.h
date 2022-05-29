@@ -18,10 +18,6 @@ public:
         return instance;
     }
     ~Database();
-    // DICTIONARIES table
-    std::unique_ptr<::FastTyping::Logic::AbstractDictionary> get_dictionary(
-        std::string const &name);
-
 private:
     friend struct UserStorage;
     friend struct DictionariesStorage;
@@ -32,12 +28,12 @@ private:
     template <typename T>
     T get_column(std::string const &query, std::string const &column);
     std::string get_column(std::string const &query, std::string const &column);
+    // cppcheck-suppress unusedPrivateFunction
     bool record_exists(std::string const &query);
     void unanswered_query(std::string const &query);
     void unanswered_query(std::vector<std::string> const &queries);
     mutable std::mutex mutex;
     pqxx::connection connect;
-    // std::string sql;  // sql query
 };
 
 struct UserStorage {
@@ -56,7 +52,7 @@ private:
 
 struct DictionariesStorage {
     void dropDictionaries();
-    void addDictionary(std::string name, bool is_adaptable, std::string type);
+    void addDictionary(std::string const& name, bool is_adaptable, std::string const& type);
     std::vector<std::string> get_dictionaries();
     bool dictionaryExists(std::string const &dictionary_name);
     std::string getType(std::string const& name);

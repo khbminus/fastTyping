@@ -159,9 +159,9 @@ DictionariesStorage::DictionariesStorage() : db(Database::get_instance()) {
     }
 }
 
-void DictionariesStorage::addDictionary(std::string name,
+void DictionariesStorage::addDictionary(std::string const& name,
                                         bool is_adaptable,
-                                        std::string type) {
+                                        std::string const& type) {
     db.unanswered_query(
         "INSERT INTO DICTIONARIES(NAME, IS_ADAPTABLE, TYPE)\n"
         "VALUES('" +
@@ -251,27 +251,6 @@ std::vector<std::pair<char, char>> MistakesStorage::getTopMistakes(
                    });
     work.commit();
     return result;
-}
-
-std::unique_ptr<::FastTyping::Logic::AbstractDictionary>
-Database::get_dictionary(std::string const &name) {
-    std::string sql =
-        "SELECT * FROM DICTIONARIES "
-        "WHERE NAME = '" +
-        connect.esc(name) + "' LIMIT 1;";
-
-    std::string type = get_column(sql, "TYPE");
-
-    std::cout << "type = '" << type << "'" << std::endl;
-
-    if (type == "const") {
-        ConstDictionariesStorage dictionaries;
-        std::string line = dictionaries.getLineConst(name);
-        return std::make_unique<FastTyping::Logic::Dictionary>(
-            dictionaries.getLineConst(name));
-    }
-    return std::make_unique<FastTyping::Logic::Dictionary>(
-        "This is sample don't judge me");
 }
 
 Database::~Database() {

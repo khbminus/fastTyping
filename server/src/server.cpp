@@ -3,8 +3,8 @@
 #include <iostream>
 #include <memory>
 #include <optional>
-#include "dictionaryDB.h"
 #include <thread>
+#include "dictionaryDB.h"
 #include "game.h"
 
 namespace FastTyping::Server {
