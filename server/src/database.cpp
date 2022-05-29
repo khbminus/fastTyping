@@ -25,24 +25,6 @@ void Database::unanswered_query(std::vector<std::string> const &queries) {
     work.commit();
 }
 
-template <typename T>
-T Database::get_column(std::string const &query, std::string const &column) {
-    std::unique_lock l{mutex};
-    pqxx::work work(connect);
-    pqxx::result res = work.exec(query);
-    work.commit();
-    return (res.front())[column].as<T>();
-}
-
-std::string Database::get_column(std::string const &query,
-                                 std::string const &column) {
-    std::unique_lock l{mutex};
-    pqxx::work work(connect);
-    pqxx::result res = work.exec(query);
-    work.commit();
-    return (res.front())[column].c_str();
-}
-
 bool Database::record_exists(std::string const &query) {
     std::unique_lock l{mutex};
     pqxx::work work(connect);
