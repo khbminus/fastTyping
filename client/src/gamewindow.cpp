@@ -65,7 +65,6 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
     QObject::connect(manager, &GameManager::correctOnPositionSignal, &textModel,
                      &TextListModel::onCorrectChar);
     highlightNextKey();
-    show();
 }
 
 void GameWindow::keyPress(int key, QString keysCombination) {
