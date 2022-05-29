@@ -21,6 +21,17 @@ private:
     Database &db;
 };
 
+struct FileDictionariesStorage {
+public:
+    FileDictionariesStorage();
+    void dropFile();
+    void addFile(std::string const &name, std::string const &filename);
+    std::string getFileName(std::string const &name);
+
+private:
+    Database &db;
+};
+
 std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
     std::string const &name);
 

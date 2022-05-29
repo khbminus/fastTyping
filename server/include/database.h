@@ -23,6 +23,7 @@ private:
     friend struct UserStorage;
     friend struct DictionariesStorage;
     friend struct ConstDictionariesStorage;
+    friend struct FileDictionariesStorage;
     friend struct MistakesStorage;
     friend struct StatisticsStorage;
     Database();
