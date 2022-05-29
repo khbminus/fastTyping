@@ -54,6 +54,7 @@ Item {
         id: returnButton
         text: "return"
         onClicked: root.returnPressed()
+        focusPolicy: Qt.ClickFocus
     }
 
     function moveCursor1(position) {
