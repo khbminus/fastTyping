@@ -15,6 +15,7 @@ void WindowController::setActiveWindow(const std::string &windowName) {
         activeWindow->show();
     } else {
         activeQuickWindow = windowsQuick[windowName];
+        activeQuickWindow->show();
     }
 }
 

@@ -45,6 +45,8 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
                      SLOT(keyPress(int, QString)));
     QObject::connect(rootObject(), SIGNAL(releasedKey(int, QString)), this,
                      SLOT(keyRelease(int, QString)));
+    QObject::connect(rootObject(), SIGNAL(returnPressed()), this,
+                     SLOT(on_ReturnButton_clicked()));
 
     for (auto man : managers) {
         QObject::connect(this, &GameWindow::key_pressed, man,
