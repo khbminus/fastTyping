@@ -12,11 +12,8 @@ using nlohmann::json;
 namespace FastTyping::Server {
 struct User {
     User() = delete;
-    explicit User(std::string &name_, UserStorage& DB)
-        : userName(name_),
-          id(DB.getId(name_)),
-          gameId(-1),
-          wantToExit(false) {}
+    explicit User(std::string &name_, UserStorage &DB)
+        : userName(name_), id(DB.getId(name_)), gameId(-1), wantToExit(false) {}
     [[nodiscard]] Game *getGame() const;
     [[nodiscard]] const std::string &name() const noexcept;
     [[nodiscard]] int getId() const noexcept;

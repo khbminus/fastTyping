@@ -113,8 +113,9 @@ json MapGameStorage::createGame(
         return {{"header", {{"type", "wrongFormatError"}}},
                 {"body", {{"text", "Can't find words"}}}};
     }
-    std::shared_ptr<Game> game = std::make_shared<Game>(
-        std::make_unique<Logic::SimpleParser>(), std::move(dictionary), host_id);
+    std::shared_ptr<Game> game =
+        std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
+                               std::move(dictionary), host_id);
     {
         std::unique_lock l{map_mutex};
         games[game->getId()] = game;

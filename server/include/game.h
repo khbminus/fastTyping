@@ -78,10 +78,10 @@ public:
 class MapGameStorage final : public AbstractGameStorage {
 public:
     std::shared_ptr<Game> get(int id, json &errors) override;
-    json createGame(const json &body,
-                    std::unique_ptr<FastTyping::Logic::AbstractDictionary>
-                        dictionary,
-                    int host_id) override;
+    json createGame(
+        const json &body,
+        std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary,
+        int host_id) override;
     Game *getGame(int game_id) override {
         return games[game_id].get();
     }

@@ -21,6 +21,7 @@ public:
     // DICTIONARIES table
     std::unique_ptr<::FastTyping::Logic::AbstractDictionary> get_dictionary(
         std::string const &name);
+
 private:
     friend struct UserStorage;
     friend struct DictionariesStorage;
@@ -44,10 +45,11 @@ struct UserStorage {
     std::string getName(int);
     void setPassword(int user_id,
                      const std::string &password);  // base password == '0000'
-    int getId(const std::string &);              // or create it
+    int getId(const std::string &);                 // or create it
     bool nameExist(const std::string &);
     void dropUsers();
     UserStorage();
+
 private:
     Database &db;
 };
@@ -59,6 +61,7 @@ struct DictionariesStorage {
     bool dictionaryExists(std::string const &dictionary_name);
     std::string getType(std::string const& name);
     DictionariesStorage();
+
 private:
     Database &db;
 };
@@ -70,6 +73,7 @@ struct MistakesStorage {
                                                       const std::string &);
     void dropMistakes();
     MistakesStorage();
+
 private:
     Database &db;
 };

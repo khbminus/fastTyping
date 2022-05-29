@@ -8,7 +8,7 @@
 using namespace FastTyping::Server;
 
 TEST_CASE("user from string") {
-    //Database& db = Database::get_instance();
+    // Database& db = Database::get_instance();
     UserStorage db;
     std::string name1 = "aboba";
     std::string name2 = "obaba";
@@ -34,7 +34,6 @@ TEST_CASE("Dictionaries") {
           std::vector{std::string("Aboba"), std::string("Boba")});
 }
 
-
 TEST_CASE("Database") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
@@ -58,7 +57,7 @@ TEST_CASE("DB passwords") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
     UserStorage storage;
-    //Database& storage = Database::get_instance();
+    // Database& storage = Database::get_instance();
     int a = storage.getId(name1);
     CHECK(storage.nameExist(name1) == true);
     int b = storage.getId(name2);
