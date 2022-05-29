@@ -29,3 +29,7 @@ target_link_libraries(server-tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} 
 add_executable(generator-tests src/generator.cpp src/doctest_main.cpp src/generatorTests.cpp)
 target_include_directories(generator-tests PRIVATE ${Boost_INCLUDE_DIRS} include)
 target_link_libraries(generator-tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
+
+add_executable(dictionaries-interface src/dictionaryDB.cpp src/dictionary-interface.cpp)
+target_include_directories(dictionaries-interface PRIVATE ${Boost_INCLUDE_DIRS} include)
+target_link_libraries(dictionaries-interface ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})

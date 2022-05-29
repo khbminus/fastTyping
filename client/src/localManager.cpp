@@ -35,6 +35,10 @@ bool LocalManager::check_symbol(int position) {
 LocalManager::LocalManager(std::vector<QString> a_words)
     : dictionary(std::move(a_words)) {}
 
+bool LocalManager::is_correct_word() {
+    return inputter.getBuffer() == dictionary.getCurrentWord();
+}
+
 void LocalManager::key_pressed(QChar button) {
     if (button == ' ') {
         if (inputter.getBuffer() == dictionary.getCurrentWord()) {
@@ -54,6 +58,7 @@ void LocalManager::key_pressed(QChar button) {
     } else {
         inputter.addSymbol(button);
     }
+
     if (!check_symbol(inputter.getBuffer().size() - 1)) {
         emit errorOnPositionSignal(dictionary.getCompletedSize() +
                                    inputter.getBuffer().size() - 1);
