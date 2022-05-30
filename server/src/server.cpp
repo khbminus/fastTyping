@@ -173,10 +173,6 @@ Server::Server()
         }
         return user.getGame()->getStateOfUsers();
     };
-    commonQueriesMap["exit"] = [&](const json &body, User &user) -> json {
-        user.setWillToExit();
-        return {};
-    };
 
     commonQueriesMap["getDictionaries"] = [&](json const &body,
                                               User &user) -> json {
@@ -303,12 +299,10 @@ void Server::parseQuery(tcp::socket s) {
                 query = json::parse(line);
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
-                BOOST_LOG_TRIVIAL(debug) << query << '\n';
                 if (auto it = loginQueriesMap.find(queryHeader["type"]);
                     it != loginQueriesMap.end()) {
                     result = it->second(queryBody);
                     result["header"]["queryType"] = queryHeader["type"];
-                    BOOST_LOG_TRIVIAL(debug) << result << '\n';
                     client << result << '\n';
                     if ((result["header"]["queryType"] == "login" ||
                          result["header"]["queryType"] == "register") &&
@@ -343,15 +337,10 @@ void Server::parseQuery(tcp::socket s) {
                 query = json::parse(line);
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
-                BOOST_LOG_TRIVIAL(debug) << query << '\n';
                 if (auto it = commonQueriesMap.find(queryHeader["type"]);
                     it != commonQueriesMap.end()) {
                     result = it->second(queryBody, user);
                     result["header"]["queryType"] = queryHeader["type"];
-                    if (user.isWantToExit()) {
-                        user.clearWillToExit();
-                        break;
-                    }
                     client << result << '\n';
                 } else {
                     json header = json({{"type", "unknownQueryError"}});

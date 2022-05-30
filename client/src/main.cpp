@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     auto signWindow = QSharedPointer<QMainWindow>(new SignWindow());
     auto registerWindow = QSharedPointer<QMainWindow>(new RegisterWindow());
     auto startGameWindow = QSharedPointer<QMainWindow>(new StartGameWindow());
-    auto waitGameWindow = QSharedPointer<QMainWindow>(new RegisterWindow());
+    auto waitGameWindow = QSharedPointer<QMainWindow>(new WaitGameWindow());
 
     controller.registerWindow("LoginWindow", loginWindow);
     controller.registerWindow("SignWindow", signWindow);
