@@ -22,6 +22,7 @@ std::map<std::string, ResponseType> header_to_type{
     {"getNewLine", ResponseType::blocking},
     {"getStates", ResponseType::async},
     {"getNewLine", ResponseType::blocking},
+    {"getDictionaries", ResponseType::blocking},
     {"startGame", ResponseType::blocking},
     {"waitGameStart", ResponseType::blocking},
     {"getGameStatistics", ResponseType::blocking}};

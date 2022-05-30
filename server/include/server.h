@@ -19,12 +19,13 @@ public:
     [[noreturn]] void polling();
 
 private:
-    static inline const int PORT = 1337;
+    static inline const int PORT = 1338;
 
     Server();
     boost::asio::io_context ioContext;
     tcp::acceptor acceptor;
-    std::unique_ptr<Database> userStorage;
+    std::unique_ptr<UserStorage> user_storage;
+    std::unique_ptr<DictionariesStorage> dictionaries_storage;
     std::unique_ptr<AbstractGameStorage> gameStorage;
     std::unordered_map<std::string, std::function<json(const json &, User &)>>
         commonQueriesMap;

@@ -30,7 +30,6 @@ void Game::startGame() {
 }
 
 void Game::userFinished(int uid) {
-    std::unique_lock l{mutex};
     using namespace std::chrono;
     assert(gameStartTime.has_value());
     duration<double> time_span = duration_cast<duration<double>>(
@@ -88,12 +87,13 @@ json Game::backspace(int uid) {
     std::string &word = additionalInfo[uid].currentBuffer;
     additionalInfo[uid].totalChars++;
     auto checkResult = checkUnsafe(uid);
-    if (checkResult["body"]["isPrefixCorrect"] == true) {
-        additionalInfo[uid].correctChars--;
-    }
+
     if (word.empty()) {
         return {{"header", {{"type", "emptyBufferError"}}},
                 {"body", {{"text", "can't use backspace with empty buffer"}}}};
+    }
+    if (checkResult["body"]["isPrefixCorrect"] == true) {
+        additionalInfo[uid].correctChars--;
     }
     word.pop_back();
     return checkUnsafe(uid);
@@ -146,8 +146,12 @@ std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
               {"body", {{"text", "Can't find game with specific id"}}}};
     return nullptr;
 }
-json MapGameStorage::createGame(const json &body, int hostId) {
-    if (body["dictionaryName"] != "const" || body["parserName"] != "simple") {
+
+json MapGameStorage::createGame(
+    const json &body,
+    std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary,
+    int host_id) {
+    if (body["parserName"] != "simple") {
         return {{"header", {{"type", "wrongFormatError"}}},
                 {"body", {{"text", "wrong parameters"}}}};
     }
@@ -155,11 +159,9 @@ json MapGameStorage::createGame(const json &body, int hostId) {
         return {{"header", {{"type", "wrongFormatError"}}},
                 {"body", {{"text", "Can't find words"}}}};
     }
-    std::shared_ptr<Game> game = std::make_shared<Game>(
-        std::make_unique<Logic::SimpleParser>(),
-        std::make_unique<Logic::Dictionary>(
-            body["words"].get<std::vector<std::string>>()),
-        hostId);
+    std::shared_ptr<Game> game =
+        std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
+                               std::move(dictionary), host_id);
     {
         std::unique_lock l{map_mutex};
         games[game->getId()] = game;

@@ -23,6 +23,14 @@ QString key_pressed_query(QString const &new_char) {
     return dump(result);
 }
 
+QString get_dictionaries_query() {
+    json result;
+
+    result["header"] = {{"type", "getDictionaries"}};
+    result["body"] = json::object();
+    return dump(result);
+}
+
 QString backspace_pressed_query() {
     json result;
     result["header"] = {{"type", "backspace"}};
@@ -84,12 +92,12 @@ QString get_line_query() {
     return dump(result);
 }
 
-QString create_game_query(bool auto_join) {
+QString create_game_query(QString const &dict, bool auto_join) {
     json result;
     json words = json::array({"This"});
 
     result["header"] = {{"type", "createGame"}};
-    result["body"] = {{"dictionaryName", "const"},
+    result["body"] = {{"dictionaryName", dict.toStdString()},
                       {"parserName", "simple"},
                       {"autoJoin", auto_join},
                       {"words", words}};

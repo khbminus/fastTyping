@@ -26,7 +26,6 @@ struct AbstractParser {
         const std::string &dictionaryWord) const = 0;
     virtual ~AbstractParser() = default;
 };
-
 }  // namespace FastTyping::Logic
 
 #endif  // FASTTYPING_DICTIONARY_H
