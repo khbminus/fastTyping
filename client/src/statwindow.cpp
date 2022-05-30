@@ -1,5 +1,6 @@
 #include "statwindow.h"
 #include <QQuickItem>
+#include <nlohmann/json.hpp>
 #include "confirmWindow.h"
 #include "errorHandler.h"
 #include "gameContextManager.h"
@@ -12,7 +13,18 @@
 StatWindow::StatWindow(GameManager *manager, QWindow *parent)
     : QQuickView(parent),
       textModel(FastTyping::TextScreen::TextListModel(manager->blob(), this)) {
-    setInitialProperties({{"textModel", QVariant::fromValue(&textModel)}});
+    using client::queries::get_game_stat_query;
+    using nlohmann::json;
+
+    auto stats = json::parse(
+        client::web::socket().query(get_game_stat_query()).toStdString());
+    qDebug() << QString::fromUtf8(stats.dump());
+
+    setInitialProperties({
+        {"textModel", QVariant::fromValue(&textModel)},
+        {"rawWPM", QString::number(stats["body"]["rawWPM"].get<int>())},
+        {"onlyCorrectWPM", QString::number(stats["body"]["WPM"].get<int>())},
+    });
     setSource(QUrl(QString::fromUtf8("qrc:/StatWindow.qml")));
 
     QObject::connect(rootObject(), SIGNAL(returnPressed()), this,

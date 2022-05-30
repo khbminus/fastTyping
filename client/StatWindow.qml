@@ -7,6 +7,8 @@ Item {
     height: 600
     property int gameId: 0
     property var textModel
+    property string rawWPM
+    property string onlyCorrectWPM
 
     signal returnPressed()
 
@@ -60,7 +62,7 @@ Item {
                     id:rawWPMnumber
                     width: parent.width
                     horizontalAlignment: Text.AlignHCenter
-                    text: "120"
+                    text: root.rawWPM
                 }
 
             }
@@ -84,7 +86,7 @@ Item {
                     id: numberWPM
                     width: parent.width
                     horizontalAlignment: Text.AlignHCenter
-                    text: "100"
+                    text: root.onlyCorrectWPM
                 }
 
             }
