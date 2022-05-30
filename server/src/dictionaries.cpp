@@ -9,9 +9,9 @@ namespace FastTyping::Logic {
 
 std::vector<std::string> to_words(std::string raw) {
     std::vector<std::string> words;
-    boost::split(words, raw, boost::is_any_of(" \t\n\r"));
+    boost::split(words, raw, boost::is_space());
     std::for_each(words.begin(), words.end(), [](std::string &val) {
-        boost::trim_if(val, boost::is_any_of(" \t\n"));
+        boost::trim_if(val, boost::is_space());
     });
     words.erase(
         std::remove_if(words.begin(), words.end(),

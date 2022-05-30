@@ -18,7 +18,6 @@ public:
         return instance;
     }
     ~Database();
-
 private:
     friend struct UserStorage;
     friend struct DictionariesStorage;
