@@ -37,7 +37,6 @@ ListView {
             anchors.top: parent.top
             id: charText
             text: parent.letter
-
             color: (parent.isCorrect ? "black" : "white")
             font.family: "monospace"
             font.pixelSize: 34

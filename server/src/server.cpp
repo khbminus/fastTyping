@@ -4,12 +4,14 @@
 #include <memory>
 #include <optional>
 #include <thread>
+#include "dictionaryDB.h"
 #include "game.h"
 
 namespace FastTyping::Server {
 Server::Server()
     : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)),
-      userStorage(new Database),
+      user_storage(new UserStorage),
+      dictionaries_storage(new DictionariesStorage),
       gameStorage(new MapGameStorage) {
     std::cout << "Listening at " << acceptor.local_endpoint() << std::endl;
     commonQueriesMap["echo"] = [&](const json &body, User &user) -> json {
@@ -32,8 +34,10 @@ Server::Server()
             return {{"header", {{"type", "alreadyInGameError"}}},
                     {"body", {{"text", "Already in game"}}}};
         }
+        std::string dictionary_name = body["dictionaryName"].get<std::string>();
 
-        auto result = gameStorage->createGame(body, user.getId());
+        auto result = gameStorage->createGame(
+            body, dictionary_instance(dictionary_name), user.getId());
         if (body.contains("autoJoin") && body["autoJoin"].is_boolean() &&
             body["autoJoin"]) {
             if (!result["body"].contains("id") ||
@@ -54,7 +58,6 @@ Server::Server()
         }
         return result;
     };
-    //{"body":{"id":0},"header":{"type":"joinGame"}}
     commonQueriesMap["joinGame"] = [&](const json &body, User &user) -> json {
         if (!body.contains("id") || !body["id"].is_number_unsigned()) {
             return {{"header", {{"type", "wrongFormatError"}}},
@@ -171,8 +174,17 @@ Server::Server()
         return user.getGame()->getStateOfUsers();
     };
 
+    commonQueriesMap["getDictionaries"] = [&](json const &body,
+                                              User &user) -> json {
+        json result = json::object();
+        result["header"] = {{"type", "dictionaries"},
+                            {"queryType", "getDictionaries"}};
+        result["body"] = {{"list", dictionaries_storage->get_dictionaries()}};
+        BOOST_LOG_TRIVIAL(debug) << result << "\n";
+        return result;
+    };
+
     loginQueriesMap["login"] = [&](const json &body) -> json {
-        // basic checks
         std::cerr << "Entered\n";
         if (!body.contains("name") || !body["name"].is_string()) {
             return {{"header", {{"type", "wrongFormatError"}}},
@@ -184,12 +196,18 @@ Server::Server()
                     {"body", {{"text", "can't find \"password\""}}}};
         }
         std::string password = body["password"];
-        std::cerr << "Go to DB\n";
-        auto result = userStorage->login(name, password);
-        return result;
+        int user_id{};
+        if (user_storage->nameExist(name) &&
+            user_storage->getPassword(user_id = user_storage->getId(name)) ==
+                password) {
+            return {{"header", {{"type", "success"}}},
+                    {"body", {{"id", user_id}}}};
+        }
+        return {{"header", {{"type", "incorrectName"}}},
+                {"body", {{"id", -1}}}};
     };
+
     loginQueriesMap["register"] = [&](const json &body) -> json {
-        // basic checks
         if (!body.contains("name") || !body["name"].is_string()) {
             return {{"header", {{"type", "wrongFormatError"}}},
                     {"body", {{"text", "can't find \"name\""}}}};
@@ -200,7 +218,17 @@ Server::Server()
                     {"body", {{"text", "can't find \"password\""}}}};
         }
         std::string password = body["password"];
-        auto result = userStorage->registration(name, password);
+        json result;
+
+        if (!user_storage->nameExist(name)) {
+            int user_id = user_storage->getId(name);
+            user_storage->setPassword(user_id, password);
+            result = {{"header", {{"type", "success"}}},
+                      {"body", {{"id", user_id}}}};
+        } else {
+            result = {{"header", {{"type", "nameAlreadyExists"}}},
+                      {"body", {{"id", -1}}}};
+        }
         BOOST_LOG_TRIVIAL(debug) << result << '\n';
         return result;
     };
@@ -223,9 +251,16 @@ Server::Server()
                     {"body", {{"text", "can't find \"new password\""}}}};
         }
         std::string new_password = body["new_password"];
-        auto result =
-            userStorage->changePassword(name, old_password, new_password);
-        return result;
+        int user_id{};
+        if (user_storage->nameExist(name) &&
+            user_storage->getPassword(user_id = user_storage->getId(name)) ==
+                old_password) {
+            user_storage->setPassword(user_id, new_password);
+            return {{"header", {{"type", "success"}}},
+                    {"body", {{"id", user_id}}}};
+        }
+        return {{"header", {{"type", "incorrectName"}}},
+                {"body", {{"id", -1}}}};
     };
 }
 
@@ -287,7 +322,7 @@ void Server::parseQuery(tcp::socket s) {
             std::cerr << e.what() << std::endl;  // process error to client
         }
 
-        User user(user_name, userStorage.get());
+        User user(user_name, *user_storage);
 
         try {
             while (client) {

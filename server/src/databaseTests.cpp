@@ -1,11 +1,15 @@
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <type_traits>
+#include "dictionaryDB.h"
 #include "doctest.h"
 #include "user.h"
+
 using namespace FastTyping::Server;
 
 TEST_CASE("user from string") {
-    Database *db = new Database;
+    // Database& db = Database::get_instance();
+    UserStorage db;
     std::string name1 = "aboba";
     std::string name2 = "obaba";
     User u1(name1, db);
@@ -13,16 +17,32 @@ TEST_CASE("user from string") {
     CHECK(u1.getId() + 1 == u2.getId());
     CHECK(u1.name() == name1);
     CHECK(u2.name() == name2);
-    delete db;
+}
+
+TEST_CASE("Dictionaries") {
+    DictionariesStorage flusher;
+    flusher.dropDictionaries();
+
+    DictionariesStorage storage;
+    storage.addDictionary("Aboba", true, "const");
+    storage.addDictionary("Boba", true, "const");
+    auto dictionaries = storage.get_dictionaries();
+    CHECK(storage.dictionaryExists("Aboba"));
+    CHECK(storage.dictionaryExists("Boba"));
+    CHECK(!storage.dictionaryExists("AbobaBoba"));
+    CHECK(dictionaries ==
+          std::vector{std::string("Aboba"), std::string("Boba")});
 }
 
 TEST_CASE("Database") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
-    Database storage;
+    UserStorage storage;
     int a = storage.getId(name1);
     int b = storage.getId(name2);
     CHECK(a + 1 == b);
+    ConstDictionariesStorage d;
+    CHECK(d.getLineConst("Aboba") == "This is sample don't judge me");
     CHECK(storage.getId(name1) == a);
     CHECK(storage.getId(name1) != b);
     CHECK(b == storage.getId(name2));
@@ -36,7 +56,8 @@ TEST_CASE("Database") {
 TEST_CASE("DB passwords") {
     std::string name1 = "Aboba";
     std::string name2 = "Boba";
-    Database storage;
+    UserStorage storage;
+    // Database& storage = Database::get_instance();
     int a = storage.getId(name1);
     CHECK(storage.nameExist(name1) == true);
     int b = storage.getId(name2);
@@ -53,7 +74,10 @@ TEST_CASE("DB passwords") {
 }
 
 TEST_CASE("DB mistakes") {
-    Database storage;
+    MistakesStorage flusher;
+    flusher.dropMistakes();
+    MistakesStorage storage;
+
     storage.addMistake(1, 'e', 'e', "qwerty");
     storage.addMistake(0, 'c', 'b', "qwerty");
     storage.addMistake(0, 'a', 'b', "qwerty");
