@@ -16,6 +16,12 @@ NAME    TEXT    NOT NULL,
 FILENAME   TEXT    NOT NULL);
 )sql";
 
+const std::string create_table_dll_query = R"sql(
+CREATE TABLE IF NOT EXISTS DLL_DICTIONARIES (
+NAME    TEXT    NOT NULL,
+FILENAME   TEXT    NOT NULL);
+)sql";
+
 ConstDictionariesStorage::ConstDictionariesStorage()
     : db(Database::get_instance()) {
     try {
@@ -71,6 +77,36 @@ void FileDictionariesStorage::addFile(std::string const &name,
         db.esc(name) + "', '" + db.esc(filename) + "');");
 }
 
+
+DLLDictionariesStorage::DLLDictionariesStorage()
+    : db(Database::get_instance()) {
+    try {
+        db.unanswered_query(create_table_dll_query);
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
+void DLLDictionariesStorage::dropDLL() {
+    db.unanswered_query("DROP TABLE DLL_DICTIONARIES;");
+}
+
+std::string DLLDictionariesStorage::getDLLName(std::string const &name) {
+    return db.get_column(
+        "SELECT FILENAME FROM DLL_DICTIONARIES WHERE NAME = '" + db.esc(name) +
+            "';",
+        "FILENAME");
+}
+
+void DLLDictionariesStorage::addDLL(std::string const &name,
+                                      std::string const &filename) {
+    db.unanswered_query(
+        "INSERT INTO DLL_DICTIONARIES(NAME, FILENAME)\n"
+        "VALUES('" +
+        db.esc(name) + "', '" + db.esc(filename) + "');");
+}
+
+
 std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
     std::string const &name) {
     std::cout << "here!" << std::endl;
@@ -92,6 +128,12 @@ std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
         FileDictionariesStorage filenames;
         std::string filename = "dict/" + filenames.getFileName(name);
         return std::make_unique<FastTyping::Logic::FileDictionary>(filename);
+    }
+
+    if (type == "dll") {
+        DLLDictionariesStorage dlls;
+        std::string filename = dlls.getDLLName(name);
+        return std::make_unique<FastTyping::Logic::DLLDictionary>(filename);
     }
 
     return std::make_unique<FastTyping::Logic::Dictionary>(

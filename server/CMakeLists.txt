@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.0)
 project(fasttyping_server)
 
 set(CMAKE_CXX_STANDARD 17)
-find_package(Boost 1.71 REQUIRED system log)
+find_package(Boost 1.71 REQUIRED system log filesystem)
+include_directories(include)
+
 find_package(nlohmann_json 3.7.3 REQUIRED)
 find_package(Threads)
 include(FetchContent)
@@ -30,7 +32,7 @@ add_executable(server src/main.cpp
                include/dictionaries.h      
                src/dictionaryDB.cpp)
 target_include_directories(server PRIVATE ${Boost_INCLUDE_DIRS} include)
-target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
+target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
 target_link_libraries(server nlohmann_json::nlohmann_json)
 
 add_executable(server-tests src/database.cpp
@@ -43,13 +45,13 @@ add_executable(server-tests src/database.cpp
                include/database.h
                src/dictionaryDB.cpp)
 target_include_directories(server-tests PRIVATE ${Boost_INCLUDE_DIRS} include)
-target_link_libraries(server-tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
+target_link_libraries(server-tests ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
 
 add_executable(generator-tests src/generator.cpp
                src/doctest_main.cpp 
                src/generatorTests.cpp)
 target_include_directories(generator-tests PRIVATE ${Boost_INCLUDE_DIRS} include)
-target_link_libraries(generator-tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
+target_link_libraries(generator-tests ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
 
 add_executable(dictionaries-interface src/dictionaryDB.cpp 
                src/dictionaries.cpp
@@ -58,4 +60,7 @@ add_executable(dictionaries-interface src/dictionaryDB.cpp
                src/database.cpp
                include/database.h)
 target_include_directories(dictionaries-interface PRIVATE ${Boost_INCLUDE_DIRS} include)
-target_link_libraries(dictionaries-interface ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
+target_link_libraries(dictionaries-interface ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
+
+
+add_library(test SHARED src/test_so.cpp)

@@ -32,6 +32,18 @@ private:
     Database &db;
 };
 
+struct DLLDictionariesStorage {
+public:
+    DLLDictionariesStorage();
+    void dropDLL();
+    void addDLL(std::string const &name, std::string const &filename);
+    std::string getDLLName(std::string const &name);
+
+private:
+    Database &db;
+};
+
+
 std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
     std::string const &name);
 
