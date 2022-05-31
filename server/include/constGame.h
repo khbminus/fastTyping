@@ -54,6 +54,16 @@ struct SimpleParser : AbstractParser {
         }
         return true;
     }
+    size_t getCorrectPrefixLength(
+        const std::string &inputWord,
+        const std::string &dictionaryWord) const override {
+        std::size_t pos = 0;
+        while (pos < inputWord.size() && pos < dictionaryWord.size() &&
+               inputWord[pos] == dictionaryWord[pos]) {
+            pos++;
+        }
+        return pos;
+    }
 };
 struct AdaptiveDictionary : AbstractDictionary {
     std::vector<std::string> words;

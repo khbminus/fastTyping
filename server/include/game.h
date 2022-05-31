@@ -39,6 +39,7 @@ public:
     json check(int uid);
     json getNewLine(int uid);
     json getStateOfUsers();
+    void joinUser(int uid);
 
     std::condition_variable cond_gameStarted;
 
@@ -57,6 +58,7 @@ private:
     struct AdditionalUserInfo {
         std::vector<std::string> currentBuffer;
         int currentWord = 0;
+        int charsTypedCorrect = 0;
         int lineNumber = 0;
     };
 

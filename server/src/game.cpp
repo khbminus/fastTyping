@@ -61,6 +61,7 @@ json Game::addNewChar(int uid, const std::string &c) {
     auto checkResult = checkUnsafe(uid);
     if (checkResult["body"]["isFullCorrect"] == true) {
         auto &info = additionalInfo[uid];
+        info.charsTypedCorrect += info.currentBuffer.size();
         info.currentBuffer.clear();
         info.currentWord++;
         checkResult["body"]["isEnd"] = isEndedUnsafe(uid);
@@ -97,8 +98,20 @@ json Game::getStateOfUsers() {
         userStates.back()["id"] = uid;
         userStates.back()["wordsTyped"] = info.currentWord;
         userStates.back()["linesTyped"] = info.lineNumber;
+        int symbolsTyped = info.charsTypedCorrect;
+
+        if (dictionary->getWordCount() != info.currentWord) {
+            std::string word = dictionary->getWord(info.currentWord);
+            symbolsTyped +=
+                parser->getCorrectPrefixLength(info.currentBuffer, word);
+        }
+        userStates.back()["symbolsTyped"] = symbolsTyped;
     }
     return result;
+}
+void Game::joinUser(int uid) {
+    std::unique_lock l{mutex};
+    additionalInfo[uid] = {};
 }
 
 std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
