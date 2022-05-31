@@ -26,6 +26,7 @@ struct DLLDictionary : AbstractDictionary {
     [[nodiscard]] size_t getWordCount() const override;
     [[nodiscard]] std::vector<std::string> getLine(int index) const override;
     [[nodiscard]] size_t getLinesCount() const override;
+
 private:
     std::vector<std::string> words;
 };
