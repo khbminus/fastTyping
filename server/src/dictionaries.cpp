@@ -56,7 +56,8 @@ FileDictionary::FileDictionary(std::string const &filename) : file(filename) {
 
 DLLDictionary::DLLDictionary(std::string const &filename) {
     boost::shared_ptr<dictionary_plugin> plugin =
-        boost_dll_import_symbol<dictionary_plugin>(filename, "dictionary", boost::dll::load_mode::append_decorations);
+        boost_dll_import_symbol<dictionary_plugin>(
+            filename, "dictionary", boost::dll::load_mode::append_decorations);
     words = plugin->words();
 }
 

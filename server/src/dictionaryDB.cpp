@@ -77,7 +77,6 @@ void FileDictionariesStorage::addFile(std::string const &name,
         db.esc(name) + "', '" + db.esc(filename) + "');");
 }
 
-
 DLLDictionariesStorage::DLLDictionariesStorage()
     : db(Database::get_instance()) {
     try {
@@ -99,13 +98,12 @@ std::string DLLDictionariesStorage::getDLLName(std::string const &name) {
 }
 
 void DLLDictionariesStorage::addDLL(std::string const &name,
-                                      std::string const &filename) {
+                                    std::string const &filename) {
     db.unanswered_query(
         "INSERT INTO DLL_DICTIONARIES(NAME, FILENAME)\n"
         "VALUES('" +
         db.esc(name) + "', '" + db.esc(filename) + "');");
 }
-
 
 std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
     std::string const &name) {
