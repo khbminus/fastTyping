@@ -27,7 +27,7 @@ SocketWrapper::SocketWrapper(QString ip, short port, ResponseHandler *a_handler)
         QObject::connect(&sender, &QuerySender::send_line, &socket_thread,
                          [socket](QString line) {
                              if (socket && socket->isOpen()) {
-                                 // qDebug() << "send:  " << line;
+                                 qDebug() << "send:  " << line;
                                  QTextStream socket_stream(socket);
                                  socket_stream << line;
                              } else {
@@ -51,7 +51,7 @@ SocketWrapper::SocketWrapper(QString ip, short port, ResponseHandler *a_handler)
                     for (std::size_t i = 0; i < list.size(); i++) {
                         QString response = list.at(i);
 
-                        // qDebug() << "received: " << response;
+                        qDebug() << "received: " << response;
 
                         ResponseType type = handler->type(response);
                         if (type == ResponseType::async) {
