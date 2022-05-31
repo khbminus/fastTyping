@@ -33,7 +33,9 @@ bool LocalManager::check_symbol(int position) {
 }
 
 LocalManager::LocalManager(std::vector<QString> a_words)
-    : dictionary(std::move(a_words)) {}
+    : dictionary(std::move(a_words)) {
+    inputter.setBufferMaxSize(dictionary.getCurrentWord().size() + 1);
+}
 
 bool LocalManager::is_correct_word() {
     return inputter.getBuffer() == dictionary.getCurrentWord();
@@ -47,6 +49,7 @@ void LocalManager::key_pressed(QChar button) {
                 emit end_signal();
                 return;
             }
+            inputter.setBufferMaxSize(dictionary.getCurrentWord().size() + 1);
             emit print_signal(
                 inputter.getBuffer(),
                 dictionary.getCompletedSize() + inputter.getBuffer().size());

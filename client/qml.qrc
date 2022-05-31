@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>Keyboard.qml</file>
         <file>KeyboardButton.qml</file>
-        <file>textScreen.qml</file>
+        <file>TextScreen.qml</file>
+        <file>GameWindow.qml</file>
     </qresource>
 </RCC>

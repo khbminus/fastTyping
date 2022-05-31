@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QPushButton>
+#include <QQuickView>
 #include <QQuickWidget>
 #include <QVariant>
 #include <memory>
@@ -16,25 +17,18 @@ namespace Ui {
 class GameWindow;
 }
 
-class GameWindow : public QMainWindow {
+class GameWindow : public QQuickView {
     Q_OBJECT
 
 public:
     explicit GameWindow(const std::vector<GameManager *> &managers,
                         GameManager *manager,
-                        QWidget *parent = nullptr);
-    ~GameWindow();
+                        QWindow *parent = nullptr);
 
 private:
-    Ui::GameWindow *ui;
-    QQuickWidget *textOut;
     FastTyping::TextScreen::TextListModel textModel;
 
     void highlightNextKey();
-
-    //    std::vector<game::AbstractGameManager *> handlers;
-    //    game::AbstractGameManager *main_handler;
-    GameManager *main_manager;
 signals:
     void press(QVariant key);
     void release(QVariant key);
@@ -44,17 +38,13 @@ signals:
     void clearHighlight();
     void backspace_pressed();
     void key_pressed(QChar button);
-    // std::vector<game::AbstractGameManager *> handlers;
-    // game::AbstractGameManager *main_handler;
-
-protected:
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent *event);
 private slots:
     void on_ReturnButton_clicked();
     void error_slot();
     void correct_slot();
     void end();
+    void keyPress(int, QString);
+    void keyRelease(int, QString);
 };
 
 #endif  // GAMEWINDOW_H

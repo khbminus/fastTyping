@@ -104,4 +104,11 @@ QString create_game_query(QString const &dict, bool auto_join) {
                       {"words", words}};
     return dump(result);
 }
+
+QString getStatesQuery() {
+    json result;
+    result["header"] = {{"type", "getStates"}};
+    result["body"] = json::object();
+    return dump(result);
+}
 }  // namespace client::queries

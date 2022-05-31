@@ -1,6 +1,6 @@
 #include "sonicSocket.h"
 
-const char ip[] = "46.17.248.131";
+const char ip[] = "localhost";
 const short port = 1337;
 
 namespace client::web {

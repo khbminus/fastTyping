@@ -31,16 +31,16 @@ int main(int argc, char *argv[]) {
     client::web::socket(&response_handler);
     auto &controller = FastTyping::WindowController::getInstance();
 
-    auto mainWindow = QSharedPointer<QMainWindow>(new MainWindow());
-    auto joinWindow = QSharedPointer<QMainWindow>(new JoinWindow());
-    auto createWindow = QSharedPointer<QMainWindow>(new CreateGameWindow());
-    // auto gameWindow = QSharedPointer<QMainWindow>(new GameWindow(&manager));
-    auto statWindow = QSharedPointer<QMainWindow>(new StatWindow());
-    auto loginWindow = QSharedPointer<QMainWindow>(new LoginWindow());
-    auto signWindow = QSharedPointer<QMainWindow>(new SignWindow());
-    auto registerWindow = QSharedPointer<QMainWindow>(new RegisterWindow());
-    auto startGameWindow = QSharedPointer<QMainWindow>(new StartGameWindow());
-    auto waitGameWindow = QSharedPointer<QMainWindow>(new WaitGameWindow());
+    auto mainWindow = new MainWindow;
+    auto joinWindow = new JoinWindow;
+    auto createWindow = new CreateGameWindow;
+    // auto gameWindow = new GameWindow(&manager));
+    auto statWindow = new StatWindow;
+    auto loginWindow = new LoginWindow;
+    auto signWindow = new SignWindow;
+    auto registerWindow = new RegisterWindow;
+    auto startGameWindow = new StartGameWindow;
+    auto waitGameWindow = new RegisterWindow;
 
     controller.registerWindow("LoginWindow", loginWindow);
     controller.registerWindow("SignWindow", signWindow);

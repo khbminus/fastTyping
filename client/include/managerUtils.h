@@ -49,10 +49,12 @@ public:
 class LocalInputter : public Inputter {
 private:
     QString buffer;
+    std::size_t maxBufferSize = 0;
 
 public:
     void addSymbol(QChar button) override {
-        buffer += button;
+        if (buffer.size() + 1 <= maxBufferSize)
+            buffer += button;
     }
     void deleteSymbol() override {
         if (!buffer.isEmpty()) {
@@ -64,6 +66,10 @@ public:
     }
     void clearBuffer() override {
         buffer.clear();
+    }
+
+    void setBufferMaxSize(std::size_t maxSize) {
+        maxBufferSize = maxSize;
     }
 };
 
