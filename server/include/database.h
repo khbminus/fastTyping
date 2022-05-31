@@ -28,17 +28,14 @@ private:
     friend struct StatisticsStorage;
     Database();
     std::string esc(std::string const &raw);
-    template <typename T>
+    template <typename T = std::string>
     T get_column(std::string const &query, std::string const &column) {
         std::unique_lock l{mutex};
         pqxx::work work(connect);
         pqxx::result res = work.exec(query);
         work.commit();
-        return (res.front())[column].as<T>();
+        return res.front()[column].as<T>();
     }
-    //    std::string get_column(std::string const &query, std::string const
-    //    &column);
-    // cppcheck-suppress unusedPrivateFunction
     bool record_exists(std::string const &query);
     void unanswered_query(std::string const &query);
     void unanswered_query(std::vector<std::string> const &queries);

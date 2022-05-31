@@ -69,7 +69,9 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
 }
 
 void GameWindow::keyPress(int key, QString keysCombination) {
-    emit press(key);
+    if (key != 0) {
+        emit press(key);
+    }
     if (keysCombination == "") {
         return;
     }

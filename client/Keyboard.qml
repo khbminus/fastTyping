@@ -31,7 +31,7 @@ Item {
 
     function releaseKey(key) {
         //console.log("released key", key);
-        if (key === Qt.Key_Shift) {
+        if (key === Qt.Key_Shift && pimpl.shiftModifier > 0) {
             pimpl.shiftModifier--;
         }
         released(key);
