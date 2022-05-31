@@ -3,7 +3,6 @@ project(fasttyping_server)
 
 set(CMAKE_CXX_STANDARD 17)
 find_package(Boost 1.71 REQUIRED system log filesystem)
-include_directories(include)
 
 find_package(nlohmann_json 3.7.3 REQUIRED)
 find_package(Threads)

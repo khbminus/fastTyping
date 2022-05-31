@@ -1,3 +1,3 @@
 #!/bin/bash
 echo "CREATE DATABASE fast_typing;" | sudo -u postgres psql
-export FASTTYOING_SB=fast_typing
+export FASTTYPING_DB=fast_typing
