@@ -6,16 +6,18 @@
 #include "sonicSocket.h"
 
 WebManager::WebManager(std::vector<QString> a_words)
-    : dictionary(std::move(a_words)) {}
+    : dictionary(std::move(a_words)) {
+    inputter.setBufferMaxSize(dictionary.getCurrentWord().size() + 1);
+}
 
 void WebManager::key_pressed(QChar button) {
     using client::queries::key_pressed_query;
     using client::web::socket;
-
-    inputter.addSymbol(button);
-    socket().send(key_pressed_query(QString(button)));
-
-    emit print_signal(inputter.getBuffer(), 0);
+    if (inputter.addSymbol(button)) {
+        socket().send(key_pressed_query(QString(button)));
+        emit print_signal(inputter.getBuffer(), 0);
+    }
+    qDebug() << "current web buffer" << inputter.getBuffer();
 }
 
 void WebManager::backspace_pressed() {
@@ -51,6 +53,8 @@ void WebManager::correct_slot() {
 
 void WebManager::correct_word_slot() {
     inputter.clearBuffer();
+    dictionary.nextWord();
+    inputter.setBufferMaxSize(dictionary.getCurrentWord().size() + 1);
     emit print_signal(inputter.getBuffer(), 0);
     emit correct_signal();
 }

@@ -57,9 +57,9 @@ void ContextManager::set_context(const std::vector<QString> &words) {
                      remote_manager.get(), &WebManager::correct_word_slot);
 
     auto &controller = FastTyping::WindowController::getInstance();
-    gameWindow = new GameWindow({local_manager.get(), remote_manager.get()},
-                                local_manager.get());
-    controller.registerWindow("GameWindow", gameWindow);
+    gameWindow.reset(new GameWindow({local_manager.get(), remote_manager.get()},
+                                    local_manager.get()));
+    controller.registerWindow("GameWindow", gameWindow.get());
 }
 
 void ContextManager::set_context_from_create_query(json const &response) {
@@ -79,12 +79,12 @@ void ContextManager::reset_context() {
     remote_manager.clear();
     auto &controller = FastTyping::WindowController::getInstance();
     controller.dropWindow("GameWindow");
-    gameWindow->deleteLater();
+    gameWindow.reset();
     controller.dropWindow("StatWindow");
-    statisticsWindow->deleteLater();
+    statisticsWindow.reset();
 }
 void ContextManager::createStatisticsWindow() {
-    statisticsWindow = new StatWindow(local_manager.get());
+    statisticsWindow.reset(new StatWindow(local_manager.get()));
     auto &controller = FastTyping::WindowController::getInstance();
-    controller.registerWindow("StatWindow", statisticsWindow);
+    controller.registerWindow("StatWindow", statisticsWindow.get());
 }

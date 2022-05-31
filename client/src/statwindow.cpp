@@ -29,6 +29,7 @@ StatWindow::StatWindow(GameManager *manager, QWindow *parent)
 
     QObject::connect(rootObject(), SIGNAL(returnPressed()), this,
                      SLOT(on_ReturnButton_clicked()));
+    textModel.setCursorPosition(-1);
 }
 
 void StatWindow::on_ReturnButton_clicked() {

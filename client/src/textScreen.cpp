@@ -71,12 +71,7 @@ void TextListModel::onWrongChar(int position) {
 }
 
 void TextListModel::onMove(const QString & /*buffer*/, int position) {
-    std::swap(position, currentCursor);
-    dataChanged(createIndex(position, 0), createIndex(position, 0),
-                {CURSOR_ROLE});
-    dataChanged(createIndex(currentCursor, 0), createIndex(currentCursor, 0),
-                {CURSOR_ROLE});
-    emit cursorMoved(currentCursor);
+    setCursorPosition(position);
 }
 
 ProgressListModel::ProgressListModel(QObject *parent)
@@ -160,5 +155,14 @@ QHash<int, QByteArray> ProgressListModel::roleNames() const {
 }
 bool Player::operator==(const Player &rhs) const {
     return userId == rhs.userId;
+}
+
+void TextListModel::setCursorPosition(int position) {
+    std::swap(position, currentCursor);
+    dataChanged(createIndex(position, 0), createIndex(position, 0),
+                {CURSOR_ROLE});
+    dataChanged(createIndex(currentCursor, 0), createIndex(currentCursor, 0),
+                {CURSOR_ROLE});
+    emit cursorMoved(currentCursor);
 }
 }  // namespace FastTyping::TextScreen

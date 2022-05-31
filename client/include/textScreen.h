@@ -104,6 +104,8 @@ public:
         statesTimer->stop();
     }
 
+    void setCursorPosition(int position);
+
 signals:
     void cursorMoved(QVariant position);
 public slots:

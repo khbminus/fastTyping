@@ -16,8 +16,8 @@ class ContextManager {
     ContextManager() = default;
     QSharedPointer<WebManager> remote_manager;
     QSharedPointer<LocalManager> local_manager;
-    GameWindow *gameWindow;
-    StatWindow *statisticsWindow;
+    QScopedPointer<GameWindow, QScopedPointerDeleteLater> gameWindow;
+    QScopedPointer<StatWindow, QScopedPointerDeleteLater> statisticsWindow;
     void set_context(std::vector<QString> const &words);
 
 public:
