@@ -6,19 +6,19 @@
 namespace FastTyping::Server {
 const std::string create_table_const_query = R"sql(
 CREATE TABLE IF NOT EXISTS CONST_DICTIONARIES (
-NAME    TEXT    NOT NULL,
+NAME    TEXT    NOT NULL UNIQUE,
 VALUE   TEXT    NOT NULL);
 )sql";
 
 const std::string create_table_file_query = R"sql(
 CREATE TABLE IF NOT EXISTS FILE_DICTIONARIES (
-NAME    TEXT    NOT NULL,
+NAME    TEXT    NOT NULL UNIQUE,
 FILENAME   TEXT    NOT NULL);
 )sql";
 
 const std::string create_table_dll_query = R"sql(
 CREATE TABLE IF NOT EXISTS DLL_DICTIONARIES (
-NAME    TEXT    NOT NULL,
+NAME    TEXT    NOT NULL UNIQUE,
 FILENAME   TEXT    NOT NULL);
 )sql";
 
@@ -46,7 +46,7 @@ void ConstDictionariesStorage::addConst(std::string const &name,
     db.unanswered_query(
         "INSERT INTO CONST_DICTIONARIES(NAME, VALUE)\n"
         "VALUES('" +
-        db.esc(name) + "', '" + db.esc(val) + "');");
+        db.esc(name) + "', '" + db.esc(val) + "') ON CONFLICT DO NOTHING;");
 }
 
 FileDictionariesStorage::FileDictionariesStorage()
@@ -74,7 +74,8 @@ void FileDictionariesStorage::addFile(std::string const &name,
     db.unanswered_query(
         "INSERT INTO FILE_DICTIONARIES(NAME, FILENAME)\n"
         "VALUES('" +
-        db.esc(name) + "', '" + db.esc(filename) + "');");
+        db.esc(name) + "', '" + db.esc(filename) +
+        "') ON CONFLICT DO NOTHING;");
 }
 
 DLLDictionariesStorage::DLLDictionariesStorage()
@@ -102,12 +103,12 @@ void DLLDictionariesStorage::addDLL(std::string const &name,
     db.unanswered_query(
         "INSERT INTO DLL_DICTIONARIES(NAME, FILENAME)\n"
         "VALUES('" +
-        db.esc(name) + "', '" + db.esc(filename) + "');");
+        db.esc(name) + "', '" + db.esc(filename) +
+        "') ON CONFLICT DO NOTHING;");
 }
 
 std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
     std::string const &name) {
-    std::cout << "here!" << std::endl;
     DictionariesStorage dictionaries;
 
     if (!dictionaries.dictionaryExists(name)) {
