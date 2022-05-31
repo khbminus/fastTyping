@@ -77,7 +77,7 @@ void GameWindow::keyPress(int key, QString keysCombination) {
         return;
     }
 
-    if (event->key() == Qt::Key_Backspace) {
+    if (key == Qt::Key_Backspace) {
         emit backspace_pressed();
     } else {
         emit key_pressed(keysCombination[0]);
