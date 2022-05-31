@@ -12,7 +12,8 @@
 
 StatWindow::StatWindow(GameManager *manager, QWindow *parent)
     : QQuickView(parent),
-      textModel(FastTyping::TextScreen::TextListModel(manager->blob(), this)) {
+      textModel(
+          FastTyping::TextScreen::TextListModel(manager->blob() + " ", this)) {
     using client::queries::get_game_stat_query;
     using nlohmann::json;
 
@@ -23,7 +24,9 @@ StatWindow::StatWindow(GameManager *manager, QWindow *parent)
     setInitialProperties({
         {"textModel", QVariant::fromValue(&textModel)},
         {"rawWPM", QString::number(stats["body"]["rawWPM"].get<int>())},
-        {"onlyCorrectWPM", QString::number(stats["body"]["WPM"].get<int>())},
+        {"onlyCorrectWPM", stats["body"]["WPM"].get<int>()},
+        {"charsTyped", stats["body"]["totalChars"].get<int>()},
+        {"charsCorrect", stats["body"]["correctChars"].get<int>()},
     });
     setSource(QUrl(QString::fromUtf8("qrc:/StatWindow.qml")));
 

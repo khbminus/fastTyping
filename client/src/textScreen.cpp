@@ -1,4 +1,5 @@
 #include "textScreen.h"
+#include <QDebug>
 #include "queryTemplates.h"
 #include "responseHandler.h"
 #include "sonicSocket.h"
@@ -125,6 +126,7 @@ void TextListModel::updateState() {
 }
 
 void TextListModel::onUpdated(const nlohmann::json &query) {
+    qDebug() << QString::fromStdString(query.dump());
     if (query["header"]["type"] != "currentState") {
         return;
     }
@@ -138,7 +140,10 @@ void TextListModel::onUpdated(const nlohmann::json &query) {
 
     for (const auto &player : users) {
         int pos = player["symbolsTyped"].get<int>();
+        if (pos == players.size())
+            pos--;
         if (pos < players.size()) {
+            qDebug() << player["id"].get<int>() << "to" << pos;
             players[pos]->showPlayer(Player(player["id"].get<int>()));
         }
     }

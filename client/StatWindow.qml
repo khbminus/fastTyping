@@ -9,6 +9,8 @@ Item {
     property var textModel
     property string rawWPM
     property string onlyCorrectWPM
+    property int charsTyped
+    property int charsCorrect
 
     signal returnPressed()
 
@@ -41,7 +43,8 @@ Item {
     Row {
         anchors.left: textScreen.left
         anchors.top: textScreen.bottom
-        anchors.topMargin: 3
+        anchors.topMargin: 6
+        spacing: 6
 
         Rectangle {
             border.width: 1
@@ -87,6 +90,32 @@ Item {
                     width: parent.width
                     horizontalAlignment: Text.AlignHCenter
                     text: root.onlyCorrectWPM
+                }
+
+            }
+        }
+
+        Rectangle {
+            border.width: 1
+            radius: 6
+            height: 48
+            width: labelSymbolTyped.width
+            anchors.margins: 3
+            Column {
+                anchors.fill: parent
+                Text {
+                    id: labelSymbolTyped
+                    horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: 20
+                    font.bold: true
+                    text: "Accuracy"
+                }
+                Text {
+                    id: numberSymbolTyped
+                    width: parent.width
+                    horizontalAlignment: Text.AlignHCenter
+                    text: Number(100. * root.charsCorrect / root.charsTyped).toLocaleString(Qt.locale(), ".3f") + "%"
+                    Component.onCompleted: console.log(root.charsCorrect, root.charsTyped, 1. * root.charsCorrect / root.charsTyped)
                 }
 
             }
