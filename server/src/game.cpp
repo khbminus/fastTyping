@@ -65,12 +65,9 @@ json Game::addNewChar(int uid, char c) {
     additionalInfo[uid].currentBuffer += c;
     additionalInfo[uid].totalChars++;
     auto checkResult = checkUnsafe(uid);
-    if (checkResult["body"]["isPrefixCorrect"] == true ||
-        checkResult["body"]["isFullCorrect"] == true) {  // space case
-        additionalInfo[uid].correctChars++;
-    }
     if (checkResult["body"]["isFullCorrect"] == true) {
         auto &info = additionalInfo[uid];
+        additionalInfo[uid].correctChars += info.currentBuffer.size();
         info.currentBuffer.clear();
         info.currentWord++;
         checkResult["body"]["isEnd"] = isEndedUnsafe(uid);
@@ -91,9 +88,6 @@ json Game::backspace(int uid) {
     if (word.empty()) {
         return {{"header", {{"type", "emptyBufferError"}}},
                 {"body", {{"text", "can't use backspace with empty buffer"}}}};
-    }
-    if (checkResult["body"]["isPrefixCorrect"] == true) {
-        additionalInfo[uid].correctChars--;
     }
     word.pop_back();
     return checkUnsafe(uid);
@@ -117,7 +111,12 @@ json Game::getStateOfUsers() {
         userStates.back()["id"] = uid;
         userStates.back()["wordsTyped"] = info.currentWord;
         userStates.back()["linesTyped"] = info.lineNumber;
-        userStates.back()["symbolsTyped"] = info.correctChars;
+        int symbolsTyped = info.correctChars;
+        if (info.currentWord < dictionary->getWordCount()) {
+            symbolsTyped += parser->getCorrectPrefixLength(
+                info.currentBuffer, dictionary->getWord(info.currentWord));
+        }
+        userStates.back()["symbolsTyped"] = symbolsTyped;
     }
     return result;
 }
@@ -126,8 +125,8 @@ json Game::getStatistics(int uid) {
     json result = {{"header", {{"type", "GameStatistics"}}}};
     double convertToWpm = 60.0 / additionalInfo[uid].finishTime / 4;
     // TODO replace 4 with average word length
-    result["body"]["wpm"] = additionalInfo[uid].correctChars * convertToWpm;
-    result["body"]["rawWmp"] = additionalInfo[uid].totalChars * convertToWpm;
+    result["body"]["WPM"] = additionalInfo[uid].correctChars * convertToWpm;
+    result["body"]["rawWPM"] = additionalInfo[uid].totalChars * convertToWpm;
     result["body"]["correctChars"] = additionalInfo[uid].correctChars;
     result["body"]["totalChars"] = additionalInfo[uid].totalChars;
 

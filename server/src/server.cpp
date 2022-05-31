@@ -182,11 +182,6 @@ Server::Server()
         return user.getGame()->getStatistics(user.getId());
     };
 
-    commonQueriesMap["exit"] = [&](const json &body, User &user) -> json {
-        user.setWillToExit();
-        return {};
-    };
-
     commonQueriesMap["getDictionaries"] = [&](json const &body,
                                               User &user) -> json {
         json result = json::object();
@@ -357,10 +352,6 @@ void Server::parseQuery(tcp::socket s) {
                     it != commonQueriesMap.end()) {
                     result = it->second(queryBody, user);
                     result["header"]["queryType"] = queryHeader["type"];
-                    if (user.isWantToExit()) {
-                        user.clearWillToExit();
-                        break;
-                    }
                     client << result << '\n';
                 } else {
                     json header = json({{"type", "unknownQueryError"}});
