@@ -118,4 +118,11 @@ QString get_game_stat_query() {
     result["body"] = {};
     return dump(result);
 }
+
+QString getStatesQuery() {
+    json result;
+    result["header"] = {{"type", "getStates"}};
+    result["body"] = json::object();
+    return dump(result);
+}
 }  // namespace client::queries

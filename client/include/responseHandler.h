@@ -2,6 +2,7 @@
 #define RESPONSE_HANDLER_H
 
 #include <QString>
+#include <nlohmann/json.hpp>
 #include "socketWrapper.h"
 
 namespace client::responses {
@@ -16,6 +17,8 @@ signals:
     void correct_signal();
     void end_signal();
     void correct_word_signal();
+    void stateUpdated(const nlohmann::json &);
+    void gameWaited();
 };
 
 APIHandler &handler();

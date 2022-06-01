@@ -15,7 +15,7 @@ class ContextManager {
     ContextManager() = default;
     QSharedPointer<WebManager> remote_manager;
     QSharedPointer<LocalManager> local_manager;
-    QSharedPointer<GameWindow> window;
+    GameWindow *window;
     void set_context(std::vector<QString> const &words);
 
 public:

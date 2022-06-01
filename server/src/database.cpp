@@ -1,5 +1,7 @@
 #include "database.h"
 #include <algorithm>
+#include <cstdlib>
+#include <string>
 #include "constGame.h"
 #include "dictionaryDB.h"
 
@@ -58,7 +60,8 @@ TYPE TEXT
 );
 )sql";
 
-Database::Database() : connect("dbname = fast_typing") {
+Database::Database()
+    : connect("dbname = " + std::string(std::getenv("FASTTYPING_DB"))) {
     try {
         if (connect.is_open()) {
             std::cerr << "Opened database successfully: " << connect.dbname()
@@ -67,8 +70,6 @@ Database::Database() : connect("dbname = fast_typing") {
             std::cerr << "Can't open database" << std::endl;
             std::abort();
         }
-        unanswered_query({create_table_users_query, create_table_mistakes_query,
-                          create_table_dictionaries_query});
         std::cerr << "Table created successfully" << std::endl;
     } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;

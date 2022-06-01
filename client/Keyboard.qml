@@ -31,7 +31,7 @@ Item {
 
     function releaseKey(key) {
         //console.log("released key", key);
-        if (key === Qt.Key_Shift) {
+        if (key === Qt.Key_Shift && pimpl.shiftModifier > 0) {
             pimpl.shiftModifier--;
         }
         released(key);
@@ -87,7 +87,7 @@ Item {
         //width: pimpl.buttonWidth * 15 + pimpl.horizontalSpacing * 14
         //height: pimpl.rowHeight * 6 + pimpl.verticalSpacing * 5
         id:keyboard
-        color: "white"
+        color: "black"
         anchors.fill: parent;
         MouseArea {
             anchors.fill: parent
