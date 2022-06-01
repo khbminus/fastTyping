@@ -28,7 +28,7 @@ int main() {
     dll.addDLL("DLL", "test");
 
     CorpusDictionariesStorage corpus;
-    corpus.addCorpus("English", "EnglishTop100");
+    corpus.addCorpus("English", "test");
 
     add_corpus_dictionary("test", {"name", "main", "moon"});
 

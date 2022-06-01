@@ -58,23 +58,19 @@ FileDictionary::FileDictionary(std::string const &filename) : file(filename) {
 
 CorpusDictionary::CorpusDictionary(std::string const &corpus) {
     using FastTyping::Server::Database;
-    try {
-        Database &db = Database::get_instance();
-        std::unique_lock l{db.mutex};
 
-        pqxx::work work(db.connect);
-        pqxx::result selected = work.exec("SELECT * FROM" + db.esc(corpus) +
-                                          "ORDER BY random() LIMIT 20;");
+    Database &db = Database::get_instance();
+    std::unique_lock l{db.mutex};
 
-        std::transform(selected.begin(), selected.end(),
-                       std::back_inserter(words),
-                       [](pqxx::row const &row) -> std::string {
-                           return row["WORD"].c_str();
-                       });
-        work.commit();
-    } catch (...) {
-        words = {"Cannot", "load", "dictionary"};
-    }
+    pqxx::work work(db.connect);
+    pqxx::result selected = work.exec("SELECT * FROM " + db.esc(corpus) +
+                                      " ORDER BY random() LIMIT 2;");
+
+    std::transform(selected.begin(), selected.end(), std::back_inserter(words),
+                   [](pqxx::row const &row) -> std::string {
+                       return row["WORD"].c_str();
+                   });
+    work.commit();
 }
 
 [[nodiscard]] std::string CorpusDictionary::getWord(int index) const {
@@ -120,10 +116,11 @@ void add_corpus_dictionary(std::string const &name,
 
     db.unanswered_query("CREATE TABLE IF NOT EXISTS " + db.esc(name) +
                         "(WORD TEXT UNIQUE);");
-    std::string sql = "INSERT INTO " + db.esc(name) +  " (WORD)\n"
-        "VALUES('" +
-        boost::algorithm::join(words, "'),\n('")
-        + "') ON CONFLICT DO NOTHING;";
+    std::string sql = "INSERT INTO " + db.esc(name) +
+                      " (WORD)\n"
+                      "VALUES('" +
+                      boost::algorithm::join(words, "'),\n('") +
+                      "') ON CONFLICT DO NOTHING;";
 
     std::cout << sql << std::endl;
     db.unanswered_query(sql);
