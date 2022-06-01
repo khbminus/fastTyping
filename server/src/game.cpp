@@ -85,7 +85,6 @@ json Game::addNewChar(int uid, const std::string &c) {
         checkResult["body"]["isEnd"] = isEndedUnsafe(uid);
         if (isEndedUnsafe(uid)) {
             userFinished(uid);
-            std::cerr << "user finished\n";
         }
         return checkResult;
     }
@@ -94,7 +93,7 @@ json Game::addNewChar(int uid, const std::string &c) {
 json Game::backspace(int uid) {
     std::unique_lock l{mutex};
     auto &word = additionalInfo[uid].currentBuffer;
-     additionalInfo[uid].totalChars++;
+    additionalInfo[uid].totalChars++;
     auto checkResult = checkUnsafe(uid);
     if (word.empty()) {
         return {{"header", {{"type", "emptyBufferError"}}},
@@ -145,7 +144,7 @@ json Game::getStatistics(int uid) {
     double convertToWpm = 60.0 / additionalInfo[uid].finishTime / 4;
     // TODO replace 4 with average word length
     result["body"]["wpm"] = additionalInfo[uid].correctChars * convertToWpm;
-    result["body"]["rawWmp"] = additionalInfo[uid].totalChars * convertToWpm;
+    result["body"]["rawWpь"] = additionalInfo[uid].totalChars * convertToWpm;
     result["body"]["correctChars"] = additionalInfo[uid].correctChars;
     result["body"]["totalChars"] = additionalInfo[uid].totalChars;
 
