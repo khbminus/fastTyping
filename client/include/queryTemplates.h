@@ -16,8 +16,8 @@ QString wait_game_query();
 QString leave_query();
 QString get_line_query();
 QString get_dictionaries_query();
+QString get_game_stat_query();
 QString getStatesQuery();
-QString user_finish_query();
 QString get_game_stat_query();
 }  // namespace client::queries
 

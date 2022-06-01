@@ -26,6 +26,7 @@ private:
     friend struct FileDictionariesStorage;
     friend struct MistakesStorage;
     friend struct StatisticsStorage;
+    friend struct DLLDictionariesStorage;
     Database();
     std::string esc(std::string const &raw);
     template <typename T = std::string>

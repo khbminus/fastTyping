@@ -1,9 +1,18 @@
 #include "dictionaries.h"
 #include <algorithm>
+#include <boost/dll/import.hpp>
+#include <boost/version.hpp>
 #include <cctype>
 #include <iostream>
 #include <sstream>
 #include "boost/algorithm/string.hpp"
+#include "dictionaries_api.h"
+
+#if BOOST_VERSION >= 107600
+#define boost_dll_import_symbol ::boost::dll::import_symbol
+#else
+#define boost_dll_import_symbol ::boost::dll::import
+#endif
 
 namespace FastTyping::Logic {
 
@@ -44,4 +53,26 @@ FileDictionary::FileDictionary(std::string const &filename) : file(filename) {
 [[nodiscard]] std::size_t FileDictionary::getLinesCount() const {
     return 1;
 }
+
+DLLDictionary::DLLDictionary(std::string const &filename) {
+    boost::shared_ptr<dictionary_plugin> plugin =
+        boost_dll_import_symbol<dictionary_plugin>(
+            filename, "dictionary", boost::dll::load_mode::append_decorations);
+    words = plugin->words();
+}
+
+[[nodiscard]] std::string DLLDictionary::getWord(int index) const {
+    return words[index];
+}
+
+[[nodiscard]] std::size_t DLLDictionary::getWordCount() const {
+    return words.size();
+}
+[[nodiscard]] std::vector<std::string> DLLDictionary::getLine(int index) const {
+    return words;
+}
+[[nodiscard]] std::size_t DLLDictionary::getLinesCount() const {
+    return 1;
+}
+
 }  // namespace FastTyping::Logic

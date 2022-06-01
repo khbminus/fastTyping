@@ -71,8 +71,8 @@ json Game::check(int uid) {
 
 json Game::addNewChar(int uid, const std::string &c) {
     std::unique_lock l{mutex};
-    additionalInfo[uid].currentBuffer.push_back(c);
     additionalInfo[uid].totalChars++;
+    additionalInfo[uid].currentBuffer.push_back(c);
     auto checkResult = checkUnsafe(uid);
     if (checkResult["body"]["isFullCorrect"] == true) {
         auto &info = additionalInfo[uid];
@@ -82,7 +82,6 @@ json Game::addNewChar(int uid, const std::string &c) {
         checkResult["body"]["isEnd"] = isEndedUnsafe(uid);
         if (isEndedUnsafe(uid)) {
             userFinished(uid);
-            std::cerr << "user finished\n";
         }
         return checkResult;
     }
@@ -120,11 +119,11 @@ json Game::getStateOfUsers() {
         userStates.back()["wordsTyped"] = info.currentWord;
         userStates.back()["linesTyped"] = info.lineNumber;
         int symbolsTyped = info.correctChars;
-        if (info.currentWord < dictionary->getWordCount()) {
+
+        if (dictionary->getWordCount() != info.currentWord) {
             auto bufferAsString =
                 std::accumulate(info.currentBuffer.begin(),
                                 info.currentBuffer.end(), std::string());
-            std::string word = dictionary->getWord(info.currentWord);
             symbolsTyped +=
                 parser->getCorrectPrefixLength(bufferAsString, word);
         }
@@ -149,6 +148,7 @@ void Game::joinUser(int uid) {
     std::unique_lock l{mutex};
     additionalInfo[uid] = {};
 }
+
 std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
     std::unique_lock l{map_mutex};
     if (auto it = games.find(id); it != games.end()) {
