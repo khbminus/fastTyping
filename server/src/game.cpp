@@ -91,7 +91,6 @@ json Game::backspace(int uid) {
     std::unique_lock l{mutex};
     auto &word = additionalInfo[uid].currentBuffer;
     additionalInfo[uid].totalChars++;
-    auto checkResult = checkUnsafe(uid);
     if (word.empty()) {
         return {{"header", {{"type", "emptyBufferError"}}},
                 {"body", {{"text", "can't use backspace with empty buffer"}}}};
