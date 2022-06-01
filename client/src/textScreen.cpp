@@ -126,7 +126,7 @@ void TextListModel::updateState() {
 }
 
 void TextListModel::onUpdated(const nlohmann::json &query) {
-    qDebug() << QString::fromStdString(query.dump());
+    //    qDebug() << QString::fromStdString(query.dump());
     if (query["header"]["type"] != "currentState") {
         return;
     }
@@ -143,7 +143,7 @@ void TextListModel::onUpdated(const nlohmann::json &query) {
         if (pos == players.size())
             pos--;
         if (pos < players.size()) {
-            qDebug() << player["id"].get<int>() << "to" << pos;
+            //            qDebug() << player["id"].get<int>() << "to" << pos;
             players[pos]->showPlayer(Player(player["id"].get<int>()));
         }
     }

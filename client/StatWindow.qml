@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.15
+import QtCharts 2.15
 
 Item {
     id: root
@@ -11,6 +12,9 @@ Item {
     property string onlyCorrectWPM
     property int charsTyped
     property int charsCorrect
+    property var chartModel
+    property int maxChartWPM
+    property int maxChartErrors
 
     signal returnPressed()
 
@@ -41,6 +45,7 @@ Item {
         focusPolicy: Qt.ClickFocus
     }
     Row {
+        id: statsRow
         anchors.left: textScreen.left
         anchors.top: textScreen.bottom
         anchors.topMargin: 6
@@ -122,4 +127,57 @@ Item {
         }
     }
 
+    ChartView {
+        anchors.top: statsRow.bottom
+        anchors.topMargin: 4
+        anchors.bottom: gameIDview.top
+        anchors.bottomMargin: 4
+        anchors.left: textScreen.left
+        anchors.right: textScreen.right
+
+        antialiasing: true
+        legend.visible: true
+        LineSeries {
+            name: "WPM"
+            axisY: ValueAxis {
+                min: 0
+                max: root.maxChartWPM
+            }
+
+            VXYModelMapper {
+                model: root.chartModel
+                xColumn: 0
+                yColumn: 1
+            }
+            Component.onCompleted: console.log("1", count)
+        }
+        LineSeries {
+            name: "raw"
+//            axisY: ValueAxis {
+//                min: 0
+//                max: root.maxChartWPM
+//            }
+            VXYModelMapper {
+                model: root.chartModel
+                xColumn: 0
+                yColumn: 2
+            }
+            Component.onCompleted: console.log("2", count)
+        }
+
+        ScatterSeries {
+            markerSize: 6
+            name: "errors"
+            axisYRight: ValueAxis {
+                min: 0
+                max: root.maxChartErrors
+            }
+            VXYModelMapper {
+                model: root.chartModel
+                xColumn: 0
+                yColumn: 3
+            }
+            Component.onCompleted: console.log("3", count)
+        }
+    }
 }

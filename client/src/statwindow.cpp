@@ -20,14 +20,23 @@ StatWindow::StatWindow(GameManager *manager, QWindow *parent)
     auto stats = json::parse(
         client::web::socket().query(get_game_stat_query()).toStdString());
     qDebug() << QString::fromUtf8(stats.dump());
+    auto model = dynamic_cast<LocalManager *>(manager)->getModel();
+    for (int i = 0; i < model->rowCount(QModelIndex()); i++) {
+        qDebug() << model->data(model->index(i, 0))
+                 << model->data(model->index(i, 1))
+                 << model->data(model->index(i, 2))
+                 << model->data(model->index(i, 3));
+    }
 
-    setInitialProperties({
-        {"textModel", QVariant::fromValue(&textModel)},
-        {"rawWPM", QString::number(stats["body"]["rawWPM"].get<int>())},
-        {"onlyCorrectWPM", stats["body"]["WPM"].get<int>()},
-        {"charsTyped", stats["body"]["totalChars"].get<int>()},
-        {"charsCorrect", stats["body"]["correctChars"].get<int>()},
-    });
+    setInitialProperties(
+        {{"textModel", QVariant::fromValue(&textModel)},
+         {"rawWPM", QString::number(stats["body"]["rawWPM"].get<int>())},
+         {"onlyCorrectWPM", stats["body"]["WPM"].get<int>()},
+         {"charsTyped", stats["body"]["totalChars"].get<int>()},
+         {"charsCorrect", stats["body"]["correctChars"].get<int>()},
+         {"chartModel", QVariant::fromValue(model)},
+         {"maxChartWPM", model->getMaxWPM()},
+         {"maxChartErrors", model->getMaxErrors()}});
     setSource(QUrl(QString::fromUtf8("qrc:/StatWindow.qml")));
 
     QObject::connect(rootObject(), SIGNAL(returnPressed()), this,
