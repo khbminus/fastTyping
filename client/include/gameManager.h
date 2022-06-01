@@ -7,6 +7,7 @@
 struct Dictionary {
     [[nodiscard]] virtual QString getCurrentWord() const = 0;
     virtual bool nextWord() = 0;
+    virtual bool previousWord() = 0;
 };
 
 struct Inputter {

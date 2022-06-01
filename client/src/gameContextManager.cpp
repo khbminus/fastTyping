@@ -32,20 +32,25 @@ void ContextManager::set_user_id(int new_id) {
     user_id = new_id;
 }
 
-LocalManager *ContextManager::get_local_manager() const {
+GameManager *ContextManager::get_local_manager() const {
     return local_manager.get();
 }
 
-LocalManager *ContextManager::get_remote_manager() const {
+GameManager *ContextManager::get_remote_manager() const {
     return local_manager.get();
 }
 
-void ContextManager::set_context(const std::vector<QString> &words) {
+void ContextManager::set_context(const std::vector<QString> &words,
+                                 bool isSolo) {
     using client::responses::APIHandler;
     using client::responses::handler;
+    if (!isSolo) {
+        local_manager.reset(new LocalManager(words));
+    } else {
+        local_manager.reset(new LocalManagerSolo(words));
+    }
 
-    local_manager.reset(new LocalManager(words));
-    remote_manager.reset(new WebManager(words));
+    remote_manager.reset(new WebManager(words));  // TODO make solo??
 
     QObject::connect(&handler(), &APIHandler::correct_signal,
                      remote_manager.get(), &WebManager::correct_slot);
@@ -62,17 +67,18 @@ void ContextManager::set_context(const std::vector<QString> &words) {
     controller.registerWindow("GameWindow", window);
 }
 
-void ContextManager::set_context_from_create_query(json const &response) {
+void ContextManager::set_context_from_create_query(json const &response,
+                                                   bool isSolo) {
     game_id = response["body"]["id"].get<int>();
     std::vector<QString> words = get_line();
-    set_context(words);
+    set_context(words, isSolo);
 }
 
-void ContextManager::set_context_from_join_query(json const &response) {
-    game_id = response["body"]["id"].get<int>();
-    std::vector<QString> words = get_line();
-    set_context(words);
-}
+// void ContextManager::set_context_from_join_query(json const &response) {
+//    game_id = response["body"]["id"].get<int>();
+//    std::vector<QString> words = get_line();
+//    set_context(words);
+//}
 
 void ContextManager::reset_context() {
     local_manager.clear();

@@ -47,6 +47,7 @@ set(PROJECT_SOURCES
         src/errorHandler.cpp
         src/queryTemplates.cpp
         src/localManager.cpp
+        src/localManagerSolo.cpp
         src/responseHandler.cpp
         src/socketWrapper.cpp
         src/sonicSocket.cpp

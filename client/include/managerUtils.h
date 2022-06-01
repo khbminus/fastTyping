@@ -27,7 +27,12 @@ public:
         currentPosition++;
         return currentPosition < words.size();
     }
-
+    bool previousWord() override {
+        if (currentPosition == 0) return  false;
+        currentPosition--;
+        return true;
+    }
+    
     QString blob() {
         return whole_line;
     }
@@ -71,6 +76,46 @@ public:
     void setBufferMaxSize(std::size_t maxSize) {
         maxBufferSize = maxSize;
     }
+};
+
+class LocalSoloInputter : public Inputter {
+private:
+    std::vector<QString> buffers;
+    std::vector<std::size_t> maxBufSz;
+public:
+    void addSymbol(QChar button) override {
+        if (buffers.back().size() + 1 <= maxBufSz.back())
+            buffers.back() += button;
+    }
+    
+    void deleteSymbol() override {
+        if (!buffers.back().isEmpty()) {
+            buffers.back().chop(1);
+        } else {
+            buffers.pop_back();
+            maxBufSz.pop_back();
+            if (!buffers.back().isEmpty()) {
+                buffers.back().chop(1);
+            }
+        }
+    }
+    [[nodiscard]] QString getBuffer() const override {
+        return buffers.back();
+    }
+    void clearBuffer() override {
+        buffers.clear();
+        maxBufSz.clear();
+    }
+
+    void setBufferMaxSize(std::size_t maxSize) {
+        maxBufSz.push_back(maxSize);
+        buffers.push_back("");
+    }
+    
+    std::size_t getBuffersCnt() {
+        return buffers.size();
+    }
+    
 };
 
 #endif
