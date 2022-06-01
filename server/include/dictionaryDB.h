@@ -1,13 +1,7 @@
 #ifndef DICTIONARY_DATABASE_H
 #define DICTIONARY_DATABASE_H
-
 #include <iostream>
 #include <memory>
-#include <mutex>
-#include <nlohmann/json.hpp>
-#include <pqxx/pqxx>
-#include <vector>
-#include "abc.h"
 #include "database.h"
 
 namespace FastTyping::Server {

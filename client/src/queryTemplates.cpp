@@ -105,6 +105,20 @@ QString create_game_query(QString const &dict, bool auto_join) {
     return dump(result);
 }
 
+QString user_finish_query() {
+    json result;
+    result["header"] = {{"type", "userFinished"}};
+    result["body"] = {};
+    return dump(result);
+}
+
+QString get_game_stat_query() {
+    json result;
+    result["header"] = {{"type", "getGameStatistics"}};
+    result["body"] = {};
+    return dump(result);
+}
+
 QString getStatesQuery() {
     json result;
     result["header"] = {{"type", "getStates"}};
