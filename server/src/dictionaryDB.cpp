@@ -22,6 +22,12 @@ NAME    TEXT    NOT NULL UNIQUE,
 FILENAME   TEXT    NOT NULL);
 )sql";
 
+const std::string create_table_corpus_query = R"sql(
+CREATE TABLE IF NOT EXISTS CORPUS_DICTIONARIES (
+NAME    TEXT    NOT NULL UNIQUE,
+CORPUS  TEXT    NOT NULL);
+)sql";
+
 ConstDictionariesStorage::ConstDictionariesStorage()
     : db(Database::get_instance()) {
     try {
@@ -107,6 +113,35 @@ void DLLDictionariesStorage::addDLL(std::string const &name,
         "') ON CONFLICT DO NOTHING;");
 }
 
+CorpusDictionariesStorage::CorpusDictionariesStorage()
+    : db(Database::get_instance()) {
+    try {
+        db.unanswered_query(create_table_corpus_query);
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
+void CorpusDictionariesStorage::dropCorpus() {
+    db.unanswered_query("DROP TABLE CORPUS_DICTIONARIES;");
+}
+
+std::string CorpusDictionariesStorage::getCorpusName(std::string const &name) {
+    return db.get_column(
+        "SELECT CORPUS FROM CORPUS_DICTIONARIES WHERE NAME = '" + db.esc(name) +
+            "';",
+        "CORPUS");
+}
+
+void CorpusDictionariesStorage::addCorpus(std::string const &name,
+                                      std::string const &corpus) {
+    db.unanswered_query(
+        "INSERT INTO CORPUS_DICTIONARIES(NAME, CORPUS)\n"
+        "VALUES('" +
+        db.esc(name) + "', '" + db.esc(corpus) +
+        "') ON CONFLICT DO NOTHING;");
+}
+
 std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
     std::string const &name) {
     DictionariesStorage dictionaries;
@@ -133,6 +168,12 @@ std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
         DLLDictionariesStorage dlls;
         std::string filename = dlls.getDLLName(name);
         return std::make_unique<FastTyping::Logic::DLLDictionary>(filename);
+    }
+
+    if (type == "corpus") {
+        std::cout << "corpus" << std::endl;
+        CorpusDictionariesStorage corpus;
+        return std::make_unique<FastTyping::Logic::CorpusDictionary>(corpus.getCorpusName(name));
     }
 
     return std::make_unique<FastTyping::Logic::Dictionary>(

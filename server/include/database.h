@@ -6,6 +6,7 @@
 #include <pqxx/pqxx>
 #include <vector>
 #include "abc.h"
+#include "dictfwd.h"
 
 namespace FastTyping::Server {
 
@@ -26,6 +27,11 @@ private:
     friend struct ConstDictionariesStorage;
     friend struct FileDictionariesStorage;
     friend struct DLLDictionariesStorage;
+    friend struct CorpusDictionariesStorage;
+    friend struct ::FastTyping::Logic::CorpusDictionary;
+    friend void ::FastTyping::Logic::add_corpus_dictionary(
+        std::string const &name,
+        std::vector<std::string> const &words);
     Database();
     std::string esc(std::string const &raw);
     template <typename T = std::string>
