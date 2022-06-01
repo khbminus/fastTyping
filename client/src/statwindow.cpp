@@ -1,5 +1,6 @@
 #include "statwindow.h"
 #include <QQuickItem>
+#include <chrono>
 #include <nlohmann/json.hpp>
 #include "confirmWindow.h"
 #include "errorHandler.h"
@@ -11,15 +12,15 @@
 #include "windowcontroller.h"
 
 StatWindow::StatWindow(GameManager *manager, QWindow *parent)
-    : QQuickView(parent),
-      textModel(
-          FastTyping::TextScreen::TextListModel(manager->blob() + " ", this)) {
+    : QQuickView(parent), textModel(manager->blob() + " ", this) {
+    using namespace std::literals;
     using client::queries::get_game_stat_query;
     using nlohmann::json;
 
     auto stats = json::parse(
         client::web::socket().query(get_game_stat_query()).toStdString());
     qDebug() << QString::fromUtf8(stats.dump());
+    textModel.startTimer();
     auto model = dynamic_cast<LocalManager *>(manager)->getModel();
     for (int i = 0; i < model->rowCount(QModelIndex()); i++) {
         qDebug() << model->data(model->index(i, 0))

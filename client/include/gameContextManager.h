@@ -29,7 +29,7 @@ public:
     int get_user_id() const;
     int get_game_id() const;
     LocalManager *get_local_manager() const;
-    LocalManager *get_remote_manager() const;
+    WebManager *get_remote_manager() const;
     void set_context_from_create_query(nlohmann::json const &create_query);
     void set_context_from_join_query(nlohmann::json const &join_query);
     void reset_context();

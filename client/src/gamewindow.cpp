@@ -16,6 +16,7 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
                        GameManager *manager,
                        QWindow *parent)
     : QQuickView(parent), textModel(TextListModel(manager->blob(), this)) {
+    textModel.startTimer();
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     QQuickView::setGraphicsApi(QSGRendererInterface::OpenGL);
 
@@ -58,7 +59,8 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
                      &GameWindow::correct_slot);
     QObject::connect(manager, &GameManager::error_signal, this,
                      &GameWindow::error_slot);
-    QObject::connect(manager, &GameManager::end_signal, this, &GameWindow::end);
+    QObject::connect(ContextManager::get_instance().get_remote_manager(),
+                     &GameManager::end_signal, this, &GameWindow::end);
     QObject::connect(manager, &GameManager::print_signal, &textModel,
                      &TextListModel::onMove);
     QObject::connect(manager, &GameManager::errorOnPositionSignal, &textModel,

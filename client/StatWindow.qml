@@ -138,10 +138,18 @@ Item {
         antialiasing: true
         legend.visible: true
         LineSeries {
-            name: "WPM"
+            name: "raw"
+            id: wpmSeries
             axisY: ValueAxis {
                 min: 0
                 max: root.maxChartWPM
+                labelFormat: "%.0f"
+            }
+            axisX: ValueAxis {
+                labelFormat: "%.0f"
+                tickCount: wpmSeries.count + 1
+                min: 1
+                max: wpmSeries.count + 1
             }
 
             VXYModelMapper {
@@ -152,7 +160,7 @@ Item {
             Component.onCompleted: console.log("1", count)
         }
         LineSeries {
-            name: "raw"
+            name: "wpm"
 //            axisY: ValueAxis {
 //                min: 0
 //                max: root.maxChartWPM
@@ -170,7 +178,9 @@ Item {
             name: "errors"
             axisYRight: ValueAxis {
                 min: 0
-                max: root.maxChartErrors
+                max: root.maxChartErrors + 1
+                labelFormat: "%.0f"
+                tickCount: root.maxChartErrors + 2
             }
             VXYModelMapper {
                 model: root.chartModel

@@ -21,7 +21,7 @@ TextListModel::TextListModel(const QString &words, QObject *parent)
     QObject::connect(&client::responses::handler(),
                      &client::responses::APIHandler::stateUpdated, this,
                      &TextListModel::onUpdated);
-    statesTimer->start(200);
+    //    statesTimer->start(200);
 }
 
 int TextListModel::rowCount(const QModelIndex &) const {

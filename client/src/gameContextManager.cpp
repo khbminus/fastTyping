@@ -36,8 +36,8 @@ LocalManager *ContextManager::get_local_manager() const {
     return local_manager.get();
 }
 
-LocalManager *ContextManager::get_remote_manager() const {
-    return local_manager.get();
+WebManager *ContextManager::get_remote_manager() const {
+    return remote_manager.get();
 }
 
 void ContextManager::set_context(const std::vector<QString> &words) {
