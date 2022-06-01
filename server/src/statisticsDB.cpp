@@ -1,5 +1,6 @@
 #include "statisticsDB.h"
 #include <algorithm>
+#include <iomanip>
 
 namespace FastTyping::Server {
 
