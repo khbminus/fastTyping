@@ -144,7 +144,7 @@ json Game::getStatistics(int uid) {
     double convertToWpm = 60.0 / additionalInfo[uid].finishTime / 4;
     // TODO replace 4 with average word length
     result["body"]["wpm"] = additionalInfo[uid].correctChars * convertToWpm;
-    result["body"]["rawWpь"] = additionalInfo[uid].totalChars * convertToWpm;
+    result["body"]["rawWpm"] = additionalInfo[uid].totalChars * convertToWpm;
     result["body"]["correctChars"] = additionalInfo[uid].correctChars;
     result["body"]["totalChars"] = additionalInfo[uid].totalChars;
 
