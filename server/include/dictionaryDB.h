@@ -53,7 +53,6 @@ private:
     Database &db;
 };
 
-
 // corpus is a table in db;
 struct CorpusDictionariesStorage {
 public:
@@ -61,6 +60,7 @@ public:
     void dropCorpus();
     void addCorpus(std::string const &name, std::string const &filename);
     std::string getCorpusName(std::string const &name);
+
 private:
     Database &db;
 };

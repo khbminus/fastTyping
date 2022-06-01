@@ -134,12 +134,11 @@ std::string CorpusDictionariesStorage::getCorpusName(std::string const &name) {
 }
 
 void CorpusDictionariesStorage::addCorpus(std::string const &name,
-                                      std::string const &corpus) {
+                                          std::string const &corpus) {
     db.unanswered_query(
         "INSERT INTO CORPUS_DICTIONARIES(NAME, CORPUS)\n"
         "VALUES('" +
-        db.esc(name) + "', '" + db.esc(corpus) +
-        "') ON CONFLICT DO NOTHING;");
+        db.esc(name) + "', '" + db.esc(corpus) + "') ON CONFLICT DO NOTHING;");
 }
 
 std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
@@ -173,7 +172,8 @@ std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
     if (type == "corpus") {
         std::cout << "corpus" << std::endl;
         CorpusDictionariesStorage corpus;
-        return std::make_unique<FastTyping::Logic::CorpusDictionary>(corpus.getCorpusName(name));
+        return std::make_unique<FastTyping::Logic::CorpusDictionary>(
+            corpus.getCorpusName(name));
     }
 
     return std::make_unique<FastTyping::Logic::Dictionary>(
