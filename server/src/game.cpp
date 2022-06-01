@@ -94,7 +94,7 @@ json Game::addNewChar(int uid, const std::string &c) {
 json Game::backspace(int uid) {
     std::unique_lock l{mutex};
     auto &word = additionalInfo[uid].currentBuffer;
-     additionalInfo[uid].totalChars++;
+    additionalInfo[uid].totalChars++;
     auto checkResult = checkUnsafe(uid);
     if (word.empty()) {
         return {{"header", {{"type", "emptyBufferError"}}},

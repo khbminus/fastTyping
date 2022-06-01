@@ -198,7 +198,7 @@ Server::Server()
     };
 
     commonQueriesMap["exit"] = [&](const json &body, User &user) -> json {
-//        user.setWillToExit();
+        //        user.setWillToExit();
         return {};
     };
 
