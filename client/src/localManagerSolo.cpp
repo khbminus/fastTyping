@@ -99,7 +99,7 @@ void LocalManagerSolo::backspace_pressed() {
         }
         dictionary.previousWord();
     }
-    
+
     inputter.deleteSymbol();
     emit correctOnPositionSignal(dictionary.getCompletedSize() +
                                  inputter.getBuffer().size());

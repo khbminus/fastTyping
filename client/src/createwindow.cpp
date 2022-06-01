@@ -31,14 +31,14 @@ void CreateGameWindow::on_CreateButton_clicked() {
     using client::queries::create_game_query;
     using client::web::socket;
     bool isSolo = false;
-    if (ui->ModeBox->currentText() == "Single player"){
+    if (ui->ModeBox->currentText() == "Single player") {
         isSolo = true;
     }
     QString raw_response =
         socket().query(create_game_query(ui->WordsBox->currentText()));
     qDebug() << "create result:" << raw_response;
     json response = json::parse(raw_response.toStdString());
-    
+
     if (ensure_success(response)) {
         auto &context = ContextManager::get_instance();
         context.set_context_from_create_query(response, isSolo);

@@ -28,11 +28,12 @@ public:
         return currentPosition < words.size();
     }
     bool previousWord() override {
-        if (currentPosition == 0) return  false;
+        if (currentPosition == 0)
+            return false;
         currentPosition--;
         return true;
     }
-    
+
     QString blob() {
         return whole_line;
     }
@@ -82,12 +83,13 @@ class LocalSoloInputter : public Inputter {
 private:
     std::vector<QString> buffers;
     std::vector<std::size_t> maxBufSz;
+
 public:
     void addSymbol(QChar button) override {
         if (buffers.back().size() + 1 <= maxBufSz.back())
             buffers.back() += button;
     }
-    
+
     void deleteSymbol() override {
         if (!buffers.back().isEmpty()) {
             buffers.back().chop(1);
@@ -111,11 +113,10 @@ public:
         maxBufSz.push_back(maxSize);
         buffers.push_back("");
     }
-    
+
     std::size_t getBuffersCnt() {
         return buffers.size();
     }
-    
 };
 
 #endif
