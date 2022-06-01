@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(fasttyping_server)
 
 set(CMAKE_CXX_STANDARD 17)
-find_package(Boost 1.71 REQUIRED system log)
+find_package(Boost 1.71 REQUIRED system log locale filesystem)
 find_package(nlohmann_json 3.7.3 REQUIRED)
 find_package(Threads)
 include(FetchContent)

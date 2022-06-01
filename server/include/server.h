@@ -19,7 +19,7 @@ public:
     [[noreturn]] void polling();
 
 private:
-    static inline const int PORT = 1338;
+    static inline const int PORT = 1337;
 
     Server();
     boost::asio::io_context ioContext;

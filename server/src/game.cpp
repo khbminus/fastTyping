@@ -125,6 +125,17 @@ json Game::getStateOfUsers() {
         userStates.back()["id"] = uid;
         userStates.back()["wordsTyped"] = info.currentWord;
         userStates.back()["linesTyped"] = info.lineNumber;
+        int symbolsTyped = info.correctChars;
+
+        if (dictionary->getWordCount() != info.currentWord) {
+            std::string word = dictionary->getWord(info.currentWord);
+            auto bufferAsString =
+                std::accumulate(info.currentBuffer.begin(),
+                                info.currentBuffer.end(), std::string());
+            symbolsTyped +=
+                parser->getCorrectPrefixLength(bufferAsString, word);
+        }
+        userStates.back()["symbolsTyped"] = symbolsTyped;
     }
     return result;
 }
