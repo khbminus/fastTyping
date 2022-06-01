@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     auto signWindow = new SignWindow;
     auto registerWindow = new RegisterWindow;
     auto startGameWindow = new StartGameWindow;
-    auto waitGameWindow = new RegisterWindow;
+    auto waitGameWindow = new WaitGameWindow;
 
     controller.registerWindow("LoginWindow", loginWindow);
     controller.registerWindow("SignWindow", signWindow);

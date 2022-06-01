@@ -24,7 +24,7 @@ std::map<std::string, ResponseType> header_to_type{
     {"getStates", ResponseType::async},
     {"getNewLine", ResponseType::blocking},
     {"startGame", ResponseType::blocking},
-    {"waitGameStart", ResponseType::blocking}};
+    {"waitGameStart", ResponseType::async}};
 
 ResponseType APIHandler::type(QString const &line) const {
     json response = json::parse(line.toStdString());
@@ -53,6 +53,9 @@ void APIHandler::handle(QString const &line) {
     }
     if (response["header"]["queryType"] == "getStates") {
         emit stateUpdated(response);
+    }
+    if (response["header"]["queryType"] == "waitGameStart") {   
+        emit gameWaited();
     }
 }
 

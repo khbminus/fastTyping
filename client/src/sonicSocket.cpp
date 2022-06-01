@@ -1,7 +1,7 @@
 #include "sonicSocket.h"
 
 const char ip[] = "localhost";
-const short port = 1337;
+const short port = 1338;
 
 namespace client::web {
 client::web::SocketWrapper &socket(ResponseHandler *handler) {
