@@ -67,6 +67,9 @@ Item {
     function releaseKey(key) {
         keyboard.releaseKey(key)
     }
+    function highlightKey(key) {
+        keyboard.highlightKey(key)
+    }
 
     function shiftHighlight() {
         keyboard.shiftHighlight()
