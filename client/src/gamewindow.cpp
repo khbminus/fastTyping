@@ -111,13 +111,6 @@ void GameWindow::correct_slot() {
 void GameWindow::end() {
     auto &controller = FastTyping::WindowController::getInstance();
     textModel.stopTimer();
-    using client::queries::user_finish_query;  // BLAT' NU POCHEMU
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-
-    // client::web::socket().query(user_finish_query());
     ContextManager::get_instance().createStatisticsWindow();
     controller.setActiveWindow("StatWindow");
 }
