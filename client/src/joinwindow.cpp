@@ -12,15 +12,11 @@
 JoinWindow::JoinWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::JoinWindow) {
     ui->setupUi(this);
-
-  
 }
 
 JoinWindow::~JoinWindow() {
     delete ui;
 }
-
-
 
 void JoinWindow::on_JoinButton_clicked() {
     using client::queries::join_query;

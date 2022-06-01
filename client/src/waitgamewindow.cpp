@@ -1,9 +1,9 @@
 #include "waitgamewindow.h"
 #include <nlohmann/json.hpp>
 #include "errorHandler.h"
-#include "responseHandler.h"
 #include "gameContextManager.h"
 #include "queryTemplates.h"
+#include "responseHandler.h"
 #include "responseParse.h"
 #include "sonicSocket.h"
 #include "ui_waitgamewindow.h"
@@ -13,7 +13,8 @@ WaitGameWindow::WaitGameWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::WaitGameWindow) {
     ui->setupUi(this);
 
-    QObject::connect(&client::responses::handler(), &client::responses::APIHandler::gameWaited, this,
+    QObject::connect(&client::responses::handler(),
+                     &client::responses::APIHandler::gameWaited, this,
                      &WaitGameWindow::gameWaited);
 }
 
@@ -24,7 +25,6 @@ WaitGameWindow::~WaitGameWindow() {
 void WaitGameWindow::on_ReturnButton_clicked() {
     // TODO
 }
-
 
 void WaitGameWindow::gameWaited() {
     auto &controller = FastTyping::WindowController::getInstance();

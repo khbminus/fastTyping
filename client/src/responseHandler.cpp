@@ -54,7 +54,7 @@ void APIHandler::handle(QString const &line) {
     if (response["header"]["queryType"] == "getStates") {
         emit stateUpdated(response);
     }
-    if (response["header"]["queryType"] == "waitGameStart") {   
+    if (response["header"]["queryType"] == "waitGameStart") {
         emit gameWaited();
     }
 }
