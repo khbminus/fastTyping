@@ -19,6 +19,9 @@
 #include "windowcontroller.h"
 
 int main(int argc, char *argv[]) {
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    QQuickView::setGraphicsApi(QSGRendererInterface::OpenGL);
+
     QApplication a(argc, argv);
     QApplication::setAttribute(Qt::AA_ForceRasterWidgets, false);
     auto &keyboard = FastTyping::Keyboard::KeyboardModel::getInstance();
