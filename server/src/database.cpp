@@ -103,14 +103,14 @@ void UserStorage::setPassword(int id, const std::string &passw) {
 std::string UserStorage::getName(int id) {
     std::string sql =
         "SELECT NAME FROM USERS WHERE ID = " + std::to_string(id) + ";";
-    return db.get_column(sql, "NAME");
+    return db.get_column<std::string>(sql, "NAME");
 }
 
 std::string UserStorage::getPassword(int id) {
     std::string sql =
         "SELECT PASSWORD FROM USERS WHERE ID = " + std::to_string(id) +
         " LIMIT 1;";
-    return db.get_column(sql, "PASSWORD");
+    return db.get_column<std::string>(sql, "PASSWORD");
 }
 
 // creating new user or return existed one's id
@@ -165,7 +165,7 @@ bool DictionariesStorage::dictionaryExists(std::string const &dictionary_name) {
 }
 
 std::string DictionariesStorage::getType(std::string const &name) {
-    return db.get_column(
+    return db.get_column<std::string>(
         "SELECT TYPE "
         "FROM DICTIONARIES "
         "WHERE NAME = '" +

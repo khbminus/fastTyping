@@ -3,6 +3,7 @@
 #include <boost/locale.hpp>
 #include <boost/log/trivial.hpp>
 #include <iostream>
+#include <ratio>
 #include "constGame.h"
 
 namespace FastTyping::Server {
@@ -16,17 +17,30 @@ bool Game::isEndedUnsafe(int uid) {
 }
 
 bool Game::getGameStarted() {
-    return gameStarted;
+    std::unique_lock l{mutex};
+    return gameStartTime.has_value();
 }
 
 int Game::getHostId() {
+    std::unique_lock l{mutex};
     return hostId;
 }
 
 void Game::startGame() {
-    gameStarted = true;
+    gameStartTime = std::chrono::high_resolution_clock::now();
     cond_gameStarted.notify_all();
 }
+
+void Game::userFinished(int uid) {
+    using namespace std::chrono;
+    assert(gameStartTime.has_value());
+    duration<double> time_span = duration_cast<duration<double>>(
+        high_resolution_clock::now() - gameStartTime.value());
+    additionalInfo[uid].finishTime = time_span.count();
+    std::cerr << "Finis time uf user " << uid << " "
+              << additionalInfo[uid].finishTime << '\n';
+}
+
 json Game::checkUnsafe(int uid) {
     json result;
     std::string rightWord =
@@ -57,14 +71,21 @@ json Game::check(int uid) {
 
 json Game::addNewChar(int uid, const std::string &c) {
     std::unique_lock l{mutex};
+    additionalInfo[uid].totalChars++;
     additionalInfo[uid].currentBuffer.push_back(c);
     auto checkResult = checkUnsafe(uid);
+    if (checkResult["body"]["isPrefixCorrect"] == true ||
+        checkResult["body"]["isFullCorrect"] == true) {  // space case
+        additionalInfo[uid].correctChars++;
+    }
     if (checkResult["body"]["isFullCorrect"] == true) {
         auto &info = additionalInfo[uid];
-        info.charsTypedCorrect += info.currentBuffer.size();
         info.currentBuffer.clear();
         info.currentWord++;
         checkResult["body"]["isEnd"] = isEndedUnsafe(uid);
+        if (isEndedUnsafe(uid)) {
+            userFinished(uid);
+        }
         return checkResult;
     }
     return checkResult;
@@ -72,9 +93,14 @@ json Game::addNewChar(int uid, const std::string &c) {
 json Game::backspace(int uid) {
     std::unique_lock l{mutex};
     auto &word = additionalInfo[uid].currentBuffer;
+    additionalInfo[uid].totalChars++;
+    auto checkResult = checkUnsafe(uid);
     if (word.empty()) {
         return {{"header", {{"type", "emptyBufferError"}}},
                 {"body", {{"text", "can't use backspace with empty buffer"}}}};
+    }
+    if (checkResult["body"]["isPrefixCorrect"] == true) {
+        additionalInfo[uid].correctChars--;
     }
     word.pop_back();
     return checkUnsafe(uid);
@@ -98,7 +124,7 @@ json Game::getStateOfUsers() {
         userStates.back()["id"] = uid;
         userStates.back()["wordsTyped"] = info.currentWord;
         userStates.back()["linesTyped"] = info.lineNumber;
-        int symbolsTyped = info.charsTypedCorrect;
+        int symbolsTyped = info.correctChars;
 
         if (dictionary->getWordCount() != info.currentWord) {
             std::string word = dictionary->getWord(info.currentWord);
@@ -110,6 +136,18 @@ json Game::getStateOfUsers() {
         }
         userStates.back()["symbolsTyped"] = symbolsTyped;
     }
+    return result;
+}
+json Game::getStatistics(int uid) {
+    std::unique_lock l{mutex};
+    json result = {{"header", {{"type", "GameStatistics"}}}};
+    double convertToWpm = 60.0 / additionalInfo[uid].finishTime / 4;
+    // TODO replace 4 with average word length
+    result["body"]["wpm"] = additionalInfo[uid].correctChars * convertToWpm;
+    result["body"]["rawWpь"] = additionalInfo[uid].totalChars * convertToWpm;
+    result["body"]["correctChars"] = additionalInfo[uid].correctChars;
+    result["body"]["totalChars"] = additionalInfo[uid].totalChars;
+
     return result;
 }
 void Game::joinUser(int uid) {

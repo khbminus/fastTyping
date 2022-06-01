@@ -59,6 +59,7 @@ void ContextManager::set_context(const std::vector<QString> &words) {
     auto &controller = FastTyping::WindowController::getInstance();
     window = new GameWindow({local_manager.get(), remote_manager.get()},
                             local_manager.get());
+
     controller.registerWindow("GameWindow", window);
 }
 

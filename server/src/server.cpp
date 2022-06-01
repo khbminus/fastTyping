@@ -188,6 +188,20 @@ Server::Server()
         return user.getGame()->getStateOfUsers();
     };
 
+    commonQueriesMap["getGameStatistics"] = [&](const json &body,
+                                                User &user) -> json {
+        if (user.getGame() == nullptr) {
+            return {{"header", {{"type", "notInGameError"}}},
+                    {"body", {{"text", "not in game"}}}};
+        }
+        return user.getGame()->getStatistics(user.getId());
+    };
+
+    commonQueriesMap["exit"] = [&](const json &body, User &user) -> json {
+        //        user.setWillToExit();
+        return {};
+    };
+
     commonQueriesMap["getDictionaries"] = [&](json const &body,
                                               User &user) -> json {
         json result = json::object();

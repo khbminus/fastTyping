@@ -3,6 +3,7 @@
 #include <type_traits>
 #include "dictionaryDB.h"
 #include "doctest.h"
+#include "statisticsDB.h"
 #include "user.h"
 
 using namespace FastTyping::Server;
@@ -42,7 +43,7 @@ TEST_CASE("Database") {
     int b = storage.getId(name2);
     CHECK(a + 1 == b);
     ConstDictionariesStorage d;
-    CHECK(d.getLineConst("Aboba") == "This is sample don't judge me");
+    //    CHECK(d.getLineConst("Aboba") == "This is sample don't judge me");
     CHECK(storage.getId(name1) == a);
     CHECK(storage.getId(name1) != b);
     CHECK(b == storage.getId(name2));
@@ -96,4 +97,32 @@ TEST_CASE("DB mistakes") {
         storage.getTopMistakes(0, 1, "qwerty");
     CHECK(mistakes_one.size() == 1);
     CHECK(mistakes_one == std::vector<std::pair<char, char>>{{'a', 'a'}});
+}
+
+TEST_CASE("Statistics") {
+    StatisticsStorage flusher;
+    flusher.dropStatistics();
+    StatisticsStorage storage;
+    storage.addGame(1, "const", 23.5, 25.55555, 10, 16, 30.2);
+    storage.addGame(0, "const", 23.5, 25.55555, 10, 16, 30.2);
+    storage.addGame(0, "const", 24.5, 25.55555, 10, 16, 28);
+    storage.addGame(0, "const", 21, 25.55555, 10, 16, 30.3);
+    CHECK(storage.getAvgWpm(0) == 23);
+    CHECK(storage.getMaxWpm(0) == 24.5);
+    CHECK(storage.getGamesAmount(0) == 3);
+    CHECK(storage.getHistory(0) ==
+          std::vector<gameStatistics>{{0, "const", 21, 25.56, 10, 16, 30.3},
+                                      {0, "const", 24.5, 25.56, 10, 16, 28},
+                                      {0, "const", 23.5, 25.56, 10, 16, 30.2}});
+
+    CHECK(storage.getHistory(0, 2) ==
+          std::vector<gameStatistics>{{0, "const", 21, 25.56, 10, 16, 30.3},
+                                      {0, "const", 24.5, 25.56, 10, 16, 28}});
+
+    CHECK(storage.getUserDictStatistics(0) ==
+          std::vector<dictStatistics>{{0, "const", 24.5, 23, 3}});
+
+    CHECK(storage.getTopDictStatistics("const") ==
+          std::vector<dictStatistics>{{0, "const", 24.5, 23, 3},
+                                      {1, "const", 23.5, 23.5, 1}});
 }

@@ -36,9 +36,10 @@ void ConstDictionariesStorage::dropConst() {
 }
 
 std::string ConstDictionariesStorage::getLineConst(std::string const &name) {
-    return db.get_column("SELECT VALUE FROM CONST_DICTIONARIES WHERE NAME = '" +
-                             db.esc(name) + "';",
-                         "VALUE");
+    return db.get_column<std::string>(
+        "SELECT VALUE FROM CONST_DICTIONARIES WHERE NAME = '" + db.esc(name) +
+            "';",
+        "VALUE");
 }
 
 void ConstDictionariesStorage::addConst(std::string const &name,
@@ -63,7 +64,7 @@ void FileDictionariesStorage::dropFile() {
 }
 
 std::string FileDictionariesStorage::getFileName(std::string const &name) {
-    return db.get_column(
+    return db.get_column<std::string>(
         "SELECT FILENAME FROM FILE_DICTIONARIES WHERE NAME = '" + db.esc(name) +
             "';",
         "FILENAME");
