@@ -1,7 +1,7 @@
 #include "queryTemplates.h"
 #include <algorithm>
 #include <iostream>
-#include <nlohmann/json.hpp >
+#include <nlohmann/json.hpp>
 #include <vector>
 
 using nlohmann::json;
