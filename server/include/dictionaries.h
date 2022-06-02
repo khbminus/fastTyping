@@ -33,7 +33,9 @@ private:
 };
 
 struct CorpusDictionary : AbstractDictionary {
-    explicit CorpusDictionary(std::string const &corpus);
+    explicit CorpusDictionary(std::string const &corpus,
+                              bool adapt = false,
+                              int user_id = -1);
     [[nodiscard]] std::string getWord(int index) const override;
     [[nodiscard]] size_t getWordCount() const override;
     [[nodiscard]] std::vector<std::string> getLine(int index) const override;

@@ -56,7 +56,9 @@ FileDictionary::FileDictionary(std::string const &filename) : file(filename) {
     return 1;
 }
 
-CorpusDictionary::CorpusDictionary(std::string const &corpus) {
+CorpusDictionary::CorpusDictionary(std::string const &corpus,
+                                   bool adapt,
+                                   int user_id) {
     using FastTyping::Server::Database;
 
     Database &db = Database::get_instance();
@@ -102,6 +104,7 @@ DLLDictionary::DLLDictionary(std::string const &filename) {
 [[nodiscard]] std::size_t DLLDictionary::getWordCount() const {
     return words.size();
 }
+
 [[nodiscard]] std::vector<std::string> DLLDictionary::getLine(int index) const {
     return words;
 }

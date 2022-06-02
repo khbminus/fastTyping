@@ -143,7 +143,7 @@ void CorpusDictionariesStorage::addCorpus(std::string const &name,
 }
 
 std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
-    std::string const &name) {
+    std::string const &name, int user_id) {
     DictionariesStorage dictionaries;
 
     if (!dictionaries.dictionaryExists(name)) {
