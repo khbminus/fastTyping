@@ -32,7 +32,7 @@ void ContextManager::set_user_id(int new_id) {
     user_id = new_id;
 }
 
-GameManager *ContextManager::get_local_manager() const {
+LocalManager *ContextManager::get_local_manager() const {
     return local_manager.get();
 }
 

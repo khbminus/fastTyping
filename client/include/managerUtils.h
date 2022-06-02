@@ -88,9 +88,12 @@ private:
     std::vector<QString> buffers;
     std::vector<std::size_t> maxBufSz;
 public:
-    void addSymbol(QChar button) override {
-        if (buffers.back().size() + 1 <= maxBufSz.back())
+    bool addSymbol(QChar button) override {
+        if (buffers.back().size() + 1 <= maxBufSz.back()) {
             buffers.back() += button;
+            return true;
+        }
+        return false;
     }
     
     void deleteSymbol() override {

@@ -33,7 +33,7 @@ bool LocalManagerSolo::check_symbol(int position) {
 }
 
 LocalManagerSolo::LocalManagerSolo(std::vector<QString> a_words)
-    : dictionary(std::move(a_words)) {
+    : LocalManager(std::move(a_words)) {
     inputter.setBufferMaxSize(dictionary.getCurrentWord().size() + 1);
 }
 

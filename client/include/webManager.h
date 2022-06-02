@@ -20,6 +20,7 @@ public:
     QString get_buffer() override;
     QVariant next() override;
     QString blob() override;
+
 public slots:
     void end_slot();
     void error_slot();
