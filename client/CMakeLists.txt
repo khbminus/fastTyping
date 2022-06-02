@@ -88,6 +88,9 @@ set(PROJECT_SOURCES
 
         include/WpmChartModel.h
         src/WpmChartModel.cpp
+
+        include/profileWindow.h
+        src/profileWindow.cpp
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

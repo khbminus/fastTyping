@@ -24,6 +24,7 @@ public:
 private slots:
     void on_JoinButton_clicked();
     void on_CreateButton_clicked();
+    void on_ProfileButton_clicked();
 
 private:
     Ui::MainWindow *ui;

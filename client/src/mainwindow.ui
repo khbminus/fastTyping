@@ -20,7 +20,7 @@
                <x>320</x>
                <y>200</y>
                <width>221</width>
-               <height>81</height>
+               <height>89</height>
            </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -35,6 +35,13 @@
                <widget class="QPushButton" name="JoinButton">
                    <property name="text">
                        <string>Join an existing game</string>
+                   </property>
+               </widget>
+           </item>
+           <item>
+               <widget class="QPushButton" name="ProfileButton">
+                   <property name="text">
+                       <string>Profile</string>
                    </property>
                </widget>
            </item>

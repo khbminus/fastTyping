@@ -44,3 +44,8 @@ void MainWindow::on_CreateButton_clicked() {
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("CreateWindow");
 }
+
+void MainWindow::on_ProfileButton_clicked() {
+    auto &controller = FastTyping::WindowController::getInstance();
+    controller.setActiveWindow("ProfileWindow");
+}
