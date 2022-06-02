@@ -67,7 +67,9 @@ void LocalManager::key_pressed(QChar button) {
     }
 
     if (!check_symbol(inputter.getBuffer().size() - 1)) {
-        wpmChartModel->errorSymbol();
+        wpmChartModel->errorSymbol(
+            inputter.getBuffer().back(),
+            dictionary.getCurrentWord()[inputter.getBuffer().size() - 1]);
         emit errorOnPositionSignal(dictionary.getCompletedSize() +
                                    inputter.getBuffer().size() - 1);
     } else {
