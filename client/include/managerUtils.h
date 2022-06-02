@@ -45,6 +45,9 @@ public:
             [&](const QString &a, const QString &b) { return a + " " + b; });
         return ans.trimmed();
     }
+    [[nodiscard]] bool isEnded() const {
+        return currentPosition == words.size();
+    }
 };
 
 class LocalInputter : public Inputter {

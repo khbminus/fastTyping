@@ -42,6 +42,9 @@ bool LocalManager::is_correct_word() {
 }
 
 void LocalManager::key_pressed(QChar button) {
+    if (dictionary.isEnded()) {
+        return;
+    }
     if (button == ' ') {
         if (inputter.getBuffer() == dictionary.getCurrentWord()) {
             inputter.clearBuffer();
