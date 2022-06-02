@@ -42,7 +42,6 @@ StatWindow::StatWindow(GameManager *manager, QWindow *parent)
          {"gameId", ContextManager::get_instance().get_game_id()}});
     setSource(QUrl(QString::fromUtf8("qrc:/StatWindow.qml")));
 
-
     client::web::socket().send(send_typos_query(model->getAllErrors()));
 
     QObject::connect(rootObject(), SIGNAL(returnPressed()), this,

@@ -1,8 +1,8 @@
 #include "queryTemplates.h"
-#include <iostream>
-#include <vector>
 #include <algorithm>
+#include <iostream>
 #include <nlohmann/json.hpp >
+#include <vector>
 
 using nlohmann::json;
 
@@ -128,14 +128,15 @@ QString getStatesQuery() {
     return dump(result);
 }
 
-QString send_typos_query(QList<std::pair<QChar, QChar>> typos){
+QString send_typos_query(QList<std::pair<QChar, QChar>> typos) {
     json result;
     json words = json::array({"This"});
 
     std::vector<std::string> errors;
-    std::transform(typos.begin(), typos.end(), std::back_inserter(errors), [](std::pair<QChar, QChar> a){
-        return (QString(a.first) + a.second).toStdString();
-    });
+    std::transform(typos.begin(), typos.end(), std::back_inserter(errors),
+                   [](std::pair<QChar, QChar> a) {
+                       return (QString(a.first) + a.second).toStdString();
+                   });
 
     result["header"] = {{"type", "addTypos"}};
     result["body"] = {{"typos", json(errors)}};

@@ -171,7 +171,7 @@ dictionary_instance(std::string const &name, int user_id, bool adapt) {
     }
 
     if (type == "corpus") {
-        std::cout << "corpus"    << std::endl;
+        std::cout << "corpus" << std::endl;
         CorpusDictionariesStorage corpus;
         return std::make_unique<FastTyping::Logic::CorpusDictionary>(
             corpus.getCorpusName(name), adapt, user_id);

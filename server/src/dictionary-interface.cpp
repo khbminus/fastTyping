@@ -40,7 +40,6 @@ int main() {
         std::stringstream raw;
         raw << top1000.rdbuf();
         add_corpus_dictionary("EnglishTop1000", to_words(raw.str()));
-
     }
 
     add_corpus_dictionary("test", {"name", "main", "moon"});

@@ -1,9 +1,9 @@
 #ifndef QUERY_TEMPLATES_H
 #define QUERY_TEMPLATES_H
 
-#include <QString>
-#include <QList>
 #include <QChar>
+#include <QList>
+#include <QString>
 
 namespace client::queries {
 QString join_query(int id);
