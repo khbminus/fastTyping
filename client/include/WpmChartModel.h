@@ -18,8 +18,10 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex &index,
                                 int role = Qt::DisplayRole) const override;
 
+    [[nodiscard]] QList<std::pair<QChar, QChar>> getAllErrors() const;
+
     void correctSymbol();
-    void errorSymbol();
+    void errorSymbol(QChar have, QChar shouldBe);
     void backspace();
 
     void startGame();
@@ -33,6 +35,7 @@ private:
     QList<int> correctPresses;
     QList<int> incorrectPresses;
     QList<int> allPresses;
+    QList<std::pair<QChar, QChar>> incorrectPressedWithButtons;
     QString wholeText;
     std::chrono::high_resolution_clock::time_point startTime;
     std::chrono::high_resolution_clock clock;
