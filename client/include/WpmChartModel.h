@@ -21,7 +21,7 @@ public:
     [[nodiscard]] QList<std::pair<QChar, QChar>> getAllErrors() const;
 
     void correctSymbol();
-    void errorSymbol(QChar shouldBe, QChar have);
+    void errorSymbol(QChar have, QChar shouldBe);
     void backspace();
 
     void startGame();
