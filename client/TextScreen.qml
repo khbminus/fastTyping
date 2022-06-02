@@ -7,6 +7,7 @@ Rectangle {
     border.width: 1
     opacity: 1
     clip: true
+    radius: 6
     property alias model : rootList.model
     function moveCursor1(position) {
             if (position >= 1) {
@@ -44,11 +45,15 @@ Rectangle {
                 width: charText.width
 
                 Text {
+                    FontLoader {
+                        id: loader
+                        source: "https://dtinth.github.io/comic-mono-font/ComicMono.ttf"
+                    }
                     anchors.top: parent.top
                     id: charText
                     text: row.letter
                     color: (row.isCorrect ? "black" : "white")
-                    font.family: "monospace"
+                    font.family: loader.name
                     font.pixelSize: 34
                 }
             }

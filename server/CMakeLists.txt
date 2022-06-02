@@ -55,12 +55,12 @@ add_executable(generator-tests src/generator.cpp
 target_include_directories(generator-tests PRIVATE ${Boost_INCLUDE_DIRS} include)
 target_link_libraries(generator-tests ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
 
-add_executable(dictionaries-interface src/dictionaryDB.cpp 
-               src/dictionaries.cpp
-               include/dictionaries.h      
-               src/dictionary-interface.cpp 
-               src/database.cpp
-               include/database.h)
+add_executable(dictionaries-interface src/dictionaryDB.cpp
+        src/dictionaries.cpp
+        include/dictionaries.h
+        src/dictionary-interface.cpp
+        src/database.cpp
+        include/database.h)
 target_include_directories(dictionaries-interface PRIVATE ${Boost_INCLUDE_DIRS} include)
 target_link_libraries(dictionaries-interface ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS} ${Boost_LIBRARIES} ${NETWORKING_LIBS} ${PQXX_LIBRARIES})
 
