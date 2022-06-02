@@ -103,6 +103,10 @@ CorpusDictionary::CorpusDictionary(std::string const &corpus,
                        return row["WORD"].c_str();
                    });
     work.commit();
+
+    if (words.empty()) {
+        words = {"No", "typos", "registered"};
+    }
 }
 
 [[nodiscard]] std::string CorpusDictionary::getWord(int index) const {
@@ -143,12 +147,16 @@ DLLDictionary::DLLDictionary(std::string const &filename) {
 }
 
 void add_corpus_dictionary(std::string const &name,
-                           std::vector<std::string> const &words) {
+                           std::vector<std::string> words) {
     using FastTyping::Server::Database;
     Database &db = Database::get_instance();
 
     db.unanswered_query("CREATE TABLE IF NOT EXISTS " + db.esc(name) +
                         "(WORD TEXT UNIQUE);");
+
+    std::transform(words.begin(), words.end(), words.begin(),
+                   [&](std::string const &line) { return db.esc(line); });
+
     std::string sql = "INSERT INTO " + db.esc(name) +
                       " (WORD)\n"
                       "VALUES('" +

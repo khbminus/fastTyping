@@ -19,6 +19,7 @@ public:
         return instance;
     }
     ~Database();
+    std::string esc(std::string const &raw);
 
 private:
     friend struct UserStorage;
@@ -32,9 +33,8 @@ private:
     friend struct ::FastTyping::Logic::CorpusDictionary;
     friend void ::FastTyping::Logic::add_corpus_dictionary(
         std::string const &name,
-        std::vector<std::string> const &words);
+        std::vector<std::string> words);
     Database();
-    std::string esc(std::string const &raw);
     template <typename T = std::string>
     T get_column(std::string const &query, std::string const &column) {
         std::unique_lock l{mutex};

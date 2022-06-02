@@ -45,7 +45,8 @@ private:
     std::vector<std::string> words;
 };
 
-void add_corpus_dictionary(std::vector<std::string> const &words);
+void add_corpus_dictionary(std::string const &name,
+                           std::vector<std::string> words);
 
 }  // namespace FastTyping::Logic
 

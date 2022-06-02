@@ -1,3 +1,5 @@
+#include <fstream>
+#include <sstream>
 #include "database.h"
 #include "dictionaries.h"
 #include "dictionaryDB.h"
@@ -8,10 +10,6 @@ using namespace FastTyping::Logic;
 int main() {
     DictionariesStorage flusher;
     flusher.dropDictionaries();
-
-    MistakesStorage mistakes;
-    UserStorage users;
-    mistakes.addMistake(users.getId("lol"), 'a', 'i', "qwerty");
 
     DictionariesStorage storage;
     storage.addDictionary("Aboba", false, "const");
@@ -32,6 +30,18 @@ int main() {
 
     CorpusDictionariesStorage corpus;
     corpus.addCorpus("English", "test");
+
+    std::ifstream top1000("../common/dictionary/english_top1000.txt");
+
+    if (top1000.is_open()) {
+        storage.addDictionary("EnglishTop1000", true, "corpus");
+        corpus.addCorpus("EnglishTop1000", "EnglishTop1000");
+
+        std::stringstream raw;
+        raw << top1000.rdbuf();
+        add_corpus_dictionary("EnglishTop1000", to_words(raw.str()));
+
+    }
 
     add_corpus_dictionary("test", {"name", "main", "moon"});
 

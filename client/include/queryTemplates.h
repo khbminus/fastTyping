@@ -2,6 +2,8 @@
 #define QUERY_TEMPLATES_H
 
 #include <QString>
+#include <QList>
+#include <QChar>
 
 namespace client::queries {
 QString join_query(int id);
@@ -21,7 +23,7 @@ QString get_dictionaries_query();
 QString get_game_stat_query();
 QString getStatesQuery();
 QString get_game_stat_query();
-QString send_typos_query(QStringList const &typos);
+QString send_typos_query(QList<std::pair<QChar, QChar>> typos);
 }  // namespace client::queries
 
 #endif
