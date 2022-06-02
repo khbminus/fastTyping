@@ -60,7 +60,9 @@ private:
 };
 
 std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
-    std::string const &name, int user_id = -1, bool adapt = false);
+    std::string const &name,
+    int user_id = -1,
+    bool adapt = false);
 
 }  // namespace FastTyping::Server
 

@@ -126,13 +126,12 @@ QString getStatesQuery() {
     return dump(result);
 }
 
-QString send_typos_query(QStringList const& typos) {
+QString send_typos_query(QStringList const &typos) {
     json result;
     json words = json::array({"This"});
 
     result["header"] = {{"type", "createGame"}};
     return dump(result);
 }
-
 
 }  // namespace client::queries

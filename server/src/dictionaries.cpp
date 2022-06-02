@@ -62,12 +62,10 @@ CorpusDictionary::CorpusDictionary(std::string const &corpus,
     using FastTyping::Server::Database;
     using FastTyping::Server::MistakesStorage;
 
-
     std::cout << "in constructor" << std::endl;
     std::string sql;
 
     Database &db = Database::get_instance();
-
 
     if (!adapt) {
         sql =
@@ -91,7 +89,8 @@ CorpusDictionary::CorpusDictionary(std::string const &corpus,
             "WORD LIKE '%" +
             boost::join(mistakesStrings, "%'\n OR WORD LIKE '%") + "%' ";
 
-        sql = "SELECT * FROM " + db.esc(corpus) + " WHERE " + condition + " ORDER BY random() LIMIT 20;";
+        sql = "SELECT * FROM " + db.esc(corpus) + " WHERE " + condition +
+              " ORDER BY random() LIMIT 20;";
     }
 
     std::unique_lock l{db.mutex};

@@ -20,9 +20,8 @@ void User::setGame(std::shared_ptr<Game> game) {
 void User::waitStartGame() {
     std::unique_lock l{mutex};
     if (currentGame->getHostId() != getId()) {
-        currentGame->cond_gameStarted.wait(l, [this]() {
-            return currentGame->getGameStarted();
-        });
+        currentGame->cond_gameStarted.wait(
+            l, [this]() { return currentGame->getGameStarted(); });
     }
 }
 
