@@ -1,4 +1,7 @@
-<h1>FASTYT<span style="color:pink;">PIG</span>N</h1>
+![image-alt-name](./logo.png)
+
+
+
 
 Тренажер печати  с возможностью соревновательной игры
 
