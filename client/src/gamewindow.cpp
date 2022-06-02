@@ -23,7 +23,8 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
     setInitialProperties(
         {{"keyModel", QVariant::fromValue(
                           &FastTyping::Keyboard::KeyboardModel::getInstance())},
-         {"textModel", QVariant::fromValue(&textModel)}});
+         {"textModel", QVariant::fromValue(&textModel)},
+         {"gameId", ContextManager::get_instance().get_game_id()}});
     setSource(QUrl(QString::fromUtf8("qrc:/GameWindow.qml")));
 
     connect(this, SIGNAL(press(QVariant)), rootObject(),

@@ -37,7 +37,8 @@ StatWindow::StatWindow(GameManager *manager, QWindow *parent)
          {"charsCorrect", stats["body"]["correctChars"].get<int>()},
          {"chartModel", QVariant::fromValue(model)},
          {"maxChartWPM", model->getMaxWPM()},
-         {"maxChartErrors", model->getMaxErrors()}});
+         {"maxChartErrors", model->getMaxErrors()},
+         {"gameId", ContextManager::get_instance().get_game_id()}});
     setSource(QUrl(QString::fromUtf8("qrc:/StatWindow.qml")));
 
     QObject::connect(rootObject(), SIGNAL(returnPressed()), this,
