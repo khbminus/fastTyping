@@ -45,6 +45,7 @@ void LocalManager::key_pressed(QChar button) {
     if (button == ' ') {
         if (inputter.getBuffer() == dictionary.getCurrentWord()) {
             inputter.clearBuffer();
+            wpmChartModel->backspace();
             if (!dictionary.nextWord()) {
                 emit end_signal();
                 return;
@@ -63,8 +64,13 @@ void LocalManager::key_pressed(QChar button) {
     }
 
     if (!check_symbol(inputter.getBuffer().size() - 1)) {
+        wpmChartModel->errorSymbol();
         emit errorOnPositionSignal(dictionary.getCompletedSize() +
                                    inputter.getBuffer().size() - 1);
+    } else {
+        wpmChartModel->correctSymbol();
+        emit correctOnPositionSignal(dictionary.getCompletedSize() +
+                                     inputter.getBuffer().size() - 1);
     }
     emit print_signal(inputter.getBuffer(), dictionary.getCompletedSize() +
                                                 inputter.getBuffer().size());

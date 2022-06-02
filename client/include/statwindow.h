@@ -2,23 +2,25 @@
 #define STATWINDOW_H
 
 #include <QMainWindow>
+#include <QQuickView>
+#include "gameManager.h"
+#include "textScreen.h"
 
 namespace Ui {
 class StatWindow;
 }
 
-class StatWindow : public QMainWindow {
+class StatWindow : public QQuickView {
     Q_OBJECT
 
 public:
-    explicit StatWindow(QWidget *parent = nullptr);
-    ~StatWindow();
+    explicit StatWindow(GameManager *manager, QWindow *parent = nullptr);
 
 private slots:
     void on_ReturnButton_clicked();
 
 private:
-    Ui::StatWindow *ui;
+    FastTyping::TextScreen::TextListModel textModel;
 };
 
 #endif  // STATWINDOW_H

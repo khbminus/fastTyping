@@ -100,6 +100,15 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex &index,
                                 int role = Qt::DisplayRole) const override;
 
+    void stopTimer() {
+        statesTimer->stop();
+    }
+    void startTimer() {
+        statesTimer->start(200);
+    }
+
+    void setCursorPosition(int position);
+
 signals:
     void cursorMoved(QVariant position);
 public slots:
