@@ -17,6 +17,11 @@ StartGameWindow::~StartGameWindow() {
     delete ui;
 }
 
+void StartGameWindow::showEvent(QShowEvent *event) {
+    ui->game_id->setText(QString::fromStdString(
+        std::to_string(ContextManager::get_instance().get_game_id())));
+}
+
 void StartGameWindow::on_StartGameButton_clicked() {
     using client::queries::start_query;
     using client::responses::ensure_success;
@@ -24,10 +29,13 @@ void StartGameWindow::on_StartGameButton_clicked() {
     using client::web::socket;
     using nlohmann::json;
     QString raw_response = socket().query(start_query());
-    qDebug() << "YEEEES";
     qDebug() << "start result: " << raw_response;
     json response = json::parse(raw_response.toStdString());
     if (ensure_success(response)) {
+        ContextManager::get_instance()
+            .get_local_manager()
+            ->getModel()
+            ->startGame();
         auto &controller = FastTyping::WindowController::getInstance();
         controller.setActiveWindow("GameWindow");
     }

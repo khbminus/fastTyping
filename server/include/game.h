@@ -1,6 +1,7 @@
 #ifndef FASTTYPING_GAME_H
 #define FASTTYPING_GAME_H
 #include <abc.h>
+#include <chrono>
 #include <condition_variable>
 #include <memory>
 #include <mutex>
@@ -32,6 +33,7 @@ public:
     bool getGameStarted();
     int getHostId();
     void startGame();
+    void userFinished(int uid);
 
     // character is a string due to UTF-8
     json addNewChar(int uid, const std::string &c);
@@ -39,6 +41,7 @@ public:
     json check(int uid);
     json getNewLine(int uid);
     json getStateOfUsers();
+    json getStatistics(int uid);
     void joinUser(int uid);
 
     std::condition_variable cond_gameStarted;
@@ -51,15 +54,18 @@ private:
     int hostId;
     int id = 0;
     static inline int nextId = 0;
-    bool gameStarted = false;
+    std::optional<std::chrono::high_resolution_clock::time_point> gameStartTime;
     std::unique_ptr<FastTyping::Logic::AbstractParser> parser;
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;
 
     struct AdditionalUserInfo {
         std::vector<std::string> currentBuffer;
         int currentWord = 0;
-        int charsTypedCorrect = 0;
         int lineNumber = 0;
+        // statistics
+        int correctChars = 0;
+        int totalChars = 0;
+        double finishTime = -1;
     };
 
     mutable std::mutex mutex;

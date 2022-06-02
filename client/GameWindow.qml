@@ -54,6 +54,7 @@ Item {
         id: returnButton
         text: "return"
         onClicked: root.returnPressed()
+        focusPolicy: Qt.ClickFocus
     }
 
     function moveCursor1(position) {
@@ -65,6 +66,9 @@ Item {
 
     function releaseKey(key) {
         keyboard.releaseKey(key)
+    }
+    function highlightKey(key) {
+        keyboard.highlightKey(key)
     }
 
     function shiftHighlight() {

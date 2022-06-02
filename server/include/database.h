@@ -23,9 +23,10 @@ public:
 private:
     friend struct UserStorage;
     friend struct DictionariesStorage;
-    friend struct MistakesStorage;
     friend struct ConstDictionariesStorage;
     friend struct FileDictionariesStorage;
+    friend struct MistakesStorage;
+    friend struct StatisticsStorage;
     friend struct DLLDictionariesStorage;
     friend struct CorpusDictionariesStorage;
     friend struct ::FastTyping::Logic::CorpusDictionary;

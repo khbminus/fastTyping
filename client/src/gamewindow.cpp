@@ -3,7 +3,6 @@
 #include <QQmlContext>
 #include <QQuickItem>
 #include <QQuickView>
-#include <iostream>
 #include "confirmWindow.h"
 #include "gameContextManager.h"
 #include "keyboard.h"
@@ -17,13 +16,15 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
                        GameManager *manager,
                        QWindow *parent)
     : QQuickView(parent), textModel(TextListModel(manager->blob(), this)) {
+    textModel.startTimer();
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     QQuickView::setGraphicsApi(QSGRendererInterface::OpenGL);
 
     setInitialProperties(
         {{"keyModel", QVariant::fromValue(
                           &FastTyping::Keyboard::KeyboardModel::getInstance())},
-         {"textModel", QVariant::fromValue(&textModel)}});
+         {"textModel", QVariant::fromValue(&textModel)},
+         {"gameId", ContextManager::get_instance().get_game_id()}});
     setSource(QUrl(QString::fromUtf8("qrc:/GameWindow.qml")));
 
     connect(this, SIGNAL(press(QVariant)), rootObject(),
@@ -59,7 +60,8 @@ GameWindow::GameWindow(const std::vector<GameManager *> &managers,
                      &GameWindow::correct_slot);
     QObject::connect(manager, &GameManager::error_signal, this,
                      &GameWindow::error_slot);
-    QObject::connect(manager, &GameManager::end_signal, this, &GameWindow::end);
+    QObject::connect(ContextManager::get_instance().get_remote_manager(),
+                     &GameManager::end_signal, this, &GameWindow::end);
     QObject::connect(manager, &GameManager::print_signal, &textModel,
                      &TextListModel::onMove);
     QObject::connect(manager, &GameManager::errorOnPositionSignal, &textModel,
@@ -111,6 +113,8 @@ void GameWindow::correct_slot() {
 
 void GameWindow::end() {
     auto &controller = FastTyping::WindowController::getInstance();
+    textModel.stopTimer();
+    ContextManager::get_instance().createStatisticsWindow();
     controller.setActiveWindow("StatWindow");
 }
 

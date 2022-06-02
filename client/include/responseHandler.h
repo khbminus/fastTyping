@@ -18,6 +18,7 @@ signals:
     void end_signal();
     void correct_word_signal();
     void stateUpdated(const nlohmann::json &);
+    void gameWaited();
 };
 
 APIHandler &handler();

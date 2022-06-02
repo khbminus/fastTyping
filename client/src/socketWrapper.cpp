@@ -86,7 +86,7 @@ SocketWrapper::SocketWrapper(QString ip, short port, ResponseHandler *a_handler)
         socket_thread.exec();
 
         std::unique_lock l{init_mutex};
-        delete socket;
+        socket->deleteLater();
         loop_wrap.reset();
     });
 

@@ -94,14 +94,27 @@ QString get_line_query() {
 
 QString create_game_query(QString const &dict, bool auto_join) {
     json result;
-    json words = json::array({"This", "is", "veryveryveryveryvery", "long",
-                              "sample", "don't", "judge", "me"});
+    json words = json::array({"This"});
 
     result["header"] = {{"type", "createGame"}};
     result["body"] = {{"dictionaryName", dict.toStdString()},
                       {"parserName", "simple"},
                       {"autoJoin", auto_join},
                       {"words", words}};
+    return dump(result);
+}
+
+QString user_finish_query() {
+    json result;
+    result["header"] = {{"type", "userFinished"}};
+    result["body"] = {};
+    return dump(result);
+}
+
+QString get_game_stat_query() {
+    json result;
+    result["header"] = {{"type", "getGameStatistics"}};
+    result["body"] = {};
     return dump(result);
 }
 
