@@ -1,10 +1,9 @@
 #include "database.h"
-#include "dictionaryDB.h"
 #include "dictionaries.h"
+#include "dictionaryDB.h"
 
 using namespace FastTyping::Server;
 using namespace FastTyping::Logic;
-
 
 int main() {
     DictionariesStorage flusher;
