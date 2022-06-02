@@ -4,5 +4,6 @@
         <file>KeyboardButton.qml</file>
         <file>TextScreen.qml</file>
         <file>GameWindow.qml</file>
+        <file>StatWindow.qml</file>
     </qresource>
 </RCC>

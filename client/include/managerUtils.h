@@ -1,6 +1,7 @@
 #ifndef MANAGER_UTILS_H
 #define MANAGER_UTILS_H
 
+#include <QDebug>
 #include <algorithm>
 #include <iterator>
 #include "gameManager.h"
@@ -57,9 +58,13 @@ private:
     std::size_t maxBufferSize = 0;
 
 public:
-    void addSymbol(QChar button) override {
-        if (buffer.size() + 1 <= maxBufferSize)
+    bool addSymbol(QChar button) override {
+        qDebug() << "buffer" << buffer.size() << maxBufferSize;
+        if (buffer.size() + 1 <= maxBufferSize) {
             buffer += button;
+            return true;
+        }
+        return false;
     }
     void deleteSymbol() override {
         if (!buffer.isEmpty()) {

@@ -1,4 +1,5 @@
 #include "textScreen.h"
+#include <QDebug>
 #include "queryTemplates.h"
 #include "responseHandler.h"
 #include "sonicSocket.h"
@@ -20,7 +21,7 @@ TextListModel::TextListModel(const QString &words, QObject *parent)
     QObject::connect(&client::responses::handler(),
                      &client::responses::APIHandler::stateUpdated, this,
                      &TextListModel::onUpdated);
-    statesTimer->start(200);
+    //    statesTimer->start(200);
 }
 
 int TextListModel::rowCount(const QModelIndex &) const {
@@ -71,12 +72,7 @@ void TextListModel::onWrongChar(int position) {
 }
 
 void TextListModel::onMove(const QString & /*buffer*/, int position) {
-    std::swap(position, currentCursor);
-    dataChanged(createIndex(position, 0), createIndex(position, 0),
-                {CURSOR_ROLE});
-    dataChanged(createIndex(currentCursor, 0), createIndex(currentCursor, 0),
-                {CURSOR_ROLE});
-    emit cursorMoved(currentCursor);
+    setCursorPosition(position);
 }
 
 ProgressListModel::ProgressListModel(QObject *parent)
@@ -130,6 +126,7 @@ void TextListModel::updateState() {
 }
 
 void TextListModel::onUpdated(const nlohmann::json &query) {
+    //    qDebug() << QString::fromStdString(query.dump());
     if (query["header"]["type"] != "currentState") {
         return;
     }
@@ -143,7 +140,10 @@ void TextListModel::onUpdated(const nlohmann::json &query) {
 
     for (const auto &player : users) {
         int pos = player["symbolsTyped"].get<int>();
+        if (pos == players.size())
+            pos--;
         if (pos < players.size()) {
+            //            qDebug() << player["id"].get<int>() << "to" << pos;
             players[pos]->showPlayer(Player(player["id"].get<int>()));
         }
     }
@@ -160,5 +160,14 @@ QHash<int, QByteArray> ProgressListModel::roleNames() const {
 }
 bool Player::operator==(const Player &rhs) const {
     return userId == rhs.userId;
+}
+
+void TextListModel::setCursorPosition(int position) {
+    std::swap(position, currentCursor);
+    dataChanged(createIndex(position, 0), createIndex(position, 0),
+                {CURSOR_ROLE});
+    dataChanged(createIndex(currentCursor, 0), createIndex(currentCursor, 0),
+                {CURSOR_ROLE});
+    emit cursorMoved(currentCursor);
 }
 }  // namespace FastTyping::TextScreen

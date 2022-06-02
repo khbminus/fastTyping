@@ -78,7 +78,7 @@ set(PROJECT_SOURCES
         src/signwindow.ui
         src/startgamewindow.ui
         src/waitgamewindow.ui
-        
+
         qml.qrc
 
         include/keyboard.h
@@ -86,6 +86,9 @@ set(PROJECT_SOURCES
 
         include/textScreen.h
         src/textScreen.cpp
+
+        include/WpmChartModel.h
+        src/WpmChartModel.cpp
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

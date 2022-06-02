@@ -7,6 +7,7 @@
 #include "gamewindow.h"
 #include "localManager.h"
 #include "sonicSocket.h"
+#include "statwindow.h"
 #include "webManager.h"
 
 class ContextManager {
@@ -15,8 +16,9 @@ class ContextManager {
     ContextManager() = default;
     QSharedPointer<WebManager> remote_manager;
     QSharedPointer<GameManager> local_manager;
-    GameWindow *window;
-    void set_context(std::vector<QString> const &words, bool isSolo);
+    QScopedPointer<GameWindow, QScopedPointerDeleteLater> gameWindow;
+    QScopedPointer<StatWindow, QScopedPointerDeleteLater> statisticsWindow;
+    void set_context(std::vector<QString> const &words);
 
 public:
     static ContextManager &get_instance() {
@@ -32,6 +34,7 @@ public:
                                        bool isSolo);
     void set_context_from_join_query(nlohmann::json const &join_query);
     void reset_context();
+    void createStatisticsWindow();
 };
 
 #endif

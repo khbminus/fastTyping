@@ -11,7 +11,7 @@ struct Dictionary {
 };
 
 struct Inputter {
-    virtual void addSymbol(QChar) = 0;
+    virtual bool addSymbol(QChar) = 0;
     virtual void deleteSymbol() = 0;
     [[nodiscard]] virtual QString getBuffer() const = 0;
     virtual void clearBuffer() = 0;
