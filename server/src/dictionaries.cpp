@@ -60,13 +60,44 @@ CorpusDictionary::CorpusDictionary(std::string const &corpus,
                                    bool adapt,
                                    int user_id) {
     using FastTyping::Server::Database;
+    using FastTyping::Server::MistakesStorage;
+
+
+    std::cout << "in constructor" << std::endl;
+    std::string sql;
 
     Database &db = Database::get_instance();
-    std::unique_lock l{db.mutex};
 
+
+    if (!adapt) {
+        sql =
+            "SELECT * FROM " + db.esc(corpus) + " ORDER BY random() LIMIT 20;";
+    } else {
+        MistakesStorage mistakesStorage;
+
+        std::vector<std::pair<char, char>> mistakes =
+            mistakesStorage.getTopMistakes(user_id, 10, "qwerty");
+
+        std::vector<std::string> mistakesStrings;
+
+        std::transform(mistakes.begin(), mistakes.end(),
+                       std::back_inserter(mistakesStrings),
+                       [&](std::pair<char, char> symbols) {
+                           auto [a, b] = symbols;
+                           return db.esc(std::string{a, b});
+                       });
+
+        std::string condition =
+            "WORD LIKE '%" +
+            boost::join(mistakesStrings, "%'\n OR WORD LIKE '%") + "%' ";
+
+        sql = "SELECT * FROM " + db.esc(corpus) + " WHERE " + condition + " ORDER BY random() LIMIT 20;";
+    }
+
+    std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
-    pqxx::result selected = work.exec("SELECT * FROM " + db.esc(corpus) +
-                                      " ORDER BY random() LIMIT 2;");
+
+    pqxx::result selected = work.exec(sql);
 
     std::transform(selected.begin(), selected.end(), std::back_inserter(words),
                    [](pqxx::row const &row) -> std::string {

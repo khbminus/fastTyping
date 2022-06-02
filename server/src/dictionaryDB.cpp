@@ -144,7 +144,7 @@ void CorpusDictionariesStorage::addCorpus(std::string const &name,
 }
 
 std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
-    std::string const &name, int user_id) {
+    std::string const &name, int user_id, bool adapt) {
     DictionariesStorage dictionaries;
 
     if (!dictionaries.dictionaryExists(name)) {
@@ -174,7 +174,7 @@ std::unique_ptr<::FastTyping::Logic::AbstractDictionary> dictionary_instance(
     if (type == "corpus") {
         std::cout << "corpus" << std::endl;
         CorpusDictionariesStorage corpus;
-        return std::make_unique<FastTyping::Logic::CorpusDictionary>(corpus.getCorpusName(name));
+        return std::make_unique<FastTyping::Logic::CorpusDictionary>(corpus.getCorpusName(name), adapt, user_id);
     }
 
     return std::make_unique<FastTyping::Logic::Dictionary>(

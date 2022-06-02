@@ -92,7 +92,7 @@ QString get_line_query() {
     return dump(result);
 }
 
-QString create_game_query(QString const &dict, bool auto_join) {
+QString create_game_query(QString const &dict, bool auto_join, bool adapt) {
     json result;
     json words = json::array({"This"});
 
@@ -100,6 +100,7 @@ QString create_game_query(QString const &dict, bool auto_join) {
     result["body"] = {{"dictionaryName", dict.toStdString()},
                       {"parserName", "simple"},
                       {"autoJoin", auto_join},
+                      {"adapt", adapt},
                       {"words", words}};
     return dump(result);
 }
@@ -124,4 +125,14 @@ QString getStatesQuery() {
     result["body"] = json::object();
     return dump(result);
 }
+
+QString send_typos_query(QStringList const& typos) {
+    json result;
+    json words = json::array({"This"});
+
+    result["header"] = {{"type", "createGame"}};
+    return dump(result);
+}
+
+
 }  // namespace client::queries

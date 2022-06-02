@@ -34,14 +34,21 @@ Server::Server()
                     {"body", {{"text", "can't find \"parserName\""}}}};
         }
 
+        bool adapt = false;
+
+        if (body.contains("adapt") && body["adapt"].is_boolean() &&
+            body["adapt"]) {
+            adapt = true;
+        }
+
         if (user.getGame() != nullptr) {
             return {{"header", {{"type", "alreadyInGameError"}}},
                     {"body", {{"text", "Already in game"}}}};
         }
-        std::string dictionary_name = body["dictionaryName"].get<std::string>();
 
-        auto result = gameStorage->createGame(
-            body, dictionary_instance(dictionary_name), user.getId());
+        std::cout << "adapt = " << adapt << std::endl;
+
+        auto result = gameStorage->createGame(body, user.getId(), adapt);
         if (body.contains("autoJoin") && body["autoJoin"].is_boolean() &&
             body["autoJoin"]) {
             if (!result["body"].contains("id") ||

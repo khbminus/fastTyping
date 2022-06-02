@@ -10,6 +10,10 @@ int main() {
     DictionariesStorage flusher;
     flusher.dropDictionaries();
 
+    MistakesStorage mistakes;
+    UserStorage users;
+    mistakes.addMistake(users.getId("lol"), 'a', 'i', "qwerty");
+
     DictionariesStorage storage;
     storage.addDictionary("Aboba", false, "const");
     storage.addDictionary("Boba", false, "const");
