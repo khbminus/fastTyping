@@ -205,14 +205,11 @@ void MistakesStorage::addMistake(int userId,
                                  char let1,
                                  char let2,
                                  const std::string &keyboardType) {
-    std::string sql =
+    db.unanswered_query(
         "INSERT INTO MISTAKES(USER_ID, KEYBOARD_TYPE, MISTAKE)\n"
         "VALUES(" +
         std::to_string(userId) + ", '" + db.esc(keyboardType) + "', '" + let1 +
-        let2 + "');";
-    std::cout << "'" << sql << "'" << std::endl;
-
-    db.unanswered_query(sql);
+        let2 + "');");
 }
 
 // TODO: refactor

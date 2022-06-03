@@ -163,7 +163,6 @@ void add_corpus_dictionary(std::string const &name,
                       boost::algorithm::join(words, "'),\n('") +
                       "') ON CONFLICT DO NOTHING;";
 
-    std::cout << sql << std::endl;
     db.unanswered_query(sql);
 }
 
