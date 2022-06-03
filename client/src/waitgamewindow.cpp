@@ -28,6 +28,8 @@ void WaitGameWindow::on_ReturnButton_clicked() {
 
 void WaitGameWindow::gameWaited() {
     auto &controller = FastTyping::WindowController::getInstance();
+    ContextManager::get_instance().get_local_manager()->getModel()->startGame();
+
     controller.setActiveWindow("GameWindow");
 }
 
