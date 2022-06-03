@@ -1,6 +1,7 @@
 #include "server.h"
 #include <boost/locale.hpp>
 #include <boost/log/trivial.hpp>
+#include <cctype>
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -13,6 +14,7 @@ Server::Server()
     : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)),
       user_storage(new UserStorage),
       dictionaries_storage(new DictionariesStorage),
+      mistakes_storage(new MistakesStorage),
       gameStorage(new MapGameStorage) {
     boost::locale::generator gen;
     std::locale::global(gen(""));
@@ -34,14 +36,21 @@ Server::Server()
                     {"body", {{"text", "can't find \"parserName\""}}}};
         }
 
+        bool adapt = false;
+
+        if (body.contains("adapt") && body["adapt"].is_boolean() &&
+            body["adapt"]) {
+            adapt = true;
+        }
+
         if (user.getGame() != nullptr) {
             return {{"header", {{"type", "alreadyInGameError"}}},
                     {"body", {{"text", "Already in game"}}}};
         }
-        std::string dictionary_name = body["dictionaryName"].get<std::string>();
 
-        auto result = gameStorage->createGame(
-            body, dictionary_instance(dictionary_name), user.getId());
+        std::cout << "adapt = " << adapt << std::endl;
+
+        auto result = gameStorage->createGame(body, user.getId(), adapt);
         if (body.contains("autoJoin") && body["autoJoin"].is_boolean() &&
             body["autoJoin"]) {
             if (!result["body"].contains("id") ||
@@ -108,6 +117,26 @@ Server::Server()
         }
         user.waitStartGame();
         return {{"header", {{"type", "GameWaitedSuccessfully"}}}, {"body", {}}};
+    };
+
+    commonQueriesMap["addTypos"] = [&](const json &body, User &user) -> json {
+        if (!body.contains("typos")) {
+            return {{"header", {{"type", "typosAdded"}}},
+                    {"body", {{"text", "no typos"}}}};
+        }
+        auto typos = body["typos"].get<std::vector<std::string>>();
+
+        int id = user.getId();
+        for (auto const &typo : typos) {
+            std::cout << "typo = '" << typo << "' " << typo.size() << std::endl;
+            if (typo.size() == 2 && std::isalpha(typo[0]) &&
+                std::isalpha(typo[1])) {
+                std::cout << "add" << std::endl;
+                mistakes_storage->addMistake(id, typo[0], typo[1], "qwerty");
+            }
+        }
+        return {{"header", {{"type", "typosAdded"}}},
+                {"body", {{"text", "no typos"}}}};
     };
 
     commonQueriesMap["startGame"] = [&](const json &body, User &user) -> json {

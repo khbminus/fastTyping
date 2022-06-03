@@ -26,6 +26,7 @@ private:
     tcp::acceptor acceptor;
     std::unique_ptr<UserStorage> user_storage;
     std::unique_ptr<DictionariesStorage> dictionaries_storage;
+    std::unique_ptr<MistakesStorage> mistakes_storage;
     std::unique_ptr<AbstractGameStorage> gameStorage;
     std::unordered_map<std::string, std::function<json(const json &, User &)>>
         commonQueriesMap;

@@ -76,10 +76,7 @@ class AbstractGameStorage {
 public:
     AbstractGameStorage() = default;
     virtual std::shared_ptr<Game> get(int id, json &errors) = 0;
-    virtual json createGame(
-        const json &body,
-        std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary,
-        int host_id) = 0;
+    virtual json createGame(const json &body, int host_id, bool adapt) = 0;
     virtual Game *getGame(int game_id) = 0;
     virtual ~AbstractGameStorage() = default;
 };
@@ -87,10 +84,7 @@ public:
 class MapGameStorage final : public AbstractGameStorage {
 public:
     std::shared_ptr<Game> get(int id, json &errors) override;
-    json createGame(
-        const json &body,
-        std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary,
-        int host_id) override;
+    json createGame(const json &body, int host_id, bool adapt = false) override;
     Game *getGame(int game_id) override {
         return games[game_id].get();
     }

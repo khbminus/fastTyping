@@ -15,6 +15,7 @@ StatWindow::StatWindow(GameManager *manager, QWindow *parent)
     : QQuickView(parent), textModel(manager->blob() + " ", this) {
     using namespace std::literals;
     using client::queries::get_game_stat_query;
+    using client::queries::send_typos_query;
     using nlohmann::json;
 
     auto stats = json::parse(
@@ -40,6 +41,8 @@ StatWindow::StatWindow(GameManager *manager, QWindow *parent)
          {"maxChartErrors", model->getMaxErrors()},
          {"gameId", ContextManager::get_instance().get_game_id()}});
     setSource(QUrl(QString::fromUtf8("qrc:/StatWindow.qml")));
+
+    client::web::socket().send(send_typos_query(model->getAllErrors()));
 
     QObject::connect(rootObject(), SIGNAL(returnPressed()), this,
                      SLOT(on_ReturnButton_clicked()));
