@@ -5,9 +5,7 @@
 
 namespace FastTyping::Server {
 
-struct gameStatistics {
-    bool operator==(const gameStatistics &rhs) const;
-    bool operator!=(const gameStatistics &rhs) const;
+struct GameStatistics {
     int userId;
     std::string dictName;
     double wpm;
@@ -18,9 +16,7 @@ struct gameStatistics {
     double finishTime;
 };
 
-struct dictStatistics {
-    bool operator==(const dictStatistics &rhs) const;
-    bool operator!=(const dictStatistics &rhs) const;
+struct DictStatistics {
     int userId;
     const std::string dictName;
     double maxWpm;
@@ -43,12 +39,11 @@ struct StatisticsStorage {
     double getMaxWpm(int userId);
     double getAvgWpm(int userId);
     int getGamesAmount(int userId);
-    std::vector<gameStatistics> getHistory(int userI, int amount = 10);
-    std::vector<dictStatistics> getUserDictStatistics(int userId);
-    dictStatistics getUserTotalStatistics(int userId);
-    std::vector<dictStatistics> getTopDictStatistics(
+    std::vector<GameStatistics> getHistory(int userI, int amount = 10);
+    std::vector<DictStatistics> getUserDictStatistics(int userId);
+    DictStatistics getUserTotalStatistics(int userId);
+    std::vector<DictStatistics> getTopDictStatistics(
         const std::string &dictName);
-
     StatisticsStorage();
 
 private:

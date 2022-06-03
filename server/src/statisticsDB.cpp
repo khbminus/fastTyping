@@ -71,9 +71,9 @@ int StatisticsStorage::getGamesAmount(int userId) {
         "RESULT");
 }
 
-std::vector<gameStatistics> StatisticsStorage::getHistory(int userId,
+std::vector<GameStatistics> StatisticsStorage::getHistory(int userId,
                                                           int amount) {
-    std::vector<gameStatistics> result;
+    std::vector<GameStatistics> result;
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
     pqxx::result history = work.exec(
@@ -81,7 +81,7 @@ std::vector<gameStatistics> StatisticsStorage::getHistory(int userId,
         " ORDER BY ID DESC LIMIT " + std::to_string(amount) + ";");
     std::transform(history.begin(), history.end(), std::back_inserter(result),
                    [](pqxx::row const &row) {
-                       return gameStatistics{
+                       return GameStatistics{
                            row["USER_ID"].as<int>(),
                            row["DICT_NAME"].as<std::string>(),
                            row["WPM"].as<double>(),
@@ -96,9 +96,9 @@ std::vector<gameStatistics> StatisticsStorage::getHistory(int userId,
     return result;
 }
 
-std::vector<dictStatistics> StatisticsStorage::getUserDictStatistics(
+std::vector<DictStatistics> StatisticsStorage::getUserDictStatistics(
     int userId) {
-    std::vector<dictStatistics> result;
+    std::vector<DictStatistics> result;
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
     pqxx::result raw_result = work.exec(
@@ -111,7 +111,7 @@ std::vector<dictStatistics> StatisticsStorage::getUserDictStatistics(
 
     std::transform(raw_result.begin(), raw_result.end(),
                    std::back_inserter(result), [userId](pqxx::row const &row) {
-                       return dictStatistics{userId,
+                       return DictStatistics{userId,
                                              row["DICT_NAME"].as<std::string>(),
                                              row["MAX_WPM"].as<double>(),
                                              row["AVG_WPM"].as<double>(),
@@ -123,7 +123,7 @@ std::vector<dictStatistics> StatisticsStorage::getUserDictStatistics(
     return result;
 }
 
-dictStatistics StatisticsStorage::getUserTotalStatistics(int userId) {
+DictStatistics StatisticsStorage::getUserTotalStatistics(int userId) {
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
     pqxx::result raw_result = work.exec(
@@ -136,7 +136,7 @@ dictStatistics StatisticsStorage::getUserTotalStatistics(int userId) {
         work.commit();
         return {userId, "all", 0, 0, 0, 0, 0};
     }
-    dictStatistics result{userId,
+    DictStatistics result{userId,
                           "all",
                           raw_result[0]["MAX_WPM"].as<double>(),
                           raw_result[0]["AVG_WPM"].as<double>(),
@@ -147,9 +147,9 @@ dictStatistics StatisticsStorage::getUserTotalStatistics(int userId) {
     return result;
 }
 
-std::vector<dictStatistics> StatisticsStorage::getTopDictStatistics(
+std::vector<DictStatistics> StatisticsStorage::getTopDictStatistics(
     const std::string &dictName) {
-    std::vector<dictStatistics> result;
+    std::vector<DictStatistics> result;
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
     pqxx::result raw_result = work.exec(
@@ -162,7 +162,7 @@ std::vector<dictStatistics> StatisticsStorage::getTopDictStatistics(
     std::transform(
         raw_result.begin(), raw_result.end(), std::back_inserter(result),
         [dictName](pqxx::row const &row) {
-            return dictStatistics{
+            return DictStatistics{
                 row["USER_ID"].as<int>(),         dictName,
                 row["MAX_WPM"].as<double>(),      row["AVG_WPM"].as<double>(),
                 row["AVG_ACCURACY"].as<double>(), row["SUM_TIME"].as<double>(),
@@ -172,22 +172,4 @@ std::vector<dictStatistics> StatisticsStorage::getTopDictStatistics(
     return result;
 }
 
-bool gameStatistics::operator==(const gameStatistics &rhs) const {
-    return userId == rhs.userId && dictName == rhs.dictName && wpm == rhs.wpm &&
-           rawWpm == rhs.rawWpm && correctChars == rhs.correctChars &&
-           totalChars == rhs.totalChars && finishTime == rhs.finishTime;
-}
-bool gameStatistics::operator!=(const gameStatistics &rhs) const {
-    return !(rhs == *this);
-}
-
-bool dictStatistics::operator==(const dictStatistics &rhs) const {
-    return userId == rhs.userId && dictName == rhs.dictName &&
-           maxWpm == rhs.maxWpm && avgWpm == rhs.avgWpm &&
-           avgAccuracy == rhs.avgAccuracy &&
-           sumFinishTime == rhs.sumFinishTime && gamesCnt == rhs.gamesCnt;
-}
-bool dictStatistics::operator!=(const dictStatistics &rhs) const {
-    return !(rhs == *this);
-}
 }  // namespace FastTyping::Server

@@ -6,8 +6,27 @@
 #include "statisticsDB.h"
 #include "user.h"
 
-using namespace FastTyping::Server;
+namespace FastTyping::Server {
 
+bool operator==(GameStatistics lhs, GameStatistics rhs) {
+    return std::tie(lhs.userId, lhs.dictName, lhs.wpm, lhs.rawWpm,
+                    lhs.correctChars, lhs.totalChars, lhs.finishTime) ==
+           std::tie(rhs.userId, rhs.dictName, rhs.wpm, rhs.rawWpm,
+                    rhs.correctChars, rhs.totalChars, rhs.finishTime);
+}
+bool operator!=(const GameStatistics &lhs, const GameStatistics &rhs) {
+    return !(rhs == lhs);
+}
+
+bool operator==(const DictStatistics &lhs, const DictStatistics &rhs) {
+    return std::tie(lhs.userId, lhs.dictName, lhs.maxWpm, lhs.avgWpm,
+                    lhs.avgAccuracy, lhs.sumFinishTime, lhs.gamesCnt) ==
+           std::tie(rhs.userId, rhs.dictName, rhs.maxWpm, rhs.avgWpm,
+                    rhs.avgAccuracy, rhs.sumFinishTime, rhs.gamesCnt);
+}
+bool operator!=(const DictStatistics &lhs, const DictStatistics &rhs) {
+    return !(rhs == lhs);
+}
 TEST_CASE("user from string") {
     // Database& db = Database::get_instance();
     UserStorage db;
@@ -112,24 +131,25 @@ TEST_CASE("Statistics") {
     CHECK(storage.getGamesAmount(0) == 3);
 
     CHECK(storage.getHistory(0) ==
-          std::vector<gameStatistics>{
+          std::vector<GameStatistics>{
               {0, "const", 21, 25.56, 0.625, 10, 16, 30.3},
               {0, "const", 24.5, 25.56, 0.625, 10, 16, 28},
               {0, "const", 23.5, 25.56, 0.625, 10, 16, 30.2}});
 
     CHECK(storage.getHistory(0, 2) ==
-          std::vector<gameStatistics>{
+          std::vector<GameStatistics>{
               {0, "const", 21, 25.56, 0.625, 10, 16, 30.3},
               {0, "const", 24.5, 25.56, 0.625, 10, 16, 28}});
 
     CHECK(storage.getUserDictStatistics(0) ==
-          std::vector<dictStatistics>{{0, "const", 24.5, 23, 0.625, 88.5, 3}});
+          std::vector<DictStatistics>{{0, "const", 24.5, 23, 0.625, 88.5, 3}});
 
     CHECK(
         storage.getTopDictStatistics("const") ==
-        std::vector<dictStatistics>{{0, "const", 24.5, 23, 0.625, 88.5, 3},
+        std::vector<DictStatistics>{{0, "const", 24.5, 23, 0.625, 88.5, 3},
                                     {1, "const", 23.5, 23.5, 0.625, 30.2, 1}});
 
     CHECK(storage.getUserTotalStatistics(0) ==
-          dictStatistics{0, "all", 24.5, 23, 0.625, 88.5, 3});
+          DictStatistics{0, "all", 24.5, 23, 0.625, 88.5, 3});
 }
+}  // namespace FastTyping::Server

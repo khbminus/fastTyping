@@ -15,7 +15,8 @@ Server::Server()
       user_storage(new UserStorage),
       dictionaries_storage(new DictionariesStorage),
       mistakes_storage(new MistakesStorage),
-      gameStorage(new MapGameStorage) {
+      gameStorage(new MapGameStorage),
+      statisticsStorage(new StatisticsStorage) {
     boost::locale::generator gen;
     std::locale::global(gen(""));
 
@@ -232,6 +233,19 @@ Server::Server()
         result["header"] = {{"type", "dictionaries"},
                             {"queryType", "getDictionaries"}};
         result["body"] = {{"list", dictionaries_storage->get_dictionaries()}};
+        return result;
+    };
+
+    commonQueriesMap["getProfile"] = [&](const json &body, User &user) -> json {
+        json result = json::object();
+        result["header"] = {{"type", "profileResult"}};
+        auto res = statisticsStorage->getUserTotalStatistics(user.getId());
+        result["body"] = {{"dictName", res.dictName},
+                          {"maxWpm", res.maxWpm},
+                          {"avgWpm", res.avgWpm},
+                          {"avgAccuracy", res.avgAccuracy},
+                          {"sumFinishTime", res.sumFinishTime},
+                          {"gamesCnt", res.gamesCnt}};
         return result;
     };
 
