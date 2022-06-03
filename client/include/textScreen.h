@@ -104,7 +104,7 @@ public:
         statesTimer->stop();
     }
     void startTimer() {
-        statesTimer->start(200);
+        statesTimer->start(350);
     }
 
     void setCursorPosition(int position);
