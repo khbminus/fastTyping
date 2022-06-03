@@ -14,9 +14,9 @@ jobs:
         id: filter
         with:
           filters: |
-            client:
+            server:
               - 'server/**'
-            frontend:
+            client:
               - 'client/**'
   clang-format:
     runs-on: ubuntu-latest
