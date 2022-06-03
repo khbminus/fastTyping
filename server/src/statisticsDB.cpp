@@ -100,7 +100,8 @@ std::vector<dictStatistics> StatisticsStorage::getUserDictStatistics(
     pqxx::work work(db.connect);
     pqxx::result history = work.exec(
         "SELECT DICT_NAME, MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, "
-        "AVG(CORRECT_CHARS::NUMERIC / TOTAL_CHARS) AS AVG_ACCURACY, SUM(FINISH_TIME) AS "
+        "AVG(CORRECT_CHARS::NUMERIC / TOTAL_CHARS) AS AVG_ACCURACY, "
+        "SUM(FINISH_TIME) AS "
         "SUM_TIME, COUNT(*) "
         "AS GAMES_CNT FROM STATISTICS WHERE USER_ID = " +
         std::to_string(userId) + " GROUP BY DICT_NAME;");
@@ -117,22 +118,22 @@ std::vector<dictStatistics> StatisticsStorage::getUserDictStatistics(
 }
 
 dictStatistics StatisticsStorage::getUserTotalStatistics(int userId) {
-    
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
     pqxx::result history = work.exec(
-        "SELECT MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, AVG(CORRECT_CHARS::NUMERIC / "
+        "SELECT MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, "
+        "AVG(CORRECT_CHARS::NUMERIC / "
         "TOTAL_CHARS) AS AVG_ACCURACY, SUM(FINISH_TIME) AS SUM_TIME, COUNT(*) "
         "AS GAMES_CNT FROM STATISTICS WHERE USER_ID = " +
         std::to_string(userId) + ";");
 
-    dictStatistics result {userId,
-              "all",
-              history[0]["MAX_WPM"].as<double>(),
-              history[0]["AVG_WPM"].as<double>(),
-              history[0]["AVG_ACCURACY"].as<double>(),
-              history[0]["SUM_TIME"].as<double>(),
-              history[0]["GAMES_CNT"].as<int>()};
+    dictStatistics result{userId,
+                          "all",
+                          history[0]["MAX_WPM"].as<double>(),
+                          history[0]["AVG_WPM"].as<double>(),
+                          history[0]["AVG_ACCURACY"].as<double>(),
+                          history[0]["SUM_TIME"].as<double>(),
+                          history[0]["GAMES_CNT"].as<int>()};
     work.commit();
     return result;
 }
@@ -144,7 +145,8 @@ std::vector<dictStatistics> StatisticsStorage::getTopDictStatistics(
     pqxx::work work(db.connect);
     pqxx::result history = work.exec(
         "SELECT USER_ID, MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, "
-        "AVG(CORRECT_CHARS::NUMERIC / TOTAL_CHARS) AS AVG_ACCURACY, SUM(FINISH_TIME) AS "
+        "AVG(CORRECT_CHARS::NUMERIC / TOTAL_CHARS) AS AVG_ACCURACY, "
+        "SUM(FINISH_TIME) AS "
         "SUM_TIME, COUNT(*) AS "
         "GAMES_CNT FROM STATISTICS WHERE DICT_NAME = '" +
         db.esc(dictName) + "' GROUP BY USER_ID;");

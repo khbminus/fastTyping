@@ -16,10 +16,12 @@ struct Game {
 public:
     Game(std::unique_ptr<FastTyping::Logic::AbstractParser> parser_,
          std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary_,
-         int hostId_, std::string &dictName)
+         int hostId_,
+         std::string &dictName)
         : parser(std::move(parser_)),
           dictionary(std::move(dictionary_)),
-          hostId(hostId_) , dictName(dictName){
+          hostId(hostId_),
+          dictName(dictName) {
         id = nextId++;
     }
     [[nodiscard]] const std::string &getName() const {
@@ -80,7 +82,8 @@ public:
     virtual json createGame(
         const json &body,
         std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary,
-        int host_id, std::string &dictName) = 0;
+        int host_id,
+        std::string &dictName) = 0;
     virtual Game *getGame(int game_id) = 0;
     virtual ~AbstractGameStorage() = default;
 };
@@ -91,7 +94,8 @@ public:
     json createGame(
         const json &body,
         std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary,
-        int host_id, std::string &dictName) override;
+        int host_id,
+        std::string &dictName) override;
     Game *getGame(int game_id) override {
         return games[game_id].get();
     }

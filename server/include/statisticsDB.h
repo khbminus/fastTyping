@@ -29,8 +29,7 @@ struct dictStatistics {
     double sumFinishTime;
     int gamesCnt;
 };
- 
-    
+
 struct StatisticsStorage {
     void dropStatistics();
     void addGame(int userId,
