@@ -53,12 +53,15 @@ void LocalManagerSolo::key_pressed(QChar button) {
             emit correct_signal();
             return;
         } else {
+            if (!dictionary.nextWord()) {
+                dictionary.previousWord();
+                return;
+            }
+            dictionary.previousWord();
             inputter.addSymbol(button);
-
             emit errorOnPositionSignal(dictionary.getCompletedSize() +
                                        inputter.getBuffer().size() - 1);
             if (!dictionary.nextWord()) {
-                inputter.clearBuffer();
                 emit end_signal();
                 return;
             }
@@ -91,13 +94,6 @@ void LocalManagerSolo::key_pressed(QChar button) {
     emit print_signal(inputter.getBuffer(), dictionary.getCompletedSize() +
                                                 inputter.getBuffer().size());
     emit correct_signal();
-
-    //    if (check_symbol(inputter.getBuffer().size() - 1)) {
-    //        emit correct_signal();
-    //    } else {
-    //        emit error_signal();
-    //    }
-    //    emit_correctness();
 }
 
 void LocalManagerSolo::backspace_pressed() {

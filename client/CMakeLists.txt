@@ -51,6 +51,7 @@ set(PROJECT_SOURCES
         src/socketWrapper.cpp
         src/sonicSocket.cpp
         src/webManager.cpp
+        src/webSoloManager.cpp
         src/confirmWindow.cpp
         src/responseParse.cpp
         src/gameContextManager.cpp

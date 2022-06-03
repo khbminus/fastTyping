@@ -47,11 +47,6 @@ json Game::checkUnsafe(int uid) {
     std::string rightWord =
         dictionary->getWord(additionalInfo[uid].currentWord);
     auto &word = additionalInfo[uid].currentBuffers.back();
-    BOOST_LOG_TRIVIAL(debug) << "Buffer of user " << uid << " is \"";
-    for (auto chr : word) {
-        BOOST_LOG_TRIVIAL(debug) << chr;
-    }
-    BOOST_LOG_TRIVIAL(debug) << "\"";
     auto concatenatedBuffer =
         std::accumulate(word.begin(), word.end(), std::string());
 
@@ -73,11 +68,6 @@ std::size_t Game::getCntCorrect(int uid) {
             dictionary->getWord(additionalInfo[uid].currentWord--) + ' ';
         auto &word = additionalInfo[uid].currentBuffers.back();
 
-        BOOST_LOG_TRIVIAL(debug) << "Buffer of user " << uid << " is \"";
-        for (auto chr : word) {
-            BOOST_LOG_TRIVIAL(debug) << chr;
-        }
-        BOOST_LOG_TRIVIAL(debug) << "\"";
         auto concatenatedBuffer =
             std::accumulate(word.begin(), word.end(), std::string());
         std::size_t pos = 0;
@@ -102,7 +92,10 @@ json Game::check(int uid) {
 json Game::addNewChar(int uid, const std::string &c) {
     std::unique_lock l{mutex};
     additionalInfo[uid].totalChars++;
-    additionalInfo[uid].currentBuffers.back().push_back(c);
+    if (additionalInfo[uid].currentBuffers.back().size() !=
+        dictionary->getWord(additionalInfo[uid].currentWord).size() + 1) {
+        additionalInfo[uid].currentBuffers.back().push_back(c);
+    }
     auto checkResult = checkUnsafe(uid);
     if (checkResult["body"]["isFullCorrect"] == true) {
         auto &info = additionalInfo[uid];
@@ -113,10 +106,7 @@ json Game::addNewChar(int uid, const std::string &c) {
             userFinished(uid);
         }
         return checkResult;
-    } else if (isSolo && c == " " &&
-               additionalInfo[uid].currentBuffers.size() !=
-                   dictionary->getWordCount()) {
-        std::cerr << "NEW WORD\n";
+    } else if (isSolo && c == " ") {
         additionalInfo[uid].currentBuffers.push_back({});
         additionalInfo[uid].currentWord++;
     }
@@ -135,7 +125,6 @@ json Game::backspace(int uid) {
         }
         assert(isSolo);
         info.currentWord--;
-        std::cerr << "BACK WORD\n";
         info.currentBuffers.pop_back();
     }
     info.currentBuffers.back().pop_back();
