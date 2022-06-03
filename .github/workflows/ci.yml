@@ -3,6 +3,21 @@ on: push
 
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+      client: ${{ steps.filter.outputs.client }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            client:
+              - 'server/**'
+            frontend:
+              - 'client/**'
   clang-format:
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:base
@@ -17,84 +32,54 @@ jobs:
           git commit -m "Automatic code format done by clang-format" || echo "Nothing to commit"
           git push || echo "Nothing to push"
   cppcheck-client:
-    needs: [ clang-format ]
+    needs: [ clang-format, changes ]
+    if: ${{ needs.changes.outputs.client == 'true' }}
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:base
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            client:
-              - 'client/**'
-
       - run: cppcheck --version
-      - if: steps.filter.outputs.client == 'true'
-        run: cd client && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
+      - run: cd client && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
   cppcheck-server:
-    needs: [ clang-format ]
+    needs: [ clang-format, changes ]
+    if: ${{ needs.changes.outputs.server == 'true' }}
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:base
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            server:
-              - 'server/**'
-
       - run: cppcheck --version
-      - if: steps.filter.outputs.server == 'true'
-        run: cd server && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
+      - run: cd server && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
 
   server-build:
-    needs: [ cppcheck-server ]
+    needs: [ cppcheck-server, changes ]
+    if: ${{ needs.changes.outputs.server == 'true' }}
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:base
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            server:
-              - 'server/**'
-
-      - if: steps.filter.outputs.server == 'true'
-        run: |
+      - run: |
           mkdir build
           cd build
           cmake .. -DBUILD_ALL=OFF -DBUILD_CLIENT=OFF -DBUILD_SERVER=ON
-      - if: steps.filter.outputs.server == 'true'
-        run: |
+      - run: |
           cd build
           make server
   client-build:
-    needs: [ cppcheck-client ]
+    needs: [ cppcheck-client, changes ]
+    if: ${{ needs.changes.outputs.client == 'true' }}
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:client
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            client:
-              - 'client/**'
-
-      - if: steps.filter.outputs.client == 'true'
-        run: |
+      - run: |
           mkdir build
           cd build
           cmake .. -DBUILD_ALL=OFF -DBUILD_CLIENT=ON -DBUILD_SERVER=OFF
-      - if: steps.filter.outputs.client == 'true'
-        run: |
+      - run: |
           cd build
           make client
   deploy:
