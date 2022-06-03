@@ -44,7 +44,6 @@ struct CorpusDictionary : AbstractDictionary {
     [[nodiscard]] size_t getLinesCount() const override;
     [[nodiscard]] std::size_t getPrefixSize(int pos) const override;
 
-
 private:
     std::vector<std::string> words;
 };
