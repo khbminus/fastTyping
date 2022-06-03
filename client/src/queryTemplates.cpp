@@ -1,6 +1,8 @@
 #include "queryTemplates.h"
 #include <algorithm>
 #include <iostream>
+#include <QList>
+#include <QChar>
 #include <nlohmann/json.hpp>
 #include <vector>
 
@@ -94,7 +96,7 @@ QString get_line_query() {
     return dump(result);
 }
 
-QString create_game_query(QString const &dict, bool auto_join, bool adapt, bool isSolo) {
+QString create_game_query(QString const &dict, bool auto_join, bool isSolo, bool adapt) {
     json result;
     json words = json::array({"This"});
 

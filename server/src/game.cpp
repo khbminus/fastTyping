@@ -115,7 +115,8 @@ json Game::addNewChar(int uid, const std::string &c) {
         return checkResult;
     } else if (isSolo && c == " " &&
                additionalInfo[uid].currentBuffers.size() !=
-                   dictionary->getWordCount() - 1) {
+                   dictionary->getWordCount()) {
+        std::cerr << "NEW WORD\n";
         additionalInfo[uid].currentBuffers.push_back({});
         additionalInfo[uid].currentWord++;
     }
@@ -124,20 +125,20 @@ json Game::addNewChar(int uid, const std::string &c) {
 
 json Game::backspace(int uid) {
     std::unique_lock l{mutex};
-    auto &word = additionalInfo[uid].currentBuffers.back();
-    additionalInfo[uid].totalChars++;
-    if (word.empty()) {
-        if (additionalInfo[uid].currentBuffers.size() == 1) {
+    auto &info = additionalInfo[uid];
+    info.totalChars++;
+    if (info.currentBuffers.back().empty()) {
+        if (info.currentBuffers.size() == 1) {
             return {
                 {"header", {{"type", "emptyBufferError"}}},
                 {"body", {{"text", "can't use backspace with empty buffer"}}}};
         }
         assert(isSolo);
-        additionalInfo[uid].currentWord--;
-        additionalInfo[uid].currentBuffers.pop_back();
-        word = additionalInfo[uid].currentBuffers.back();
+        info.currentWord--;
+        std::cerr << "BACK WORD\n";
+        info.currentBuffers.pop_back();
     }
-    word.pop_back();
+    info.currentBuffers.back().pop_back();
     return checkUnsafe(uid);
 }
 

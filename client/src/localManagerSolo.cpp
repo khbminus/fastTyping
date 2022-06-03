@@ -37,11 +37,6 @@ LocalManagerSolo::LocalManagerSolo(std::vector<QString> a_words)
     inputter.setBufferMaxSize(dictionary.getCurrentWord().size() + 1);
 }
 
-// bool LocalManagerSolo::is_correct_word() {
-//    return inputter.getBuffer() == dictionary.getCurrentWord();
-//}
-
-//////
 void LocalManagerSolo::key_pressed(QChar button) {
     if (button == ' ') {
         wpmChartModel->backspace();
@@ -55,11 +50,7 @@ void LocalManagerSolo::key_pressed(QChar button) {
             emit print_signal(
                 inputter.getBuffer(),
                 dictionary.getCompletedSize() + inputter.getBuffer().size());
-            //            if (check_symbol(inputter.getBuffer().size() - 1)) {
             emit correct_signal();
-            //            } else {
-            //                emit error_signal();
-            //            }
             return;
         } else {
             inputter.addSymbol(button);
@@ -81,11 +72,14 @@ void LocalManagerSolo::key_pressed(QChar button) {
     } else {
         inputter.addSymbol(button);
     }
-
     if (!check_symbol(inputter.getBuffer().size() - 1)) {
-        wpmChartModel->errorSymbol(
-            inputter.getBuffer().back(),
-            dictionary.getCurrentWord()[inputter.getBuffer().size() - 1]);
+        QVariant symbolFromDictionary;
+        const auto &word = dictionary.getCurrentWord();
+        if (inputter.getBuffer().size() <= word.size()) {
+            symbolFromDictionary = word[inputter.getBuffer().size() - 1];
+        }
+        wpmChartModel->errorSymbol(inputter.getBuffer().back(),
+                                   symbolFromDictionary);
         emit errorOnPositionSignal(dictionary.getCompletedSize() +
                                    inputter.getBuffer().size() - 1);
     } else {
@@ -93,6 +87,7 @@ void LocalManagerSolo::key_pressed(QChar button) {
         emit correctOnPositionSignal(dictionary.getCompletedSize() +
                                      inputter.getBuffer().size() - 1);
     }
+
     emit print_signal(inputter.getBuffer(), dictionary.getCompletedSize() +
                                                 inputter.getBuffer().size());
     emit correct_signal();
@@ -130,14 +125,10 @@ QString LocalManagerSolo::blob() {
 }
 
 QVariant LocalManagerSolo::next() {
-    //    if (!check_prefix()) {
-    //        return {};
-    //    }
-
     QString buffer = inputter.getBuffer();
     QString sample = dictionary.getCurrentWord();
 
-    if (buffer.size() == sample.size()) {
+    if (buffer.size() >= sample.size()) {
         return QChar(' ');
     } else {
         return sample[buffer.size()];

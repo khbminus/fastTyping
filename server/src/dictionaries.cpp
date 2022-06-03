@@ -180,4 +180,12 @@ void add_corpus_dictionary(std::string const &name,
     db.unanswered_query(sql);
 }
 
+[[nodiscard]] std::size_t CorpusDictionary::getPrefixSize(int pos) const {
+    std::size_t result = 0;
+    for (int ind = 0; ind < pos; ind++) {
+        result += words[ind].size() + 1;
+    }
+    return result;
+}
+
 }  // namespace FastTyping::Logic
