@@ -63,7 +63,7 @@ void LocalManagerSolo::key_pressed(QChar button) {
             return;
         } else {
             inputter.addSymbol(button);
-            
+
             emit errorOnPositionSignal(dictionary.getCompletedSize() +
                                        inputter.getBuffer().size() - 1);
             if (!dictionary.nextWord()) {
@@ -74,7 +74,7 @@ void LocalManagerSolo::key_pressed(QChar button) {
             inputter.setBufferMaxSize(dictionary.getCurrentWord().size() + 1);
             emit print_signal(
                 inputter.getBuffer(),
-                dictionary.getCompletedSize() + inputter.getBuffer().size());    
+                dictionary.getCompletedSize() + inputter.getBuffer().size());
             emit correct_signal();
             return;
         }
@@ -83,7 +83,9 @@ void LocalManagerSolo::key_pressed(QChar button) {
     }
 
     if (!check_symbol(inputter.getBuffer().size() - 1)) {
-        wpmChartModel->errorSymbol(inputter.getBuffer().back(), dictionary.getCurrentWord()[inputter.getBuffer().size() - 1]);
+        wpmChartModel->errorSymbol(
+            inputter.getBuffer().back(),
+            dictionary.getCurrentWord()[inputter.getBuffer().size() - 1]);
         emit errorOnPositionSignal(dictionary.getCompletedSize() +
                                    inputter.getBuffer().size() - 1);
     } else {

@@ -38,7 +38,6 @@ struct Dictionary : AbstractDictionary {
         return result;
     }
 
-
 private:
     std::vector<std::string> words;
 };

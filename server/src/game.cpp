@@ -112,8 +112,9 @@ json Game::addNewChar(int uid, const std::string &c) {
             userFinished(uid);
         }
         return checkResult;
-    } else if (isSolo && c == " " && additionalInfo[uid].currentBuffers.size() !=
-                               dictionary->getWordCount() - 1) {
+    } else if (isSolo && c == " " &&
+               additionalInfo[uid].currentBuffers.size() !=
+                   dictionary->getWordCount() - 1) {
         additionalInfo[uid].currentBuffers.push_back({});
         additionalInfo[uid].currentWord++;
     }

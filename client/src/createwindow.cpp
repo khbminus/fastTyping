@@ -34,8 +34,8 @@ void CreateGameWindow::on_CreateButton_clicked() {
     if (ui->ModeBox->currentText() == "Single player") {
         isSolo = true;
     }
-    QString raw_response =
-        socket().query(create_game_query(ui->WordsBox->currentText(), isSolo, true));
+    QString raw_response = socket().query(
+        create_game_query(ui->WordsBox->currentText(), isSolo, true));
     qDebug() << "create result:" << raw_response;
     json response = json::parse(raw_response.toStdString());
 
