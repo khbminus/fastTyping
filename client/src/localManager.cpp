@@ -107,6 +107,9 @@ QString LocalManager::blob() {
 }
 
 QVariant LocalManager::next() {
+    if (dictionary.isEnded()) {
+        return ' ';
+    }
     if (!check_prefix()) {
         return {};
     }
