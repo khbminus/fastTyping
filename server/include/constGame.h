@@ -30,6 +30,14 @@ struct Dictionary : AbstractDictionary {
     [[nodiscard]] size_t getLinesCount() const override {
         return 1;
     }
+    [[nodiscard]] std::size_t getPrefixSize(int pos) const override {
+        std::size_t result = 0;
+        for (int ind = 0; ind < pos; ind++) {
+            result += words[ind].size() + 1;
+        }
+        return result;
+    }
+
 
 private:
     std::vector<std::string> words;
@@ -39,7 +47,7 @@ struct SimpleParser : AbstractParser {
     [[nodiscard]] bool isFullCorrect(
         const std::string &inputWord,
         const std::string &dictionaryWord) const override {
-        return dictionaryWord + ' ' == inputWord;
+        return inputWord == dictionaryWord + ' ';
     }
     [[nodiscard]] bool isPrefixCorrect(
         const std::string &inputWord,
@@ -63,6 +71,19 @@ struct SimpleParser : AbstractParser {
             pos++;
         }
         return pos;
+    }
+};
+
+struct SoloParser : SimpleParser {
+    [[nodiscard]] bool isPrefixCorrect(
+        const std::string &inputWord,
+        const std::string &dictionaryWord) const override {
+        return true;
+    }
+    size_t getCorrectPrefixLength(
+        const std::string &inputWord,
+        const std::string &dictionaryWord) const override {
+        return inputWord.size();
     }
 };
 struct AdaptiveDictionary : AbstractDictionary {

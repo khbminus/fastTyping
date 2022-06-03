@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.14)
 project(fasttyping_client VERSION 1.0 LANGUAGES CXX)
 
 add_compile_options(-O0 -ggdb)
-
 # -*-*- QT CMake start -*-*-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

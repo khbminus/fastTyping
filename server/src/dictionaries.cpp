@@ -53,6 +53,13 @@ FileDictionary::FileDictionary(std::string const &filename) : file(filename) {
 [[nodiscard]] std::size_t FileDictionary::getLinesCount() const {
     return 1;
 }
+[[nodiscard]] std::size_t FileDictionary::getPrefixSize(int pos) const {
+    std::size_t result = 0;
+    for (int ind = 0; ind < pos; ind++) {
+        result += words[ind].size() + 1;
+    }
+    return result;
+}
 
 DLLDictionary::DLLDictionary(std::string const &filename) {
     boost::shared_ptr<dictionary_plugin> plugin =
@@ -73,6 +80,14 @@ DLLDictionary::DLLDictionary(std::string const &filename) {
 }
 [[nodiscard]] std::size_t DLLDictionary::getLinesCount() const {
     return 1;
+}
+
+[[nodiscard]] std::size_t DLLDictionary::getPrefixSize(int pos) const {
+    std::size_t result = 0;
+    for (int ind = 0; ind < pos; ind++) {
+        result += words[ind].size() + 1;
+    }
+    return result;
 }
 
 }  // namespace FastTyping::Logic

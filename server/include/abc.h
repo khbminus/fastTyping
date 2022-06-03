@@ -11,6 +11,8 @@ struct AbstractDictionary {
     [[nodiscard]] virtual std::size_t getWordCount() const = 0;
     [[nodiscard]] virtual std::vector<std::string> getLine(int index) const = 0;
     [[nodiscard]] virtual std::size_t getLinesCount() const = 0;
+    [[nodiscard]] virtual std::size_t getPrefixSize(int pos) const = 0;
+
     virtual ~AbstractDictionary() = default;
 };
 

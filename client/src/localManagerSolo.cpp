@@ -44,6 +44,7 @@ LocalManagerSolo::LocalManagerSolo(std::vector<QString> a_words)
 //////
 void LocalManagerSolo::key_pressed(QChar button) {
     if (button == ' ') {
+        wpmChartModel->backspace();
         if (inputter.getBuffer() == dictionary.getCurrentWord()) {
             inputter.clearBuffer();
             if (!dictionary.nextWord()) {
@@ -62,16 +63,19 @@ void LocalManagerSolo::key_pressed(QChar button) {
             return;
         } else {
             inputter.addSymbol(button);
+            
             emit errorOnPositionSignal(dictionary.getCompletedSize() +
                                        inputter.getBuffer().size() - 1);
             if (!dictionary.nextWord()) {
+                inputter.clearBuffer();
                 emit end_signal();
                 return;
             }
             inputter.setBufferMaxSize(dictionary.getCurrentWord().size() + 1);
             emit print_signal(
                 inputter.getBuffer(),
-                dictionary.getCompletedSize() + inputter.getBuffer().size());
+                dictionary.getCompletedSize() + inputter.getBuffer().size());    
+            emit correct_signal();
             return;
         }
     } else {
@@ -79,11 +83,18 @@ void LocalManagerSolo::key_pressed(QChar button) {
     }
 
     if (!check_symbol(inputter.getBuffer().size() - 1)) {
+        wpmChartModel->errorSymbol(inputter.getBuffer().back(), dictionary.getCurrentWord()[inputter.getBuffer().size() - 1]);
         emit errorOnPositionSignal(dictionary.getCompletedSize() +
                                    inputter.getBuffer().size() - 1);
+    } else {
+        wpmChartModel->correctSymbol();
+        emit correctOnPositionSignal(dictionary.getCompletedSize() +
+                                     inputter.getBuffer().size() - 1);
     }
     emit print_signal(inputter.getBuffer(), dictionary.getCompletedSize() +
                                                 inputter.getBuffer().size());
+    emit correct_signal();
+
     //    if (check_symbol(inputter.getBuffer().size() - 1)) {
     //        emit correct_signal();
     //    } else {

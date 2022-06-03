@@ -92,13 +92,13 @@ QString get_line_query() {
     return dump(result);
 }
 
-QString create_game_query(QString const &dict, bool auto_join) {
+QString create_game_query(QString const &dict, bool auto_join, bool isSolo) {
     json result;
     json words = json::array({"This"});
 
     result["header"] = {{"type", "createGame"}};
     result["body"] = {{"dictionaryName", dict.toStdString()},
-                      {"parserName", "simple"},
+                      {"parserName", (isSolo ? "solo" : "simple")},
                       {"autoJoin", auto_join},
                       {"words", words}};
     return dump(result);
