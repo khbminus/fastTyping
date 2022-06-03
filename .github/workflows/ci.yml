@@ -17,45 +17,87 @@ jobs:
           git commit -m "Automatic code format done by clang-format" || echo "Nothing to commit"
           git push || echo "Nothing to push"
   cppcheck-client:
+    needs: [ clang-format ]
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:base
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            client:
+              - 'client/**'
+
       - run: cppcheck --version
-      - run: cd client && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
+      - if: steps.filter.outputs.client == 'true'
+        run: cd client && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
   cppcheck-server:
+    needs: [ clang-format ]
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:base
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            server:
+              - 'server/**'
+
       - run: cppcheck --version
-      - run: cd server && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
+      - if: steps.filter.outputs.server == 'true'
+        run: cd server && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
 
   server-build:
+    needs: [ cppcheck-server ]
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:base
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
-      - run: |
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            server:
+              - 'server/**'
+
+      - if: steps.filter.outputs.server == 'true'
+        run: |
           mkdir build
           cd build
           cmake .. -DBUILD_ALL=OFF -DBUILD_CLIENT=OFF -DBUILD_SERVER=ON
-      - run: |
+      - if: steps.filter.outputs.server == 'true'
+        run: |
           cd build
           make server
   client-build:
+    needs: [ cppcheck-client ]
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:client
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
-      - run: |
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            client:
+              - 'client/**'
+
+      - if: steps.filter.outputs.client == 'true'
+        run: |
           mkdir build
           cd build
           cmake .. -DBUILD_ALL=OFF -DBUILD_CLIENT=ON -DBUILD_SERVER=OFF
-      - run: |
+      - if: steps.filter.outputs.client == 'true'
+        run: |
           cd build
           make client
+  deploy:
+    needs: [ server-build ]
+    if: github.ref == 'refs/heads/master'
+    uses: ./.github/workflows/deploy.yml

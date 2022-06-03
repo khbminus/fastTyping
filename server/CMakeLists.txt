@@ -6,6 +6,8 @@ find_package(Boost 1.71 REQUIRED system log locale filesystem)
 find_package(nlohmann_json 3.7.3 REQUIRED)
 find_package(Threads)
 include(FetchContent)
+set(SKIP_BUILD_TEST on)
+set(BUILD_SHARED_LIBS OFF)
 FetchContent_Declare(
         libpqxx
         GIT_REPOSITORY https://github.com/jtv/libpqxx.git
@@ -66,3 +68,7 @@ target_link_libraries(dictionaries-interface ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_D
 
 
 add_library(test SHARED src/test_so.cpp)
+set_target_properties(server PROPERTIES PREFIX "fastytpign_")
+install(TARGETS server
+        DESTINATION bin
+        )
