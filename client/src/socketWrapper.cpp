@@ -56,6 +56,7 @@ SocketWrapper::SocketWrapper(QString ip, short port, ResponseHandler *a_handler)
                             qDebug() << "received: " << response;
                         }
 
+//                        qDebug() << "received: " << response;
                         ResponseType type = handler->type(response);
                         if (type == ResponseType::async) {
                             handler->handle(response);

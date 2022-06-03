@@ -2,7 +2,6 @@
 #include <QDebug>
 #include <QVariant>
 #include <iterator>
-
 #include <utility>
 
 bool LocalManager::check_prefix() {
