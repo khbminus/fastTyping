@@ -52,8 +52,6 @@ void ContextManager::set_context(const std::vector<QString> &words,
     }
     remote_manager.reset(new WebManager(words));  // TODO make solo??
 
-
-
     QObject::connect(&handler(), &APIHandler::correct_signal,
                      remote_manager.get(), &WebManager::correct_slot);
     QObject::connect(&handler(), &APIHandler::error_signal,
