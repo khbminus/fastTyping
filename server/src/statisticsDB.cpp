@@ -79,16 +79,19 @@ std::vector<gameStatistics> StatisticsStorage::getHistory(int userId,
     pqxx::result history = work.exec(
         "SELECT * FROM STATISTICS WHERE USER_ID = " + std::to_string(userId) +
         " ORDER BY ID DESC LIMIT " + std::to_string(amount) + ";");
-    for (auto const &row : history) {
-        // cppcheck-suppress useStlAlgorithm
-        result.push_back(
-            {row["USER_ID"].as<int>(), row["DICT_NAME"].as<std::string>(),
-             row["WPM"].as<double>(), row["RAW_WPM"].as<double>(),
-             row["CORRECT_CHARS"].as<double>() /
-                 row["TOTAL_CHARS"].as<double>(),
-             row["CORRECT_CHARS"].as<int>(), row["TOTAL_CHARS"].as<int>(),
-             row["FINISH_TIME"].as<double>()});
-    }
+    std::transform(history.begin(), history.end(), std::back_inserter(result),
+                   [](pqxx::row const &row) {
+                       return gameStatistics{
+                           row["USER_ID"].as<int>(),
+                           row["DICT_NAME"].as<std::string>(),
+                           row["WPM"].as<double>(),
+                           row["RAW_WPM"].as<double>(),
+                           row["CORRECT_CHARS"].as<double>() /
+                               row["TOTAL_CHARS"].as<double>(),
+                           row["CORRECT_CHARS"].as<int>(),
+                           row["TOTAL_CHARS"].as<int>(),
+                           row["FINISH_TIME"].as<double>()};
+                   });
     work.commit();
     return result;
 }
@@ -98,21 +101,24 @@ std::vector<dictStatistics> StatisticsStorage::getUserDictStatistics(
     std::vector<dictStatistics> result;
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
-    pqxx::result history = work.exec(
+    pqxx::result raw_result = work.exec(
         "SELECT DICT_NAME, MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, "
         "AVG(CORRECT_CHARS::NUMERIC / TOTAL_CHARS) AS AVG_ACCURACY, "
         "SUM(FINISH_TIME) AS "
         "SUM_TIME, COUNT(*) "
         "AS GAMES_CNT FROM STATISTICS WHERE USER_ID = " +
         std::to_string(userId) + " GROUP BY DICT_NAME;");
-    for (auto const &row : history) {
-        // cppcheck-suppress useStlAlgorithm
-        result.push_back(
-            {userId, row["DICT_NAME"].as<std::string>(),
-             row["MAX_WPM"].as<double>(), row["AVG_WPM"].as<double>(),
-             row["AVG_ACCURACY"].as<double>(), row["SUM_TIME"].as<double>(),
-             row["GAMES_CNT"].as<int>()});
-    }
+
+    std::transform(raw_result.begin(), raw_result.end(),
+                   std::back_inserter(result), [userId](pqxx::row const &row) {
+                       return dictStatistics{userId,
+                                             row["DICT_NAME"].as<std::string>(),
+                                             row["MAX_WPM"].as<double>(),
+                                             row["AVG_WPM"].as<double>(),
+                                             row["AVG_ACCURACY"].as<double>(),
+                                             row["SUM_TIME"].as<double>(),
+                                             row["GAMES_CNT"].as<int>()};
+                   });
     work.commit();
     return result;
 }
@@ -120,20 +126,23 @@ std::vector<dictStatistics> StatisticsStorage::getUserDictStatistics(
 dictStatistics StatisticsStorage::getUserTotalStatistics(int userId) {
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
-    pqxx::result history = work.exec(
+    pqxx::result raw_result = work.exec(
         "SELECT MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, "
         "AVG(CORRECT_CHARS::NUMERIC / "
         "TOTAL_CHARS) AS AVG_ACCURACY, SUM(FINISH_TIME) AS SUM_TIME, COUNT(*) "
         "AS GAMES_CNT FROM STATISTICS WHERE USER_ID = " +
         std::to_string(userId) + ";");
-
+    if (raw_result.size() == 0) {
+        work.commit();
+        return {userId, "all", 0, 0, 0, 0, 0};
+    }
     dictStatistics result{userId,
                           "all",
-                          history[0]["MAX_WPM"].as<double>(),
-                          history[0]["AVG_WPM"].as<double>(),
-                          history[0]["AVG_ACCURACY"].as<double>(),
-                          history[0]["SUM_TIME"].as<double>(),
-                          history[0]["GAMES_CNT"].as<int>()};
+                          raw_result[0]["MAX_WPM"].as<double>(),
+                          raw_result[0]["AVG_WPM"].as<double>(),
+                          raw_result[0]["AVG_ACCURACY"].as<double>(),
+                          raw_result[0]["SUM_TIME"].as<double>(),
+                          raw_result[0]["GAMES_CNT"].as<int>()};
     work.commit();
     return result;
 }
@@ -143,20 +152,22 @@ std::vector<dictStatistics> StatisticsStorage::getTopDictStatistics(
     std::vector<dictStatistics> result;
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
-    pqxx::result history = work.exec(
+    pqxx::result raw_result = work.exec(
         "SELECT USER_ID, MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, "
         "AVG(CORRECT_CHARS::NUMERIC / TOTAL_CHARS) AS AVG_ACCURACY, "
         "SUM(FINISH_TIME) AS "
         "SUM_TIME, COUNT(*) AS "
         "GAMES_CNT FROM STATISTICS WHERE DICT_NAME = '" +
         db.esc(dictName) + "' GROUP BY USER_ID;");
-    for (auto const &row : history) {
-        // cppcheck-suppress useStlAlgorithm
-        result.push_back(
-            {row["USER_ID"].as<int>(), dictName, row["MAX_WPM"].as<double>(),
-             row["AVG_WPM"].as<double>(), row["AVG_ACCURACY"].as<double>(),
-             row["SUM_TIME"].as<double>(), row["GAMES_CNT"].as<int>()});
-    }
+    std::transform(
+        raw_result.begin(), raw_result.end(), std::back_inserter(result),
+        [dictName](pqxx::row const &row) {
+            return dictStatistics{
+                row["USER_ID"].as<int>(),         dictName,
+                row["MAX_WPM"].as<double>(),      row["AVG_WPM"].as<double>(),
+                row["AVG_ACCURACY"].as<double>(), row["SUM_TIME"].as<double>(),
+                row["GAMES_CNT"].as<int>()};
+        });
     work.commit();
     return result;
 }
