@@ -149,7 +149,7 @@ Server::Server()
                     {"body", {{"text", "Game already started"}}}};
         }
         json errors;
-        auto game = user.getGame();
+        auto *game = user.getGame();
         if (game == nullptr) {
             return errors;
         }
@@ -232,7 +232,6 @@ Server::Server()
         result["header"] = {{"type", "dictionaries"},
                             {"queryType", "getDictionaries"}};
         result["body"] = {{"list", dictionaries_storage->get_dictionaries()}};
-        // BOOST_LOG_TRIVIAL(debug) << result << "\n";
         return result;
     };
 
@@ -281,7 +280,6 @@ Server::Server()
             result = {{"header", {{"type", "nameAlreadyExists"}}},
                       {"body", {{"id", -1}}}};
         }
-        // BOOST_LOG_TRIVIAL(debug) << result << '\n';
         return result;
     };
     loginQueriesMap["changePassword"] = [&](const json &body) -> json {
