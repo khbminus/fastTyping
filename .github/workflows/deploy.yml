@@ -1,11 +1,6 @@
 name: Continuous Integration
 on:
-  push:
-    branches:
-      - master
-      - develop
-    paths:
-      - 'server/**'
+  workflow_call
 
 jobs:
   deploy-server:

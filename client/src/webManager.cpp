@@ -17,7 +17,6 @@ void WebManager::key_pressed(QChar button) {
         socket().send(key_pressed_query(QString(button)));
         emit print_signal(inputter.getBuffer(), 0);
     }
-    qDebug() << "current web buffer" << inputter.getBuffer();
 }
 
 void WebManager::backspace_pressed() {

@@ -1,6 +1,7 @@
 #include "server.h"
 #include <boost/locale.hpp>
 #include <boost/log/trivial.hpp>
+#include <cctype>
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -13,6 +14,7 @@ Server::Server()
     : acceptor(ioContext, tcp::endpoint(tcp::v4(), PORT)),
       user_storage(new UserStorage),
       dictionaries_storage(new DictionariesStorage),
+      mistakes_storage(new MistakesStorage),
       gameStorage(new MapGameStorage) {
     boost::locale::generator gen;
     std::locale::global(gen(""));
@@ -34,14 +36,21 @@ Server::Server()
                     {"body", {{"text", "can't find \"parserName\""}}}};
         }
 
+        bool adapt = false;
+
+        if (body.contains("adapt") && body["adapt"].is_boolean() &&
+            body["adapt"]) {
+            adapt = true;
+        }
+
         if (user.getGame() != nullptr) {
             return {{"header", {{"type", "alreadyInGameError"}}},
                     {"body", {{"text", "Already in game"}}}};
         }
-        std::string dictionary_name = body["dictionaryName"].get<std::string>();
 
-        auto result = gameStorage->createGame(
-            body, dictionary_instance(dictionary_name), user.getId());
+        std::cout << "adapt = " << adapt << std::endl;
+
+        auto result = gameStorage->createGame(body, user.getId(), adapt);
         if (body.contains("autoJoin") && body["autoJoin"].is_boolean() &&
             body["autoJoin"]) {
             if (!result["body"].contains("id") ||
@@ -110,6 +119,26 @@ Server::Server()
         return {{"header", {{"type", "GameWaitedSuccessfully"}}}, {"body", {}}};
     };
 
+    commonQueriesMap["addTypos"] = [&](const json &body, User &user) -> json {
+        if (!body.contains("typos")) {
+            return {{"header", {{"type", "typosAdded"}}},
+                    {"body", {{"text", "no typos"}}}};
+        }
+        auto typos = body["typos"].get<std::vector<std::string>>();
+
+        int id = user.getId();
+        for (auto const &typo : typos) {
+            std::cout << "typo = '" << typo << "' " << typo.size() << std::endl;
+            if (typo.size() == 2 && std::isalpha(typo[0]) &&
+                std::isalpha(typo[1])) {
+                std::cout << "add" << std::endl;
+                mistakes_storage->addMistake(id, typo[0], typo[1], "qwerty");
+            }
+        }
+        return {{"header", {{"type", "typosAdded"}}},
+                {"body", {{"text", "no typos"}}}};
+    };
+
     commonQueriesMap["startGame"] = [&](const json &body, User &user) -> json {
         if (user.getGame() == nullptr) {
             return {{"header", {{"type", "notInGameError"}}},
@@ -120,7 +149,7 @@ Server::Server()
                     {"body", {{"text", "Game already started"}}}};
         }
         json errors;
-        auto game = user.getGame();
+        auto *game = user.getGame();
         if (game == nullptr) {
             return errors;
         }
@@ -203,7 +232,6 @@ Server::Server()
         result["header"] = {{"type", "dictionaries"},
                             {"queryType", "getDictionaries"}};
         result["body"] = {{"list", dictionaries_storage->get_dictionaries()}};
-        BOOST_LOG_TRIVIAL(debug) << result << "\n";
         return result;
     };
 
@@ -252,7 +280,6 @@ Server::Server()
             result = {{"header", {{"type", "nameAlreadyExists"}}},
                       {"body", {{"id", -1}}}};
         }
-        BOOST_LOG_TRIVIAL(debug) << result << '\n';
         return result;
     };
     loginQueriesMap["changePassword"] = [&](const json &body) -> json {
@@ -322,12 +349,12 @@ void Server::parseQuery(tcp::socket s) {
                 query = json::parse(line);
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
-                BOOST_LOG_TRIVIAL(debug) << query << '\n';
+                // BOOST_LOG_TRIVIAL(debug) << query << '\n';
                 if (auto it = loginQueriesMap.find(queryHeader["type"]);
                     it != loginQueriesMap.end()) {
                     result = it->second(queryBody);
                     result["header"]["queryType"] = queryHeader["type"];
-                    BOOST_LOG_TRIVIAL(debug) << result << '\n';
+                    // BOOST_LOG_TRIVIAL(debug) << result << '\n';
                     client << result << '\n';
                     if ((result["header"]["queryType"] == "login" ||
                          result["header"]["queryType"] == "register") &&
@@ -362,7 +389,7 @@ void Server::parseQuery(tcp::socket s) {
                 query = json::parse(line);
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
-                BOOST_LOG_TRIVIAL(debug) << query << '\n';
+                // BOOST_LOG_TRIVIAL(debug) << query << '\n';
                 if (auto it = commonQueriesMap.find(queryHeader["type"]);
                     it != commonQueriesMap.end()) {
                     result = it->second(queryBody, user);

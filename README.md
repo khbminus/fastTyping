@@ -13,17 +13,13 @@ FASTYTPIGN - клиент-серверное приложение, позвол�
 ## Установка
 
 Для установки используйте команды: 
-
-`git clone https://github.com/khbminus/fastTyping.git`
-
-`mkdir build`
-
-`cd build`
-
-`cmake .. cmake .. -DBUILD_ALL=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF`, в зависимости от того, что вы хотите собрать назначив флаги 
-
-`make server`
-
-`make client`
+```sh
+git clone https://github.com/khbminus/fastTyping.git
+mkdir build
+cd build
+cmake .. cmake .. -DBUILD_ALL=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF # в зависимости от того, что вы хотите собрать назначив флаги 
+make server
+make client
+```
 
 

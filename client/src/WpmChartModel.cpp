@@ -33,14 +33,16 @@ void WpmChartModel::correctSymbol() {
     correctPresses[time]++;
 }
 
-void WpmChartModel::errorSymbol(QChar have, QChar shouldBe) {
+void WpmChartModel::errorSymbol(QChar have, QVariant shouldBe) {
     auto time = getTimeAndEnsure();
     assert(allPresses.size() == correctPresses.size());
     assert(correctPresses.size() == incorrectPresses.size());
     allPresses[time]++;
     incorrectPresses[time]++;
-    qDebug() << "should be" << shouldBe << "but have" << have;
-    incorrectPressedWithButtons << std::make_pair(shouldBe, have);
+    if (shouldBe.isValid()) {
+        qDebug() << "should be" << shouldBe << "but have" << have;
+        incorrectPressedWithButtons << std::make_pair(shouldBe.toChar(), have);
+    }
 }
 
 void WpmChartModel::backspace() {

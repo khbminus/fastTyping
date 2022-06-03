@@ -63,7 +63,6 @@ private:
 
 public:
     bool addSymbol(QChar button) override {
-        qDebug() << "buffer" << buffer.size() << maxBufferSize;
         if (buffer.size() + 1 <= maxBufferSize) {
             buffer += button;
             return true;

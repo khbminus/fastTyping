@@ -189,7 +189,9 @@ std::vector<std::string> DictionariesStorage::get_dictionaries() {
 
 MistakesStorage::MistakesStorage() : db(Database::get_instance()) {
     try {
+        std::cout << "creating table if t is not existing" << std::endl;
         db.unanswered_query(create_table_mistakes_query);
+        std::cout << "table created" << std::endl;
     } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
     }

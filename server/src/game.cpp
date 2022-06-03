@@ -5,6 +5,7 @@
 #include <iostream>
 #include <ratio>
 #include "constGame.h"
+#include "dictionaryDB.h"
 
 namespace FastTyping::Server {
 bool Game::hasUser(int uid) {
@@ -205,18 +206,23 @@ std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
     return nullptr;
 }
 
-json MapGameStorage::createGame(
-    const json &body,
-    std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary,
-    int host_id) {
+json MapGameStorage::createGame(const json &body, int host_id, bool adapt) {
     if (body["parserName"] != "simple" && body["parserName"] != "solo") {
         return {{"header", {{"type", "wrongFormatError"}}},
                 {"body", {{"text", "wrong parameters"}}}};
     }
-    if (!body.contains("words") || !body["words"].is_array()) {
-        return {{"header", {{"type", "wrongFormatError"}}},
-                {"body", {{"text", "Can't find words"}}}};
+
+    std::string dictionary_name = body["dictionaryName"].get<std::string>();
+    DictionariesStorage dictionaries;
+
+    if (!dictionaries.dictionaryExists(dictionary_name)) {
+        return {{"header", {{"type", "wrongDictionary"}}},
+                {"body", {{"text", "no such dictionary"}}}};
     }
+
+    std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary =
+        dictionary_instance(dictionary_name, host_id, adapt);
+
     std::shared_ptr<Game> game;
     if (body["parserName"] == "simple") {
         game = std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
@@ -226,7 +232,6 @@ json MapGameStorage::createGame(
                                       std::move(dictionary), host_id);
         game->setSolo();
     }
-
     {
         std::unique_lock l{map_mutex};
         games[game->getId()] = game;

@@ -55,7 +55,6 @@ QHash<int, QByteArray> TextListModel::roleNames() const {
 }
 
 void TextListModel::setCorrectnessOfChar(int position, bool value) {
-    qDebug() << "setted" << position << value;
     if (position >= line.size()) {
         return;
     }

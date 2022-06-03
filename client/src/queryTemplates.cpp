@@ -1,6 +1,8 @@
 #include "queryTemplates.h"
+#include <algorithm>
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include <vector>
 
 using nlohmann::json;
 
@@ -92,7 +94,7 @@ QString get_line_query() {
     return dump(result);
 }
 
-QString create_game_query(QString const &dict, bool auto_join, bool isSolo) {
+QString create_game_query(QString const &dict, bool auto_join, bool adapt, bool isSolo) {
     json result;
     json words = json::array({"This"});
 
@@ -100,6 +102,7 @@ QString create_game_query(QString const &dict, bool auto_join, bool isSolo) {
     result["body"] = {{"dictionaryName", dict.toStdString()},
                       {"parserName", (isSolo ? "solo" : "simple")},
                       {"autoJoin", auto_join},
+                      {"adapt", adapt},
                       {"words", words}};
     return dump(result);
 }
@@ -124,4 +127,20 @@ QString getStatesQuery() {
     result["body"] = json::object();
     return dump(result);
 }
+
+QString send_typos_query(QList<std::pair<QChar, QChar>> typos) {
+    json result;
+    json words = json::array({"This"});
+
+    std::vector<std::string> errors;
+    std::transform(typos.begin(), typos.end(), std::back_inserter(errors),
+                   [](std::pair<QChar, QChar> a) {
+                       return (QString(a.first) + a.second).toStdString();
+                   });
+
+    result["header"] = {{"type", "addTypos"}};
+    result["body"] = {{"typos", json(errors)}};
+    return dump(result);
+}
+
 }  // namespace client::queries
