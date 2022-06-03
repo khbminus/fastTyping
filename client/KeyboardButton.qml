@@ -38,7 +38,7 @@ Item {
 
         Rectangle {
                 anchors.fill: parent
-                border.color: "#000000"
+                border.color: "#FFFFFF"
                 border.width: isNext ? 3 : 0
                 //anchors.horizontalCenter: parent.horizontalCenter
                 //anchors.verticalCenter: parent.verticalCenter

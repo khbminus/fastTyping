@@ -5,6 +5,8 @@
 #include <iostream>
 #include <ratio>
 #include "constGame.h"
+#include "dictionaryDB.h"
+#include "statisticsDB.h"
 
 namespace FastTyping::Server {
 bool Game::hasUser(int uid) {
@@ -39,6 +41,13 @@ void Game::userFinished(int uid) {
     additionalInfo[uid].finishTime = time_span.count();
     std::cerr << "Finis time uf user " << uid << " "
               << additionalInfo[uid].finishTime << '\n';
+    StatisticsStorage storage;
+    double convertToWpm = 60.0 / additionalInfo[uid].finishTime / 4;
+    double wpm = additionalInfo[uid].correctChars * convertToWpm;
+    double rawWpm = additionalInfo[uid].totalChars * convertToWpm;
+    storage.addGame(
+        uid, dictName, wpm, rawWpm, additionalInfo[uid].correctChars,
+        additionalInfo[uid].totalChars, additionalInfo[uid].finishTime);
 }
 
 json Game::checkUnsafe(int uid) {
@@ -159,21 +168,26 @@ std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
     return nullptr;
 }
 
-json MapGameStorage::createGame(
-    const json &body,
-    std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary,
-    int host_id) {
+json MapGameStorage::createGame(const json &body, int host_id, bool adapt) {
     if (body["parserName"] != "simple") {
         return {{"header", {{"type", "wrongFormatError"}}},
                 {"body", {{"text", "wrong parameters"}}}};
     }
-    if (!body.contains("words") || !body["words"].is_array()) {
-        return {{"header", {{"type", "wrongFormatError"}}},
-                {"body", {{"text", "Can't find words"}}}};
+
+    std::string dictionary_name = body["dictionaryName"].get<std::string>();
+    DictionariesStorage dictionaries;
+
+    if (!dictionaries.dictionaryExists(dictionary_name)) {
+        return {{"header", {{"type", "wrongDictionary"}}},
+                {"body", {{"text", "no such dictionary"}}}};
     }
+
+    std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary =
+        dictionary_instance(dictionary_name, host_id, adapt);
+
     std::shared_ptr<Game> game =
         std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
-                               std::move(dictionary), host_id);
+                               std::move(dictionary), host_id, dictionary_name);
     {
         std::unique_lock l{map_mutex};
         games[game->getId()] = game;

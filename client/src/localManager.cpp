@@ -7,7 +7,7 @@
 bool LocalManager::check_prefix() {
     QString buffer = inputter.getBuffer();
     QString sample = dictionary.getCurrentWord();
-    qDebug() << "comparing" << buffer << " with " << sample;
+    // qDebug() << "comparing" << buffer << " with " << sample;
 
     if (buffer.size() > sample.size()) {
         return false;
@@ -42,6 +42,9 @@ bool LocalManager::is_correct_word() {
 }
 
 void LocalManager::key_pressed(QChar button) {
+    if (dictionary.isEnded()) {
+        return;
+    }
     if (button == ' ') {
         if (inputter.getBuffer() == dictionary.getCurrentWord()) {
             inputter.clearBuffer();
@@ -64,7 +67,13 @@ void LocalManager::key_pressed(QChar button) {
     }
 
     if (!check_symbol(inputter.getBuffer().size() - 1)) {
-        wpmChartModel->errorSymbol();
+        QVariant symbolFromDictionary;
+        const auto &word = dictionary.getCurrentWord();
+        if (inputter.getBuffer().size() <= word.size()) {
+            symbolFromDictionary = word[inputter.getBuffer().size() - 1];
+        }
+        wpmChartModel->errorSymbol(inputter.getBuffer().back(),
+                                   symbolFromDictionary);
         emit errorOnPositionSignal(dictionary.getCompletedSize() +
                                    inputter.getBuffer().size() - 1);
     } else {
@@ -78,6 +87,9 @@ void LocalManager::key_pressed(QChar button) {
 }
 
 void LocalManager::backspace_pressed() {
+    if (dictionary.isEnded()) {
+        return;
+    }
     inputter.deleteSymbol();
     emit correctOnPositionSignal(dictionary.getCompletedSize() +
                                  inputter.getBuffer().size());
@@ -95,6 +107,9 @@ QString LocalManager::blob() {
 }
 
 QVariant LocalManager::next() {
+    if (dictionary.isEnded()) {
+        return ' ';
+    }
     if (!check_prefix()) {
         return {};
     }

@@ -47,7 +47,7 @@ Rectangle {
                 Text {
                     FontLoader {
                         id: loader
-                        source: "https://dtinth.github.io/comic-mono-font/ComicMono.ttf"
+                        source: "https://github.com/JetBrains/JetBrainsMono/blob/master/fonts/ttf/JetBrainsMono-Light.ttf?raw=true"
                     }
                     anchors.top: parent.top
                     id: charText

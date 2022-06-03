@@ -6,6 +6,7 @@
 #include <pqxx/pqxx>
 #include <vector>
 #include "abc.h"
+#include "dictfwd.h"
 
 namespace FastTyping::Server {
 
@@ -18,6 +19,7 @@ public:
         return instance;
     }
     ~Database();
+    std::string esc(std::string const &raw);
 
 private:
     friend struct UserStorage;
@@ -27,8 +29,12 @@ private:
     friend struct MistakesStorage;
     friend struct StatisticsStorage;
     friend struct DLLDictionariesStorage;
+    friend struct CorpusDictionariesStorage;
+    friend struct ::FastTyping::Logic::CorpusDictionary;
+    friend void ::FastTyping::Logic::add_corpus_dictionary(
+        std::string const &name,
+        std::vector<std::string> words);
     Database();
-    std::string esc(std::string const &raw);
     template <typename T = std::string>
     T get_column(std::string const &query, std::string const &column) {
         std::unique_lock l{mutex};

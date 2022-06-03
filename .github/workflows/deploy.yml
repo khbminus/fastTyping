@@ -1,11 +1,6 @@
 name: Continuous Integration
 on:
-  push:
-    branches:
-      - master
-      - develop
-    paths:
-      - 'server/**'
+  workflow_call
 
 jobs:
   deploy-server:
@@ -26,7 +21,9 @@ jobs:
             cd build
             cmake .. -DBUILD_ALL=OFF -DBUILD_CLIENT=OFF -DBUILD_SERVER=ON
             make server
+            make dictionaries-interface
             echo "built"
+            sudo FASTTYPING_DB=fast_typing ./server/dictionaries-interface 
             cp server/server ../../server
             cd ..
             rm -rf build

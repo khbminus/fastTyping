@@ -33,12 +33,16 @@ void WpmChartModel::correctSymbol() {
     correctPresses[time]++;
 }
 
-void WpmChartModel::errorSymbol() {
+void WpmChartModel::errorSymbol(QChar have, QVariant shouldBe) {
     auto time = getTimeAndEnsure();
     assert(allPresses.size() == correctPresses.size());
     assert(correctPresses.size() == incorrectPresses.size());
     allPresses[time]++;
     incorrectPresses[time]++;
+    if (shouldBe.isValid()) {
+        qDebug() << "should be" << shouldBe << "but have" << have;
+        incorrectPressedWithButtons << std::make_pair(shouldBe.toChar(), have);
+    }
 }
 
 void WpmChartModel::backspace() {
@@ -75,6 +79,10 @@ int WpmChartModel::getMaxWPM() {
 
 int WpmChartModel::getMaxErrors() {
     return *std::max_element(incorrectPresses.begin(), incorrectPresses.end());
+}
+
+QList<std::pair<QChar, QChar>> WpmChartModel::getAllErrors() const {
+    return incorrectPressedWithButtons;
 }
 
 }  // namespace FastTyping::Charts
