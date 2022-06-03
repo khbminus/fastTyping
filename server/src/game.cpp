@@ -5,6 +5,7 @@
 #include <iostream>
 #include <ratio>
 #include "constGame.h"
+#include "statisticsDB.h"
 
 namespace FastTyping::Server {
 bool Game::hasUser(int uid) {
@@ -39,6 +40,13 @@ void Game::userFinished(int uid) {
     additionalInfo[uid].finishTime = time_span.count();
     std::cerr << "Finis time uf user " << uid << " "
               << additionalInfo[uid].finishTime << '\n';
+    StatisticsStorage storage;
+    double convertToWpm = 60.0 / additionalInfo[uid].finishTime / 4;
+    double wpm = additionalInfo[uid].correctChars * convertToWpm;
+    double rawWpm = additionalInfo[uid].totalChars * convertToWpm;
+    storage.addGame(
+        uid, dictName, wpm, rawWpm, additionalInfo[uid].correctChars,
+        additionalInfo[uid].totalChars, additionalInfo[uid].finishTime);
 }
 
 json Game::checkUnsafe(int uid) {
@@ -162,7 +170,8 @@ std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
 json MapGameStorage::createGame(
     const json &body,
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary,
-    int host_id) {
+    int host_id,
+    std::string &dictName) {
     if (body["parserName"] != "simple") {
         return {{"header", {{"type", "wrongFormatError"}}},
                 {"body", {{"text", "wrong parameters"}}}};
@@ -173,7 +182,7 @@ json MapGameStorage::createGame(
     }
     std::shared_ptr<Game> game =
         std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
-                               std::move(dictionary), host_id);
+                               std::move(dictionary), host_id, dictName);
     {
         std::unique_lock l{map_mutex};
         games[game->getId()] = game;

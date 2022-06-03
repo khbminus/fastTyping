@@ -84,6 +84,8 @@ std::vector<gameStatistics> StatisticsStorage::getHistory(int userId,
         result.push_back(
             {row["USER_ID"].as<int>(), row["DICT_NAME"].as<std::string>(),
              row["WPM"].as<double>(), row["RAW_WPM"].as<double>(),
+             row["CORRECT_CHARS"].as<double>() /
+                 row["TOTAL_CHARS"].as<double>(),
              row["CORRECT_CHARS"].as<int>(), row["TOTAL_CHARS"].as<int>(),
              row["FINISH_TIME"].as<double>()});
     }
@@ -97,16 +99,40 @@ std::vector<dictStatistics> StatisticsStorage::getUserDictStatistics(
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
     pqxx::result history = work.exec(
-        "SELECT DICT_NAME, MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, COUNT(*) "
+        "SELECT DICT_NAME, MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, "
+        "AVG(CORRECT_CHARS::NUMERIC / TOTAL_CHARS) AS AVG_ACCURACY, SUM(FINISH_TIME) AS "
+        "SUM_TIME, COUNT(*) "
         "AS GAMES_CNT FROM STATISTICS WHERE USER_ID = " +
         std::to_string(userId) + " GROUP BY DICT_NAME;");
     for (auto const &row : history) {
         // cppcheck-suppress useStlAlgorithm
-        result.push_back({userId, row["DICT_NAME"].as<std::string>(),
-                          row["MAX_WPM"].as<double>(),
-                          row["AVG_WPM"].as<double>(),
-                          row["GAMES_CNT"].as<int>()});
+        result.push_back(
+            {userId, row["DICT_NAME"].as<std::string>(),
+             row["MAX_WPM"].as<double>(), row["AVG_WPM"].as<double>(),
+             row["AVG_ACCURACY"].as<double>(), row["SUM_TIME"].as<double>(),
+             row["GAMES_CNT"].as<int>()});
     }
+    work.commit();
+    return result;
+}
+
+dictStatistics StatisticsStorage::getUserTotalStatistics(int userId) {
+    
+    std::unique_lock l{db.mutex};
+    pqxx::work work(db.connect);
+    pqxx::result history = work.exec(
+        "SELECT MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, AVG(CORRECT_CHARS::NUMERIC / "
+        "TOTAL_CHARS) AS AVG_ACCURACY, SUM(FINISH_TIME) AS SUM_TIME, COUNT(*) "
+        "AS GAMES_CNT FROM STATISTICS WHERE USER_ID = " +
+        std::to_string(userId) + ";");
+
+    dictStatistics result {userId,
+              "all",
+              history[0]["MAX_WPM"].as<double>(),
+              history[0]["AVG_WPM"].as<double>(),
+              history[0]["AVG_ACCURACY"].as<double>(),
+              history[0]["SUM_TIME"].as<double>(),
+              history[0]["GAMES_CNT"].as<int>()};
     work.commit();
     return result;
 }
@@ -117,14 +143,17 @@ std::vector<dictStatistics> StatisticsStorage::getTopDictStatistics(
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
     pqxx::result history = work.exec(
-        "SELECT USER_ID, MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, COUNT(*) AS "
+        "SELECT USER_ID, MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, "
+        "AVG(CORRECT_CHARS::NUMERIC / TOTAL_CHARS) AS AVG_ACCURACY, SUM(FINISH_TIME) AS "
+        "SUM_TIME, COUNT(*) AS "
         "GAMES_CNT FROM STATISTICS WHERE DICT_NAME = '" +
         db.esc(dictName) + "' GROUP BY USER_ID;");
     for (auto const &row : history) {
         // cppcheck-suppress useStlAlgorithm
         result.push_back(
             {row["USER_ID"].as<int>(), dictName, row["MAX_WPM"].as<double>(),
-             row["AVG_WPM"].as<double>(), row["GAMES_CNT"].as<int>()});
+             row["AVG_WPM"].as<double>(), row["AVG_ACCURACY"].as<double>(),
+             row["SUM_TIME"].as<double>(), row["GAMES_CNT"].as<int>()});
     }
     work.commit();
     return result;
@@ -138,10 +167,12 @@ bool gameStatistics::operator==(const gameStatistics &rhs) const {
 bool gameStatistics::operator!=(const gameStatistics &rhs) const {
     return !(rhs == *this);
 }
+
 bool dictStatistics::operator==(const dictStatistics &rhs) const {
     return userId == rhs.userId && dictName == rhs.dictName &&
            maxWpm == rhs.maxWpm && avgWpm == rhs.avgWpm &&
-           gamesCnt == rhs.gamesCnt;
+           avgAccuracy == rhs.avgAccuracy &&
+           sumFinishTime == rhs.sumFinishTime && gamesCnt == rhs.gamesCnt;
 }
 bool dictStatistics::operator!=(const dictStatistics &rhs) const {
     return !(rhs == *this);

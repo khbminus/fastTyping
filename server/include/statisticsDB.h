@@ -12,6 +12,7 @@ struct gameStatistics {
     std::string dictName;
     double wpm;
     double rawWpm;
+    double accuracy;
     int correctChars;
     int totalChars;
     double finishTime;
@@ -24,9 +25,12 @@ struct dictStatistics {
     const std::string dictName;
     double maxWpm;
     double avgWpm;
+    double avgAccuracy;
+    double sumFinishTime;
     int gamesCnt;
 };
-
+ 
+    
 struct StatisticsStorage {
     void dropStatistics();
     void addGame(int userId,
@@ -42,6 +46,7 @@ struct StatisticsStorage {
     int getGamesAmount(int userId);
     std::vector<gameStatistics> getHistory(int userI, int amount = 10);
     std::vector<dictStatistics> getUserDictStatistics(int userId);
+    dictStatistics getUserTotalStatistics(int userId);
     std::vector<dictStatistics> getTopDictStatistics(
         const std::string &dictName);
 
