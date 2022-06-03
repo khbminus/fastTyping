@@ -130,7 +130,6 @@ TEST_CASE("Statistics") {
         std::vector<dictStatistics>{{0, "const", 24.5, 23, 0.625, 88.5, 3},
                                     {1, "const", 23.5, 23.5, 0.625, 30.2, 1}});
 
-    auto res = storage.getUserTotalStatistics(0);
     CHECK(storage.getUserTotalStatistics(0) ==
           dictStatistics{0, "all", 24.5, 23, 0.625, 88.5, 3});
 }
