@@ -2,6 +2,7 @@
 #include <QQuickItem>
 #include <chrono>
 #include <nlohmann/json.hpp>
+#include "profileDataModel.h"
 #include "windowcontroller.h"
 
 ProfileWindow::ProfileWindow(QWindow *parent) : QQuickView(parent) {

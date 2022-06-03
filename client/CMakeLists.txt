@@ -91,6 +91,9 @@ set(PROJECT_SOURCES
 
         include/profileWindow.h
         src/profileWindow.cpp
+
+        include/profileDataModel.h
+        src/profileDataModel.cpp
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
