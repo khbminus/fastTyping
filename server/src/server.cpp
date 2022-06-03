@@ -232,7 +232,7 @@ Server::Server()
         result["header"] = {{"type", "dictionaries"},
                             {"queryType", "getDictionaries"}};
         result["body"] = {{"list", dictionaries_storage->get_dictionaries()}};
-        BOOST_LOG_TRIVIAL(debug) << result << "\n";
+        // BOOST_LOG_TRIVIAL(debug) << result << "\n";
         return result;
     };
 
@@ -281,7 +281,7 @@ Server::Server()
             result = {{"header", {{"type", "nameAlreadyExists"}}},
                       {"body", {{"id", -1}}}};
         }
-        BOOST_LOG_TRIVIAL(debug) << result << '\n';
+        // BOOST_LOG_TRIVIAL(debug) << result << '\n';
         return result;
     };
     loginQueriesMap["changePassword"] = [&](const json &body) -> json {
@@ -351,12 +351,12 @@ void Server::parseQuery(tcp::socket s) {
                 query = json::parse(line);
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
-                BOOST_LOG_TRIVIAL(debug) << query << '\n';
+                // BOOST_LOG_TRIVIAL(debug) << query << '\n';
                 if (auto it = loginQueriesMap.find(queryHeader["type"]);
                     it != loginQueriesMap.end()) {
                     result = it->second(queryBody);
                     result["header"]["queryType"] = queryHeader["type"];
-                    BOOST_LOG_TRIVIAL(debug) << result << '\n';
+                    // BOOST_LOG_TRIVIAL(debug) << result << '\n';
                     client << result << '\n';
                     if ((result["header"]["queryType"] == "login" ||
                          result["header"]["queryType"] == "register") &&
@@ -391,7 +391,7 @@ void Server::parseQuery(tcp::socket s) {
                 query = json::parse(line);
                 auto queryHeader = query["header"];
                 auto queryBody = query["body"];
-                BOOST_LOG_TRIVIAL(debug) << query << '\n';
+                // BOOST_LOG_TRIVIAL(debug) << query << '\n';
                 if (auto it = commonQueriesMap.find(queryHeader["type"]);
                     it != commonQueriesMap.end()) {
                     result = it->second(queryBody, user);

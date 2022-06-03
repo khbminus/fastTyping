@@ -86,3 +86,4 @@ jobs:
     needs: [ server-build ]
     if: github.ref == 'refs/heads/master'
     uses: ./.github/workflows/deploy.yml
+    secrets: inherit

@@ -5,7 +5,6 @@
 #include "constGame.h"
 #include "dictionaryDB.h"
 
-// aboba
 namespace FastTyping::Server {
 
 std::string Database::esc(std::string const &raw) {
