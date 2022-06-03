@@ -1,15 +1,31 @@
-import QtQuick 2.0
+import QtQuick 2.3
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.3
 
 Item {
     id: root
     width: 800
     height: 600
+
+    /*required property var mainInfo
+    required property var dictsNames
+    required property var dictsValues
+    required property string userName*/
+
     signal returnPressed()
+
+    FontLoader {
+        id: loaderLight
+        source: "https://github.com/JetBrains/JetBrainsMono/blob/master/fonts/ttf/JetBrainsMono-Light.ttf?raw=true"
+    }
+    FontLoader {
+        id: loaderSemiBold
+        source: "https://github.com/JetBrains/JetBrainsMono/blob/master/fonts/ttf/JetBrainsMono-SemiBold.ttf?raw=true"
+    }
 
     Text {
         id: userName
-        text: "Aboba"
+        text: "User name"
         anchors.top: parent.top
         anchors.topMargin: 15
         anchors.horizontalCenter: parent.horizontalCenter
@@ -26,84 +42,86 @@ Item {
         onClicked: root.returnPressed()
         focusPolicy: Qt.ClickFocus
     }
-    Row {
-        id: firstRow
+
+    ProfileEntry {
+        id: mainEntry
         anchors.top: userName.bottom
-        anchors.topMargin: 5
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 40
-        Column {
-            spacing: 1
-            Text {
-                text: "tests completed"
-                horizontalAlignment: Text.AlignHLeft
-            }
-            Text {
-                text: "1337"
-                horizontalAlignment: Text.AlignHLeft
-            }
-        }
-        Column {
-            spacing: 1
-            Text {
-                text: "I dunno? time typing?"
-                horizontalAlignment: Text.AlignHLeft
-            }
-            Text {
-                text: "-e^π"
-                horizontalAlignment: Text.AlignHLeft
+
+        testsCompleted: 1337
+        timeTyping: new Date(304643)
+        avgAccuracy: 33.33333
+        avgWpm: 167
+        maxWpm: 239
+        favouriteDictionary: "Абоба-2"
+
+    }
+
+    TabBar {
+        id: dictsBar
+        anchors.left: root.left
+        anchors.top: mainEntry.bottom
+        anchors.topMargin: 5
+        width: root.width
+
+        Repeater {
+            model: ["English", "Russian", "Алгебра М.А. Антипов", "Баги Юрия Зайцева", "Охуенные истории Никиты Андреева", "Список предателей родины"]
+
+            TabButton {
+                text: modelData
+                font.family: loaderSemiBold.name
+                width: Math.max(100, dictsBar.width / 4)
             }
         }
     }
-    Row {
-        id: secondRow
-        anchors.top: firstRow.bottom
-        anchors.topMargin: 5
-        anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 40
-        Column {
-            spacing: 1
-            Text {
-                text: "avg wpm"
-                horizontalAlignment: Text.AlignHLeft
-            }
-            Text {
-                text: "69"
-                horizontalAlignment: Text.AlignHLeft
-            }
+    StackLayout {
+        id: dictsLayout
+        anchors.left: root.left
+        anchors.right: root.right
+        anchors.top: dictsBar.bottom
+        width: root.width
+        currentIndex: dictsBar.currentIndex
+        ProfileEntry {
+            testsCompleted: 1
+            timeTyping: new Date(10801)
+            avgAccuracy: 69.69
+            avgWpm: 120
+            maxWpm: 566
         }
-        Column {
-            spacing: 1
-            Text {
-                text: "max wpm"
-                horizontalAlignment: Text.AlignHLeft
-            }
-            Text {
-                text: "88"
-                horizontalAlignment: Text.AlignHLeft
-            }
+        ProfileEntry {
+            testsCompleted: 2
+            timeTyping: new Date(10801)
+            avgAccuracy: 69.69
+            avgWpm: 120
+            maxWpm: 566
         }
-        Column {
-            spacing: 1
-            Text {
-                text: "average accuracy"
-                horizontalAlignment: Text.AlignHLeft
-            }
-            Text {
-                text: "10%"
-                horizontalAlignment: Text.AlignHLeft
-            }
+        ProfileEntry {
+            testsCompleted: 3
+            timeTyping: new Date(10801)
+            avgAccuracy: 69.69
+            avgWpm: 120
+            maxWpm: 566
         }
-        Column {
-            spacing: 1
-            Text {
-                text: "favourite dictionary"
-                horizontalAlignment: Text.AlignHLeft
-            }
-            Text {
-                text: "Алгебра М.А. Антипов"
-                horizontalAlignment: Text.AlignHLeft
-            }
+        ProfileEntry {
+            testsCompleted: 4
+            timeTyping: new Date(10801)
+            avgAccuracy: 69.69
+            avgWpm: 120
+            maxWpm: 566
+        }
+        ProfileEntry {
+            testsCompleted: 5
+            timeTyping: new Date(10801)
+            avgAccuracy: 69.69
+            avgWpm: 120
+            maxWpm: 566
+        }
+        ProfileEntry {
+            testsCompleted: 6
+            timeTyping: new Date(10801)
+            avgAccuracy: 69.69
+            avgWpm: 120
+            maxWpm: 566
         }
     }
 }

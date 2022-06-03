@@ -6,15 +6,16 @@
 #include <QObject>
 #include <QQmlEngine>
 
-class ProfileDataModel {
-    Q_OBJECT
-    Q_PROPERTY(QString userName READ userName CONSTANT)
-    Q_PROPERTY(QStringList playedDictionaries READ playedDictionaries CONSTANT)
-    Q_PROPERTY(int testsCompleted READ testCompleted CONSTANT)
-    Q_PROPERTY(QDateTime READ timeTyping CONSTANT)
-    Q_PROPERTY(double avgWpm READ avgWpm CONSTANT)
-    Q_PROPERTY(double avgAccuracy READ avgAccuracy CONSTANT)
-    Q_PROPERTY(QString favouriteDictionary READ favouriteDictionary CONSTANT)
+class ProfileDataModel /*: public QObject*/ {
+    //    Q_OBJECT
+    //    Q_PROPERTY(QString userName READ userName CONSTANT)
+    //    Q_PROPERTY(QStringList playedDictionaries READ playedDictionaries
+    //    CONSTANT) Q_PROPERTY(int testsCompleted READ testsCompleted CONSTANT)
+    //    Q_PROPERTY(QDateTime timeTyping READ timeTyping CONSTANT)
+    //    Q_PROPERTY(double avgWpm READ avgWpm CONSTANT)
+    //    Q_PROPERTY(double avgAccuracy READ avgAccuracy CONSTANT)
+    //    Q_PROPERTY(QString favouriteDictionary READ favouriteDictionary
+    //    CONSTANT)
 public:
     ProfileDataModel(QObject *parent = nullptr);
     QString userName() const;
