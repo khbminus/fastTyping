@@ -1,5 +1,6 @@
 #include "dictionaryDB.h"
 #include <algorithm>
+#include <cstdlib>
 #include "constGame.h"
 #include "dictionaries.h"
 
@@ -160,7 +161,8 @@ dictionary_instance(std::string const &name, int user_id, bool adapt) {
 
     if (type == "file") {
         FileDictionariesStorage filenames;
-        std::string filename = "dict/" + filenames.getFileName(name);
+        std::string filename =
+            std::getenv("HOME") + ("/.fastytpign/dict" + filenames.getFileName(name));
         return std::make_unique<FastTyping::Logic::FileDictionary>(filename);
     }
 
