@@ -42,15 +42,15 @@ jobs:
       with:
         version: 5.12.10
         target: desktop
-          - name: Install dependency
-            run: |
-              vcpkg install nlohmann-json
-          - name: Build with cmake
-            uses: ashutoshvarma/action-cmake-build@master
-            with:
-              build-dir: ${{ runner.workspace }}/build
-              build-type: Release
-              configure-options: -DCMAKE_INSTALL_PREFIX=/usr
-              target: bundle
-              install-build: false
-              parallel: 2
+        - name: Install dependency
+          run: |
+            vcpkg install nlohmann-json
+        - name: Build with cmake
+          uses: ashutoshvarma/action-cmake-build@master
+          with:
+            build-dir: ${{ runner.workspace }}/build
+            build-type: Release
+            configure-options: -DCMAKE_INSTALL_PREFIX=/usr
+            target: bundle
+            install-build: false
+            parallel: 2
