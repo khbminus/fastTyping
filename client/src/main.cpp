@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
     QQuickView::setGraphicsApi(QSGRendererInterface::OpenGL);
 
     QApplication a(argc, argv);
+    a.setWindowIcon(QIcon("icon.png"));
     QApplication::setAttribute(Qt::AA_ForceRasterWidgets, false);
     QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
     auto &keyboard = FastTyping::Keyboard::KeyboardModel::getInstance();

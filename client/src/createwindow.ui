@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>FASTYTPIGN</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="ReturnButton">
@@ -40,7 +40,7 @@
      <string>Create</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>260</x>

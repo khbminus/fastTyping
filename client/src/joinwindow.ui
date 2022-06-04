@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>FASTYTPIGN</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -46,7 +46,7 @@
       <x>312</x>
       <y>230</y>
       <width>125</width>
-      <height>53</height>
+      <height>43</height>
      </rect>
     </property>
     <property name="orientation">
