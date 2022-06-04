@@ -1,6 +1,18 @@
 import QtQuick 2.0
 
 Item {
+    FontLoader {
+        id: loaderLight
+        source: "https://github.com/JetBrains/JetBrainsMono/blob/master/fonts/ttf/JetBrainsMono-Light.ttf?raw=true"
+    }
+    FontLoader {
+        id: loaderSemiBold
+        source: "https://github.com/JetBrains/JetBrainsMono/blob/master/fonts/ttf/JetBrainsMono-SemiBold.ttf?raw=true"
+    }
+    FontLoader {
+        id: loaderBold
+        source: "https://github.com/JetBrains/JetBrainsMono/blob/master/fonts/ttf/JetBrainsMono-Bold.ttf?raw=true"
+    }
     id:root
     required property int testsCompleted
     required property date timeTyping
@@ -65,7 +77,7 @@ Item {
                 font.bold: true
             }
             Text {
-                text: root.avgWpm
+                text: root.avgWpm.toFixed(2)
                 horizontalAlignment: Text.AlignHLeft
                 font.family: loaderLight.name
                 font.pointSize: 12
@@ -81,7 +93,7 @@ Item {
                 font.bold: true
             }
             Text {
-                text: root.maxWpm
+                text: root.maxWpm.toFixed(2)
                 horizontalAlignment: Text.AlignHLeft
                 font.family: loaderLight.name
                 font.pointSize: 12

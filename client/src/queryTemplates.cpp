@@ -155,4 +155,11 @@ QString getUserDictionariesQuery() {
     result["body"] = json::object();
     return dump(result);
 }
+QString getUserGamesQuery(int limit) {
+    json result;
+    result["header"] = {{"type", "getUserGames"}};
+    result["body"] = {{"limit", limit}};
+    return dump(result);
+}
+
 }  // namespace client::queries

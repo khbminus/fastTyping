@@ -44,3 +44,57 @@ QList<QString> ProfileDataModel::dictionariesNames() const {
         [&](ProfileEntryData *data) { return data->getDictionary(); });
     return res;
 }
+
+ProfileTableModel::ProfileTableModel(QObject *parent)
+    : QAbstractListModel(parent) {
+    using client::queries::getUserGamesQuery;
+    using client::web::socket;
+    using nlohmann::json;
+
+    auto games = json::parse(
+        socket().query(getUserGamesQuery(20)).toStdString())["body"];
+    if (games.empty()) {
+        return;
+    }
+    beginInsertRows(QModelIndex(), 0, games.size() - 1);
+    entries.resize(games.size());
+    std::transform(games.begin(), games.end(), entries.begin(),
+                   [&](const json &body) -> GameEntry {
+                       return {body["finishTime"], body["rawWpm"], body["wpm"],
+                               body["accuracy"],
+                               QString::fromStdString(body["dictName"])};
+                   });
+    endInsertRows();
+}
+
+int ProfileTableModel::rowCount(const QModelIndex &parent) const {
+    return entries.size();
+}
+
+QVariant ProfileTableModel::data(const QModelIndex &index, int role) const {
+    if (index.row() < 0 || index.row() >= rowCount(QModelIndex())) {
+        return {};
+    }
+    const auto &entry = entries[index.row()];
+    switch (role) {
+        case ProfileRoles::DictionaryNameRole:
+            return entry.dictionary;
+        case ProfileRoles::WpmRole:
+            return entry.wpm;
+        case ProfileRoles::RawWpmRole:
+            return entry.rawWpm;
+        case ProfileRoles::AccuracyRole:
+            return entry.accuracy;
+        case ProfileRoles::TimeRole:
+            return entry.duration;
+    }
+    return {};
+}
+
+QHash<int, QByteArray> ProfileTableModel::roleNames() const {
+    return {{ProfileRoles::DictionaryNameRole, "dictionaryName"},
+            {ProfileRoles::AccuracyRole, "accuracy"},
+            {ProfileRoles::RawWpmRole, "rawWpm"},
+            {ProfileRoles::TimeRole, "time"},
+            {ProfileRoles::WpmRole, "wpm"}};
+}

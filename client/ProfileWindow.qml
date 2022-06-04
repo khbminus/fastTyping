@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 
@@ -11,6 +11,7 @@ Item {
     required property var dictsNames
     required property var dictsValues
     required property string userName
+    required property var tableModel
 
     signal returnPressed()
 
@@ -29,7 +30,7 @@ Item {
 
     Text {
         id: userName
-        text: "User name"
+        text: root.userName
         anchors.top: parent.top
         anchors.topMargin: 15
         anchors.horizontalCenter: parent.horizontalCenter
@@ -128,5 +129,106 @@ Item {
         font.pointSize: 18
         font.bold: true
         font.underline: true
+    }
+    ListView {
+        anchors.top: allGamesLabel.bottom
+        anchors.bottom: returnButton.top
+        anchors.topMargin: 5
+        anchors.left: root.left
+        width: root.width
+        //clip: true
+
+        header: Row {
+            spacing:  70
+            height: tableDictHeader.height
+            width: parent.width
+            anchors.left: parent.left
+            Text {
+                id: tableDictHeader
+                width: 150
+                text: "dictionary name"
+                horizontalAlignment: Text.AlignHLeft
+                font.family: loaderSemiBold.name
+                font.pointSize: 16
+            }
+            Text {
+                text: "wpm"
+                width: 50
+                horizontalAlignment: Text.AlignHLeft
+                font.family: loaderSemiBold.name
+                font.pointSize: 16
+            }
+            Text {
+                text: "raw wpm"
+                width: 50
+                horizontalAlignment: Text.AlignHLeft
+                font.family: loaderSemiBold.name
+                font.pointSize: 16
+            }
+            Text {
+                text: "accuracy"
+                width: 75
+                horizontalAlignment: Text.AlignHLeft
+                font.family: loaderSemiBold.name
+                font.pointSize: 16
+            }
+            Text {
+                text: "time elapsed"
+                width: 50
+                horizontalAlignment: Text.AlignHLeft
+                font.family: loaderSemiBold.name
+                font.pointSize: 16
+            }
+        }
+        model: root.tableModel
+        delegate: Row {
+            required property string dictionaryName
+            required property real accuracy
+            required property real wpm
+            required property real rawWpm
+            required property int time
+            spacing:  70
+            height: tableDictName.height
+            width: parent.width
+            anchors.left: parent.left
+            Text {
+                width: 150
+                id: tableDictName
+                text: parent.dictionaryName
+                horizontalAlignment: Text.AlignHLeft
+                font.family: loaderLight.name
+                font.pointSize: 12
+            }
+            Text {
+                width: 50
+                id: tableWpm
+                text: parent.wpm.toFixed(2)
+                horizontalAlignment: Text.AlignHLeft
+                font.family: loaderLight.name
+                font.pointSize: 12
+            }
+            Text {
+                width: 50
+                text: parent.rawWpm.toFixed(2)
+                horizontalAlignment: Text.AlignHLeft
+                font.family: loaderLight.name
+                font.pointSize: 12
+            }
+            Text {
+                width: 75
+                text: (parent.accuracy * 100).toFixed(2) + "%"
+                horizontalAlignment: Text.AlignHLeft
+                font.family: loaderLight.name
+                font.pointSize: 12
+            }
+            Text {
+                width: 50
+                text: parent.time + " seconds"
+                horizontalAlignment: Text.AlignHLeft
+                font.family: loaderLight.name
+                font.pointSize: 12
+            }
+        }
+        Component.onCompleted: console.log(count)
     }
 }

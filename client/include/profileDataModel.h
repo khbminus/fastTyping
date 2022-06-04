@@ -1,6 +1,7 @@
 #ifndef FASTTYPING_PROFILEDATAMODEL_H
 #define FASTTYPING_PROFILEDATAMODEL_H
 
+#include <QAbstractTableModel>
 #include <QDateTime>
 #include <QList>
 #include <QObject>
@@ -30,6 +31,36 @@ private:
     double mAvgAccuracy;
     QVariant mFavouriteDictionary;
     QString mDictionary;
+};
+
+struct GameEntry {
+    int duration;
+    double rawWpm;
+    double wpm;
+    double accuracy;
+    QString dictionary;
+};
+
+class ProfileTableModel : public QAbstractListModel {
+    Q_OBJECT
+public:
+    enum ProfileRoles {
+        DictionaryNameRole = Qt::UserRole + 1,
+        WpmRole,
+        RawWpmRole,
+        AccuracyRole,
+        TimeRole,
+    };
+    ProfileTableModel(QObject *parent = nullptr);
+
+    [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
+    [[nodiscard]] QVariant data(const QModelIndex &index,
+                                int role = Qt::DisplayRole) const override;
+
+    QHash<int, QByteArray> roleNames() const override;
+
+private:
+    QList<GameEntry> entries;
 };
 
 class ProfileDataModel : public QObject {

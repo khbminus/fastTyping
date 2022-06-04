@@ -268,6 +268,29 @@ Server::Server()
         result["body"] = resJson;
         return result;
     };
+    commonQueriesMap["getUserGames"] = [&](const json &body,
+                                           User &user) -> json {
+        int limit = 10;
+        if (body.contains("limit") && body["limit"].is_number_unsigned()) {
+            limit = body["limit"];
+        }
+
+        json result = json::object();
+        result["header"] = {{"type", "userGames"}};
+        auto res = statisticsStorage->getHistory(user.getId());
+        std::vector<json> resJson(res.size());
+        std::transform(
+            res.begin(), res.end(), resJson.begin(),
+            [&](const GameStatistics &stats) -> json {
+                return {{"dictName", stats.dictName},
+                        {"wpm", stats.wpm},
+                        {"rawWpm", stats.rawWpm},
+                        {"accuracy", stats.accuracy},
+                        {"finishTime", static_cast<int>(stats.finishTime)}};
+            });
+        result["body"] = resJson;
+        return result;
+    };
 
     loginQueriesMap["login"] = [&](const json &body) -> json {
         std::cerr << "Entered\n";

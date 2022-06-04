@@ -23,7 +23,8 @@ std::map<std::string, std::string> success_type{
     {"register", "success"},
     {"getStates", "currentState"},
     {"getProfile", "profileResult"},
-    {"getUserDictionaries", "userDictionaries"}};
+    {"getUserDictionaries", "userDictionaries"},
+    {"getUserGames", "userGames"}};
 
 std::map<std::string, std::map<std::string, QString>> error_texts{
     {"createGame",

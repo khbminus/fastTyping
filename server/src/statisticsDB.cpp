@@ -77,20 +77,22 @@ std::vector<GameStatistics> StatisticsStorage::getHistory(int userId,
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
     pqxx::result history = work.exec(
-        "SELECT * FROM STATISTICS WHERE USER_ID = " + std::to_string(userId) +
-        " ORDER BY ID DESC LIMIT " + std::to_string(amount) + ";");
+        "SELECT USER_ID, DICT_NAME, WPM, RAW_WPM, "
+        "CORRECT_CHARS::NUMERIC / TOTAL_CHARS AS ACCURACY, CORRECT_CHARS, "
+        "TOTAL_CHARS,"
+        " FINISH_TIME FROM STATISTICS WHERE USER_ID = " +
+        std::to_string(userId) + " ORDER BY ID DESC LIMIT " +
+        std::to_string(amount) + ";");
     std::transform(history.begin(), history.end(), std::back_inserter(result),
                    [](pqxx::row const &row) {
-                       return GameStatistics{
-                           row["USER_ID"].as<int>(),
-                           row["DICT_NAME"].as<std::string>(),
-                           row["WPM"].as<double>(),
-                           row["RAW_WPM"].as<double>(),
-                           row["CORRECT_CHARS"].as<double>() /
-                               row["TOTAL_CHARS"].as<double>(),
-                           row["CORRECT_CHARS"].as<int>(),
-                           row["TOTAL_CHARS"].as<int>(),
-                           row["FINISH_TIME"].as<double>()};
+                       return GameStatistics{row["USER_ID"].as<int>(),
+                                             row["DICT_NAME"].as<std::string>(),
+                                             row["WPM"].as<double>(),
+                                             row["RAW_WPM"].as<double>(),
+                                             row["ACCURACY"].as<double>(),
+                                             row["CORRECT_CHARS"].as<int>(),
+                                             row["TOTAL_CHARS"].as<int>(),
+                                             row["FINISH_TIME"].as<double>()};
                    });
     work.commit();
     return result;

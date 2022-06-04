@@ -22,8 +22,8 @@ private slots:
     void onReturnButtonClicked();
 
 private:
-    ProfileDataModel *model;
-    QList<ProfileDataModel *> dictionaries;
+    ProfileDataModel *dataModel;
+    ProfileTableModel *tableModel;
 };
 
 class ProfileHolder {
