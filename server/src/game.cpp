@@ -223,10 +223,12 @@ json MapGameStorage::createGame(const json &body, int host_id, bool adapt) {
     std::shared_ptr<Game> game;
     if (body["parserName"] == "simple") {
         game = std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
-                                      std::move(dictionary), host_id, dictionary_name);
+                                      std::move(dictionary), host_id,
+                                      dictionary_name);
     } else {
         game = std::make_shared<Game>(std::make_unique<Logic::SoloParser>(),
-                                      std::move(dictionary), host_id, dictionary_name);
+                                      std::move(dictionary), host_id,
+                                      dictionary_name);
         game->setSolo();
     }
     {
