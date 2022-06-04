@@ -3,8 +3,8 @@
 #include <boost/locale.hpp>
 #include <boost/log/trivial.hpp>
 #include <iostream>
-#include <ratio>
 #include <random>
+#include <ratio>
 #include "constGame.h"
 #include "dictionaryDB.h"
 #include "statisticsDB.h"
@@ -193,9 +193,9 @@ json MapGameStorage::createGame(const json &body, int host_id, bool adapt) {
             game_id = rnd() % 1'000'00;
         }
     }
-    std::shared_ptr<Game> game =
-        std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
-                               std::move(dictionary), host_id, dictionary_name, game_id);
+    std::shared_ptr<Game> game = std::make_shared<Game>(
+        std::make_unique<Logic::SimpleParser>(), std::move(dictionary), host_id,
+        dictionary_name, game_id);
     {
         std::unique_lock l{map_mutex};
         games[game->getId()] = game;
