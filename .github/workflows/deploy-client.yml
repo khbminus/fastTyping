@@ -20,7 +20,7 @@ jobs:
           target: desktop
       - name: Install dependency
         run: |
-          sudo apt install
+          sudo apt -y install cmake build-essential dpkg-dev nlohmann-json3-dev
           mkdir AppDir
       - name: Build with cmake
         uses: ashutoshvarma/action-cmake-build@master
@@ -37,10 +37,20 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Add Clang
-        shell: bash
-        run: |
-          echo "PATH=$PATH:C:\msys64\mingw64\bin" >> $GITHUB_ENV
-      - name: Check Version
-        run: |
-          clang --version
+      - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: 5.12.10
+        target: desktop
+          - name: Install dependency
+            run: |
+              vcpkg install nlohmann-json
+          - name: Build with cmake
+            uses: ashutoshvarma/action-cmake-build@master
+            with:
+              build-dir: ${{ runner.workspace }}/build
+              build-type: Release
+              configure-options: -DCMAKE_INSTALL_PREFIX=/usr
+              target: bundle
+              install-build: false
+              parallel: 2
