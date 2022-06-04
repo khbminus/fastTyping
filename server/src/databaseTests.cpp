@@ -110,19 +110,26 @@ TEST_CASE("Statistics") {
     CHECK(storage.getAvgWpm(0) == 23);
     CHECK(storage.getMaxWpm(0) == 24.5);
     CHECK(storage.getGamesAmount(0) == 3);
+
     CHECK(storage.getHistory(0) ==
-          std::vector<gameStatistics>{{0, "const", 21, 25.56, 10, 16, 30.3},
-                                      {0, "const", 24.5, 25.56, 10, 16, 28},
-                                      {0, "const", 23.5, 25.56, 10, 16, 30.2}});
+          std::vector<gameStatistics>{
+              {0, "const", 21, 25.56, 0.625, 10, 16, 30.3},
+              {0, "const", 24.5, 25.56, 0.625, 10, 16, 28},
+              {0, "const", 23.5, 25.56, 0.625, 10, 16, 30.2}});
 
     CHECK(storage.getHistory(0, 2) ==
-          std::vector<gameStatistics>{{0, "const", 21, 25.56, 10, 16, 30.3},
-                                      {0, "const", 24.5, 25.56, 10, 16, 28}});
+          std::vector<gameStatistics>{
+              {0, "const", 21, 25.56, 0.625, 10, 16, 30.3},
+              {0, "const", 24.5, 25.56, 0.625, 10, 16, 28}});
 
     CHECK(storage.getUserDictStatistics(0) ==
-          std::vector<dictStatistics>{{0, "const", 24.5, 23, 3}});
+          std::vector<dictStatistics>{{0, "const", 24.5, 23, 0.625, 88.5, 3}});
 
-    CHECK(storage.getTopDictStatistics("const") ==
-          std::vector<dictStatistics>{{0, "const", 24.5, 23, 3},
-                                      {1, "const", 23.5, 23.5, 1}});
+    CHECK(
+        storage.getTopDictStatistics("const") ==
+        std::vector<dictStatistics>{{0, "const", 24.5, 23, 0.625, 88.5, 3},
+                                    {1, "const", 23.5, 23.5, 0.625, 30.2, 1}});
+
+    CHECK(storage.getUserTotalStatistics(0) ==
+          dictStatistics{0, "all", 24.5, 23, 0.625, 88.5, 3});
 }
