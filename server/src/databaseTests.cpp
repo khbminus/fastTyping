@@ -27,6 +27,7 @@ bool operator==(const DictStatistics &lhs, const DictStatistics &rhs) {
 bool operator!=(const DictStatistics &lhs, const DictStatistics &rhs) {
     return !(rhs == lhs);
 }
+// cppcheck-supress syntaxError
 TEST_CASE("user from string") {
     // Database& db = Database::get_instance();
     UserStorage db;
