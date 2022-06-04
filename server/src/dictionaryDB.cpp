@@ -162,14 +162,16 @@ dictionary_instance(std::string const &name, int user_id, bool adapt) {
     if (type == "file") {
         FileDictionariesStorage filenames;
         std::string filename =
-            std::getenv("HOME") + ("/.fastytpign/dict" + filenames.getFileName(name));
+            std::getenv("HOME") +
+            ("/.fastytpign/dict" + filenames.getFileName(name));
         return std::make_unique<FastTyping::Logic::FileDictionary>(filename);
     }
 
     if (type == "dll") {
         DLLDictionariesStorage dlls;
         std::string filename = dlls.getDLLName(name);
-        return std::make_unique<FastTyping::Logic::DLLDictionary>(filename);
+        return std::make_unique<FastTyping::Logic::DLLDictionary>(
+            std::getenv("HOME") + ("/.fastytpign/dll" + filename));
     }
 
     if (type == "corpus") {
