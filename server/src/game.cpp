@@ -42,7 +42,7 @@ void Game::userFinished(int uid) {
     std::cerr << "Finis time uf user " << uid << " "
               << additionalInfo[uid].finishTime << '\n';
     StatisticsStorage storage;
-    double convertToWpm = 60.0 / additionalInfo[uid].finishTime / 4;
+    double convertToWpm = 60.0 / additionalInfo[uid].finishTime / 5;
     double wpm = additionalInfo[uid].correctChars * convertToWpm;
     double rawWpm = additionalInfo[uid].totalChars * convertToWpm;
     storage.addGame(
@@ -173,8 +173,7 @@ json Game::getStateOfUsers() {
 json Game::getStatistics(int uid) {
     std::unique_lock l{mutex};
     json result = {{"header", {{"type", "GameStatistics"}}}};
-    double convertToWpm = 60.0 / additionalInfo[uid].finishTime / 4;
-    // TODO replace 4 with average word length
+    double convertToWpm = 60.0 / additionalInfo[uid].finishTime / 5;
     result["body"]["WPM"] = additionalInfo[uid].correctChars * convertToWpm;
     result["body"]["rawWPM"] = additionalInfo[uid].totalChars * convertToWpm;
     result["body"]["correctChars"] = additionalInfo[uid].correctChars;
