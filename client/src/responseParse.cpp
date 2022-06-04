@@ -31,7 +31,7 @@ std::map<std::string, std::map<std::string, QString>> error_texts{
      {{"alreadyInGame", "You are already in game. Wait until it ends"},
       {"wrongFormatError", "Internal error"},
       {"connectAfterLeaveError", "You are trying to join game after leave"},
-      {"wrongIdError", "There no game with this Id"},
+      {"wrongIdError", "There are no game with such Id"},
       {"connectAfterStartError", "Try connect after game started"}}},
     {"register", {{"nameAlreadyExists", "User with this name already exists"}}},
     {"login", {{"incorrectName", "Invalid name or password"}}},
