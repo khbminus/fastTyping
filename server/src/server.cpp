@@ -277,7 +277,7 @@ Server::Server()
 
         json result = json::object();
         result["header"] = {{"type", "userGames"}};
-        auto res = statisticsStorage->getHistory(user.getId());
+        auto res = statisticsStorage->getHistory(user.getId(), limit);
         std::vector<json> resJson(res.size());
         std::transform(
             res.begin(), res.end(), resJson.begin(),
