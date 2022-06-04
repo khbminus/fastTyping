@@ -40,12 +40,17 @@ WebManager *ContextManager::get_remote_manager() const {
     return remote_manager.get();
 }
 
-void ContextManager::set_context(const std::vector<QString> &words) {
+void ContextManager::set_context(const std::vector<QString> &words,
+                                 bool isSolo) {
     using client::responses::APIHandler;
     using client::responses::handler;
-
-    local_manager.reset(new LocalManager(words));
-    remote_manager.reset(new WebManager(words));
+    if (!isSolo) {
+        local_manager.reset(new LocalManager(words));
+        remote_manager.reset(new WebManager(words));
+    } else {
+        local_manager.reset(new LocalManagerSolo(words));
+        remote_manager.reset(new WebSoloManager(words));
+    }
 
     QObject::connect(&handler(), &APIHandler::correct_signal,
                      remote_manager.get(), &WebManager::correct_slot);
@@ -62,16 +67,11 @@ void ContextManager::set_context(const std::vector<QString> &words) {
     controller.registerWindow("GameWindow", gameWindow.get());
 }
 
-void ContextManager::set_context_from_create_query(json const &response) {
+void ContextManager::set_context_from_create_query(json const &response,
+                                                   bool isSolo) {
     game_id = response["body"]["id"].get<int>();
     std::vector<QString> words = get_line();
-    set_context(words);
-}
-
-void ContextManager::set_context_from_join_query(json const &response) {
-    game_id = response["body"]["id"].get<int>();
-    std::vector<QString> words = get_line();
-    set_context(words);
+    set_context(words, isSolo);
 }
 
 void ContextManager::reset_context() {
