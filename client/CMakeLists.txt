@@ -178,9 +178,10 @@ endif ()
 #            DESTINATION share/${${items}.path}
 #            PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
 #endforeach()
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qwerty.json ${CMAKE_CURRENT_SOURCE_DIR}/test.json
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qwerty.json ${CMAKE_CURRENT_SOURCE_DIR}/ test.json
         DESTINATION .
         PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
-
-include(Packaging.cmake)
+if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    include(Packaging.cmake)
+endif ()
 
