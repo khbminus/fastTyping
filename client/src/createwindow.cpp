@@ -40,10 +40,24 @@ void CreateGameWindow::on_CreateButton_clicked() {
     qDebug() << "create result:" << raw_response;
     json response = json::parse(raw_response.toStdString());
     if (ensure_success(response)) {
+        using client::queries::start_query;
         auto &context = ContextManager::get_instance();
         context.set_context_from_create_query(response, isSolo);
         auto &controller = FastTyping::WindowController::getInstance();
-        controller.setActiveWindow("StartGameWindow");
+        if (isSolo) {
+            raw_response = socket().query(start_query());
+            qDebug() << "start result: " << raw_response;
+            response = json::parse(raw_response.toStdString());
+            if (ensure_success(response)) {
+                ContextManager::get_instance()
+                    .get_local_manager()
+                    ->getModel()
+                    ->startGame();
+                controller.setActiveWindow("GameWindow");
+            }
+        } else {
+            controller.setActiveWindow("StartGameWindow");
+        }
     }
 }
 
