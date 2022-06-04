@@ -49,7 +49,7 @@ void ContextManager::set_context(const std::vector<QString> &words,
         remote_manager.reset(new WebManager(words));
     } else {
         local_manager.reset(new LocalManagerSolo(words));
-        remote_manager.reset(new WebSoloManager(words)); 
+        remote_manager.reset(new WebSoloManager(words));
     }
 
     QObject::connect(&handler(), &APIHandler::correct_signal,
