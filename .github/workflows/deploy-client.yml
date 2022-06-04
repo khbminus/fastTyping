@@ -4,7 +4,7 @@ on:
 
 jobs:
   build-linux:
-    if: startsWith(github.ref, 'refs/tags/')
+#    if: startsWith(github.ref, 'refs/tags/')
     name: Build On Ubuntu
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +32,7 @@ jobs:
           install-build: false
           parallel: 2
   build-windows:
-    if: startsWith(github.ref, 'refs/tags/')
+    #    if: startsWith(github.ref, 'refs/tags/')
     name: Build On Windows
     runs-on: windows-latest
     steps:
