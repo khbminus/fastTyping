@@ -38,8 +38,8 @@ jobs:
           name: Release ${{ github.ref_name }}
           draft: true
           files: |
-            fasttyping_client-*-Linux.AppImage
-            fasttyping_client-*-Linux.rpm
+            build/fasttyping_client-*-Linux.AppImage
+            build/fasttyping_client-*-Linux.rpm
           fail_on_unmatched_files: true
 #  build-windows:
 #    #    if: startsWith(github.ref, 'refs/tags/')
