@@ -162,4 +162,11 @@ QString getUserGamesQuery(int limit) {
     return dump(result);
 }
 
+QString getDictionaryStatsQuery(QString dictionaryName) {
+    json result;
+    result["header"] = {{"type", "getDictionaryStats"}};
+    result["body"] = {{"dictionaryName", dictionaryName.toStdString()}};
+    return dump(result);
+}
+
 }  // namespace client::queries

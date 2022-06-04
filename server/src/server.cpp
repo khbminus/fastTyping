@@ -292,6 +292,33 @@ Server::Server()
         return result;
     };
 
+    commonQueriesMap["getDictionaryStats"] = [&](const json &body,
+                                                 User &user) -> json {
+        if (!body.contains("dictionaryName") ||
+            !body["dictionaryName"].is_string()) {
+            return {{"header", {{"type", "wrongFormatError"}}},
+                    {"body", {{"text", "can't find dictionary name"}}}};
+        }
+        json result = json::object();
+        result["header"] = {{"type", "dictionaryStats"}};
+        auto res =
+            statisticsStorage->getTopDictStatistics(body["dictionaryName"]);
+        std::vector<json> resJson(res.size());
+        std::transform(res.begin(), res.end(), resJson.begin(),
+                       [&](const DictStatistics &stats) -> json {
+                           return {{"dictName", stats.dictName},
+                                   {"maxWpm", stats.maxWpm},
+                                   {"avgWpm", stats.avgWpm},
+                                   {"avgAccuracy", stats.avgAccuracy},
+                                   {"sumFinishTime",
+                                    static_cast<int>(stats.sumFinishTime)},
+                                   {"gamesCnt", stats.gamesCnt},
+                                   {"userId", stats.userId}};
+                       });
+        result["body"] = resJson;
+        return result;
+    };
+
     loginQueriesMap["login"] = [&](const json &body) -> json {
         std::cerr << "Entered\n";
         if (!body.contains("name") || !body["name"].is_string()) {

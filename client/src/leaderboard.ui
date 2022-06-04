@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>Leaderboard</class>
+    <widget class="QMainWindow" name="Leaderboard">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>640</width>
+                <height>600</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>MainWindow</string>
+        </property>
+        <widget class="QWidget" name="centralwidget">
+            <widget class="QTabWidget" name="tabWidget">
+                <property name="geometry">
+                    <rect>
+                        <x>0</x>
+                        <y>0</y>
+                        <width>640</width>
+                        <height>570</height>
+                    </rect>
+                </property>
+                <property name="currentIndex">
+                    <number>-1</number>
+                </property>
+            </widget>
+            <widget class="QPushButton" name="ReturnButton">
+                <property name="geometry">
+                    <rect>
+                        <x>0</x>
+                        <y>570</y>
+                        <width>640</width>
+                        <height>32</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Return</string>
+                </property>
+            </widget>
+        </widget>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

@@ -27,6 +27,7 @@ QString send_typos_query(QList<std::pair<QChar, QChar>> typos);
 QString getProfileQuery();
 QString getUserDictionariesQuery();
 QString getUserGamesQuery(int limit);
+QString getDictionaryStatsQuery(QString dictionaryName);
 }  // namespace client::queries
 
 #endif
