@@ -54,13 +54,15 @@ void StatisticsStorage::addGame(int userId,
 
 double StatisticsStorage::getMaxWpm(int userId) {
     return db.get_column<double>(
-        "SELECT MAX(WPM) AS RESULT FROM STATISTICS WHERE USER_ID = " +
+        "SELECT COALESCE(MAX(WPM), 0) AS RESULT FROM STATISTICS WHERE USER_ID "
+        "= " +
             std::to_string(userId) + ";",
         "RESULT");
 }
 double StatisticsStorage::getAvgWpm(int userId) {
     return db.get_column<double>(
-        "SELECT Avg(WPM) AS RESULT FROM STATISTICS WHERE USER_ID = " +
+        "SELECT COALESCE(Avg(WPM), 0) AS RESULT FROM STATISTICS WHERE USER_ID "
+        "= " +
             std::to_string(userId) + ";",
         "RESULT");
 }
@@ -129,9 +131,11 @@ DictStatistics StatisticsStorage::getUserTotalStatistics(int userId) {
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
     pqxx::result raw_result = work.exec(
-        "SELECT MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, "
-        "AVG(CORRECT_CHARS::NUMERIC / "
-        "TOTAL_CHARS) AS AVG_ACCURACY, SUM(FINISH_TIME) AS SUM_TIME, COUNT(*) "
+        "SELECT COALESCE(MAX(WPM), 0) AS MAX_WPM, COALESCE(AVG(WPM), 0) AS "
+        "AVG_WPM, "
+        "COALESCE(AVG(CORRECT_CHARS::NUMERIC / "
+        "TOTAL_CHARS), 0) AS AVG_ACCURACY, COALESCE(SUM(FINISH_TIME), 0) AS "
+        "SUM_TIME, COUNT(*) "
         "AS GAMES_CNT FROM STATISTICS WHERE USER_ID = " +
         std::to_string(userId) + ";");
     if (raw_result.size() == 0) {
