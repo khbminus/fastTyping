@@ -15,7 +15,8 @@ struct DictionaryStatistics {
 class LeaderboardTableModel : public QAbstractTableModel {
     Q_OBJECT
 public:
-    LeaderboardTableModel(QString dictionaryName, QObject *parent = nullptr);
+    explicit LeaderboardTableModel(QString dictionaryName,
+                                   QObject *parent = nullptr);
 
     [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
@@ -32,7 +33,7 @@ private:
 class LeaderboardController : public QObject {
     Q_OBJECT
 public:
-    LeaderboardController(QObject *parent = nullptr);
+    explicit LeaderboardController(QObject *parent = nullptr);
 
     [[nodiscard]] QList<std::pair<QTableView *, QString>> getDictionariesTabs()
         const;
