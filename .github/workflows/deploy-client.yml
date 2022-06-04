@@ -20,7 +20,7 @@ jobs:
           target: desktop
       - name: Install dependency
         run: |
-          sudo apt-get install cmake build-essential dpkg-dev install nlohmann-json-dev
+          sudo apt-get install cmake build-essential dpkg-dev install nlohmann-json3-dev
           mkdir AppDir
       - name: Build with cmake
         uses: ashutoshvarma/action-cmake-build@master
@@ -31,3 +31,9 @@ jobs:
           target: bundle
           install-build: false
           parallel: 2
+  build-windows:
+    if: startsWith(github.ref, 'refs/tags/')
+    name: Build On Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
