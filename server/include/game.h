@@ -16,10 +16,12 @@ struct Game {
 public:
     Game(std::unique_ptr<FastTyping::Logic::AbstractParser> parser_,
          std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary_,
-         int hostId_)
+         int hostId_,
+         std::string &dictName)
         : parser(std::move(parser_)),
           dictionary(std::move(dictionary_)),
-          hostId(hostId_) {
+          hostId(hostId_),
+          dictName(dictName) {
         id = nextId++;
     }
     [[nodiscard]] const std::string &getName() const {
@@ -60,6 +62,7 @@ private:
     std::optional<std::chrono::high_resolution_clock::time_point> gameStartTime;
     std::unique_ptr<FastTyping::Logic::AbstractParser> parser;
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;
+    std::string dictName;
 
     struct AdditionalUserInfo {
         std::vector<std::vector<std::string>> currentBuffers = {{}};
