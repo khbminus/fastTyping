@@ -1,7 +1,7 @@
 ![image-alt-name](./logo.png)
 
 
-
+[![Continuous Integration](https://github.com/khbminus/fastTyping/actions/workflows/ci.yml/badge.svg)](https://github.com/khbminus/fastTyping/actions/workflows/ci.yml)
 
 Тренажер печати  с возможностью соревновательной игры
 
