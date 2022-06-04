@@ -5,8 +5,8 @@
 #include <iostream>
 #include <ratio>
 #include "constGame.h"
-#include "dictionaryDB.h"
 #include "database.h"
+#include "dictionaryDB.h"
 #include "statisticsDB.h"
 
 namespace FastTyping::Server {
