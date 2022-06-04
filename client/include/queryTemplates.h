@@ -19,6 +19,7 @@ QString start_query();
 QString wait_game_query();
 QString leave_query();
 QString get_line_query();
+QString get_user_name_query();
 QString get_dictionaries_query();
 QString get_game_stat_query();
 QString getStatesQuery();

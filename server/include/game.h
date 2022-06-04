@@ -62,6 +62,7 @@ private:
     std::string dictName;
 
     struct AdditionalUserInfo {
+        std::string userName;
         std::vector<std::string> currentBuffer;
         int currentWord = 0;
         int lineNumber = 0;

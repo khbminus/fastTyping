@@ -6,6 +6,7 @@
 #include <ratio>
 #include "constGame.h"
 #include "dictionaryDB.h"
+#include "database.h"
 #include "statisticsDB.h"
 
 namespace FastTyping::Server {
@@ -124,6 +125,7 @@ json Game::getStateOfUsers() {
     for (const auto &[uid, info] : additionalInfo) {
         userStates.emplace_back();
         userStates.back()["id"] = uid;
+        userStates.back()["userName"] = info.userName;
         userStates.back()["wordsTyped"] = info.currentWord;
         userStates.back()["linesTyped"] = info.lineNumber;
         int symbolsTyped = info.correctChars;
@@ -156,6 +158,8 @@ json Game::getStatistics(int uid) {
 void Game::joinUser(int uid) {
     std::unique_lock l{mutex};
     additionalInfo[uid] = {};
+    UserStorage db;
+    additionalInfo[uid].userName = db.getName(uid);
 }
 
 std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {

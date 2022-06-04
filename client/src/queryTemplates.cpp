@@ -54,6 +54,13 @@ QString start_query() {
     return dump(result);
 }
 
+QString get_user_name_query() {
+    json result;
+    result["header"] = {{"type", "getUserName"}};
+    result["body"] = json::object();
+    return dump(result);
+}
+
 QString wait_game_query() {
     json result;
     result["header"] = {{"type", "waitGameStart"}};
