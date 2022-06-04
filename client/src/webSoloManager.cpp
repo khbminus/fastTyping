@@ -65,3 +65,11 @@ QString WebSoloManager::blob() {
 QVariant WebSoloManager::next() {
     return QVariant();
 }
+
+void WebSoloManager::correct_word_slot() {
+    inputter.clearBuffer();
+    dictionary.nextWord();
+    inputter.setBufferMaxSize(dictionary.getCurrentWord().size() + 1);
+    emit print_signal(inputter.getBuffer(), 0);
+    emit correct_signal();
+}

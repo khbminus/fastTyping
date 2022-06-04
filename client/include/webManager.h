@@ -27,7 +27,7 @@ public slots:
     void end_slot();
     void error_slot();
     void correct_slot();
-    void correct_word_slot();
+    virtual void correct_word_slot();
 };
 
 class WebSoloManager final : public WebManager {
@@ -45,7 +45,7 @@ public slots:
     void end_slot();
     void error_slot();
     void correct_slot();
-    void correct_word_slot();
+    void correct_word_slot() override;
 };
 
 #endif  // GAME_MANAGER_H
