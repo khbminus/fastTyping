@@ -4,6 +4,7 @@
 #include <boost/log/trivial.hpp>
 #include <iostream>
 #include <ratio>
+#include <random>
 #include "constGame.h"
 #include "dictionaryDB.h"
 #include "statisticsDB.h"
@@ -184,10 +185,17 @@ json MapGameStorage::createGame(const json &body, int host_id, bool adapt) {
 
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary =
         dictionary_instance(dictionary_name, host_id, adapt);
-
+    int game_id = 30;
+    {
+        std::mt19937 rnd(239);
+        std::unique_lock l{map_mutex};
+        while (games.count(game_id) != 0) {
+            game_id = rnd();
+        }
+    }
     std::shared_ptr<Game> game =
         std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
-                               std::move(dictionary), host_id, dictionary_name);
+                               std::move(dictionary), host_id, dictionary_name, game_id);
     {
         std::unique_lock l{map_mutex};
         games[game->getId()] = game;
