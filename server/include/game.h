@@ -52,7 +52,7 @@ public:
 private:
     json checkUnsafe(int uid);  // THREAD UNSAFE
     bool isEndedUnsafe(int uid);
-    std::size_t getCntCorrect(int uid); 
+    std::size_t getCntCorrect(int uid);
 
     std::string gameName;
     int hostId;
