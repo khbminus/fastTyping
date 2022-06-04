@@ -1,0 +1,33 @@
+name: Continuous Integration
+on:
+  workflow_call
+
+jobs:
+  build-linux:
+    if: startsWith(github.ref, 'refs/tags/')
+    name: Build On Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install linuxdeploy
+        uses: miurahr/install-linuxdeploy-action@v1
+        with:
+          plugins: qt appimage
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: 6.2
+          target: desktop
+      - name: Install dependency
+        run: |
+          sudo apt-get install cmake build-essential dpkg-dev install nlohmann-json-dev
+          mkdir AppDir
+      - name: Build with cmake
+        uses: ashutoshvarma/action-cmake-build@master
+        with:
+          build-dir: ${{ runner.workspace }}/build
+          build-type: Release
+          configure-options: -DCMAKE_INSTALL_PREFIX=/usr
+          target: bundle
+          install-build: false
+          parallel: 2
