@@ -17,11 +17,13 @@ public:
     Game(std::unique_ptr<FastTyping::Logic::AbstractParser> parser_,
          std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary_,
          int hostId_,
-         std::string &dictName, int game_id)
+         std::string &dictName,
+         int game_id)
         : parser(std::move(parser_)),
           dictionary(std::move(dictionary_)),
           hostId(hostId_),
-          dictName(dictName), id(game_id) {};
+          dictName(dictName),
+          id(game_id){};
     [[nodiscard]] const std::string &getName() const {
         return gameName;
     }
@@ -53,7 +55,6 @@ private:
     std::string gameName;
     int hostId;
     int id = 0;
-    static inline int nextId = 0;
     std::optional<std::chrono::high_resolution_clock::time_point> gameStartTime;
     std::unique_ptr<FastTyping::Logic::AbstractParser> parser;
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;

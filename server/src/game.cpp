@@ -190,7 +190,7 @@ json MapGameStorage::createGame(const json &body, int host_id, bool adapt) {
         std::mt19937 rnd(239);
         std::unique_lock l{map_mutex};
         while (games.count(game_id) != 0) {
-            game_id = rnd();
+            game_id = rnd() % 1'000'00;
         }
     }
     std::shared_ptr<Game> game =
