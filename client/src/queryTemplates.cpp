@@ -143,4 +143,16 @@ QString send_typos_query(QList<std::pair<QChar, QChar>> typos) {
     return dump(result);
 }
 
+QString getProfileQuery() {
+    json result;
+    result["header"] = {{"type", "getProfile"}};
+    result["body"] = json::object();
+    return dump(result);
+}
+QString getUserDictionariesQuery() {
+    json result;
+    result["header"] = {{"type", "getUserDictionaries"}};
+    result["body"] = json::object();
+    return dump(result);
+}
 }  // namespace client::queries

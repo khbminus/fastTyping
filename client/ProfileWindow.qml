@@ -7,10 +7,10 @@ Item {
     width: 800
     height: 600
 
-    /*required property var mainInfo
+    required property var mainInfo
     required property var dictsNames
     required property var dictsValues
-    required property string userName*/
+    required property string userName
 
     signal returnPressed()
 
@@ -22,6 +22,10 @@ Item {
         id: loaderSemiBold
         source: "https://github.com/JetBrains/JetBrainsMono/blob/master/fonts/ttf/JetBrainsMono-SemiBold.ttf?raw=true"
     }
+    FontLoader {
+        id: loaderBold
+        source: "https://github.com/JetBrains/JetBrainsMono/blob/master/fonts/ttf/JetBrainsMono-Bold.ttf?raw=true"
+    }
 
     Text {
         id: userName
@@ -31,6 +35,17 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         font.pointSize: 24
     }
+    Text {
+        id: commonInfoLabel
+        text: "General Stats:"
+        anchors.left: root.left
+        anchors.top: userName.bottom
+        font.family: loaderBold.name
+        font.pointSize: 18
+        font.bold: true
+        font.underline: true
+    }
+
 
     Button {
         x: 700
@@ -45,27 +60,37 @@ Item {
 
     ProfileEntry {
         id: mainEntry
-        anchors.top: userName.bottom
+        anchors.top: commonInfoLabel.bottom
         anchors.horizontalCenter: parent.horizontalCenter
 
-        testsCompleted: 1337
-        timeTyping: new Date(304643)
-        avgAccuracy: 33.33333
-        avgWpm: 167
-        maxWpm: 239
-        favouriteDictionary: "Абоба-2"
+        testsCompleted: mainInfo.testsCompleted
+        timeTyping: mainInfo.timeTyping
+        avgAccuracy: mainInfo.avgAccuracy
+        avgWpm: mainInfo.avgWpm
+        maxWpm: mainInfo.maxWpm
+        favouriteDictionary: mainInfo.favouriteDictionary
+    }
 
+    Text {
+        id: perDictLabel
+        text: "Per Dictionary Stats:"
+        anchors.left: root.left
+        anchors.top: mainEntry.bottom
+        font.family: loaderBold.name
+        font.pointSize: 18
+        font.bold: true
+        font.underline: true
     }
 
     TabBar {
         id: dictsBar
         anchors.left: root.left
-        anchors.top: mainEntry.bottom
+        anchors.top: perDictLabel.bottom
         anchors.topMargin: 5
         width: root.width
 
         Repeater {
-            model: ["English", "Russian", "Алгебра М.А. Антипов", "Баги Юрия Зайцева", "Охуенные истории Никиты Андреева", "Список предателей родины"]
+            model: root.dictsNames
 
             TabButton {
                 text: modelData
@@ -80,48 +105,28 @@ Item {
         anchors.right: root.right
         anchors.top: dictsBar.bottom
         width: root.width
+        height: mainEntry.height // tricky hacks
         currentIndex: dictsBar.currentIndex
-        ProfileEntry {
-            testsCompleted: 1
-            timeTyping: new Date(10801)
-            avgAccuracy: 69.69
-            avgWpm: 120
-            maxWpm: 566
+        Repeater {
+            model: root.dictsValues
+            delegate: ProfileEntry {
+                required testsCompleted
+                required timeTyping
+                required avgAccuracy
+                required avgWpm
+                required maxWpm
+            }
         }
-        ProfileEntry {
-            testsCompleted: 2
-            timeTyping: new Date(10801)
-            avgAccuracy: 69.69
-            avgWpm: 120
-            maxWpm: 566
-        }
-        ProfileEntry {
-            testsCompleted: 3
-            timeTyping: new Date(10801)
-            avgAccuracy: 69.69
-            avgWpm: 120
-            maxWpm: 566
-        }
-        ProfileEntry {
-            testsCompleted: 4
-            timeTyping: new Date(10801)
-            avgAccuracy: 69.69
-            avgWpm: 120
-            maxWpm: 566
-        }
-        ProfileEntry {
-            testsCompleted: 5
-            timeTyping: new Date(10801)
-            avgAccuracy: 69.69
-            avgWpm: 120
-            maxWpm: 566
-        }
-        ProfileEntry {
-            testsCompleted: 6
-            timeTyping: new Date(10801)
-            avgAccuracy: 69.69
-            avgWpm: 120
-            maxWpm: 566
-        }
+    }
+
+    Text {
+        id: allGamesLabel
+        text: "Recent Games:"
+        anchors.left: root.left
+        anchors.top: dictsLayout.bottom
+        font.family: loaderBold.name
+        font.pointSize: 18
+        font.bold: true
+        font.underline: true
     }
 }

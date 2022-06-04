@@ -24,6 +24,8 @@ QString get_game_stat_query();
 QString getStatesQuery();
 QString get_game_stat_query();
 QString send_typos_query(QList<std::pair<QChar, QChar>> typos);
+QString getProfileQuery();
+QString getUserDictionariesQuery();
 }  // namespace client::queries
 
 #endif

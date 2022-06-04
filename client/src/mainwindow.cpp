@@ -2,6 +2,7 @@
 #include <iostream>
 #include "./ui_mainwindow.h"
 #include "keyboard.h"
+#include "profileWindow.h"
 #include "queryTemplates.h"
 #include "sonicSocket.h"
 #include "windowcontroller.h"
@@ -46,6 +47,8 @@ void MainWindow::on_CreateButton_clicked() {
 }
 
 void MainWindow::on_ProfileButton_clicked() {
+    auto &holder = ProfileHolder::getInstance();
+    holder.createWindow();
     auto &controller = FastTyping::WindowController::getInstance();
     controller.setActiveWindow("ProfileWindow");
 }

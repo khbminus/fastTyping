@@ -5,29 +5,44 @@
 #include <QList>
 #include <QObject>
 #include <QQmlEngine>
+#include <QQmlListProperty>
+#include <nlohmann/json.hpp>
 
-class ProfileDataModel /*: public QObject*/ {
-    //    Q_OBJECT
-    //    Q_PROPERTY(QString userName READ userName CONSTANT)
-    //    Q_PROPERTY(QStringList playedDictionaries READ playedDictionaries
-    //    CONSTANT) Q_PROPERTY(int testsCompleted READ testsCompleted CONSTANT)
-    //    Q_PROPERTY(QDateTime timeTyping READ timeTyping CONSTANT)
-    //    Q_PROPERTY(double avgWpm READ avgWpm CONSTANT)
-    //    Q_PROPERTY(double avgAccuracy READ avgAccuracy CONSTANT)
-    //    Q_PROPERTY(QString favouriteDictionary READ favouriteDictionary
-    //    CONSTANT)
+class ProfileEntryData : public QObject {
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(int testsCompleted MEMBER mTestsCompleted CONSTANT)
+    Q_PROPERTY(QDateTime timeTyping MEMBER mTimeTyping CONSTANT)
+    Q_PROPERTY(double avgWpm MEMBER mAvgWpm CONSTANT)
+    Q_PROPERTY(double maxWpm MEMBER mMaxWpm CONSTANT)
+    Q_PROPERTY(double avgAccuracy MEMBER mAvgAccuracy CONSTANT)
+    Q_PROPERTY(
+        QVariant favouriteDictionary MEMBER mFavouriteDictionary CONSTANT)
 public:
-    ProfileDataModel(QObject *parent = nullptr);
-    QString userName() const;
-    QList<QString> playedDictionaries() const;
-    int testsCompleted() const;
-    QDateTime timeTyping() const;
-    double avgWpm() const;
-    double maxWpm() const;
-    double avgAccuracy() const;
-    QString favouriteDictionary() const;
+    ProfileEntryData(const nlohmann::json &body, QObject *parent = nullptr);
+    [[nodiscard]] QString getDictionary() const;
 
 private:
+    int mTestsCompleted = 0;
+    QDateTime mTimeTyping;
+    double mAvgWpm;
+    double mMaxWpm;
+    double mAvgAccuracy;
+    QVariant mFavouriteDictionary;
+    QString mDictionary;
+};
+
+class ProfileDataModel : public QObject {
+    Q_OBJECT
+public:
+    ProfileDataModel(QObject *parent = nullptr);
+    [[nodiscard]] ProfileEntryData *commonData() const;
+    [[nodiscard]] QList<QString> dictionariesNames() const;
+    [[nodiscard]] QQmlListProperty<ProfileEntryData> dictionaries();
+
+private:
+    ProfileEntryData *mCommonData;
+    QList<ProfileEntryData *> mDictionaries;
 };
 
 #endif  // FASTTYPING_PROFILEDATAMODEL_H

@@ -240,12 +240,32 @@ Server::Server()
         json result = json::object();
         result["header"] = {{"type", "profileResult"}};
         auto res = statisticsStorage->getUserTotalStatistics(user.getId());
-        result["body"] = {{"dictName", res.dictName},
-                          {"maxWpm", res.maxWpm},
-                          {"avgWpm", res.avgWpm},
-                          {"avgAccuracy", res.avgAccuracy},
-                          {"sumFinishTime", res.sumFinishTime},
-                          {"gamesCnt", res.gamesCnt}};
+        result["body"] = {
+            {"dictName", res.dictName},
+            {"maxWpm", res.maxWpm},
+            {"avgWpm", res.avgWpm},
+            {"avgAccuracy", res.avgAccuracy},
+            {"sumFinishTime", static_cast<int>(res.sumFinishTime)},
+            {"gamesCnt", res.gamesCnt}};
+        return result;
+    };
+    commonQueriesMap["getUserDictionaries"] = [&](const json &body,
+                                                  User &user) -> json {
+        json result = json::object();
+        result["header"] = {{"type", "userDictionaries"}};
+        auto res = statisticsStorage->getUserDictStatistics(user.getId());
+        std::vector<json> resJson(res.size());
+        std::transform(res.begin(), res.end(), resJson.begin(),
+                       [&](const DictStatistics &stats) -> json {
+                           return {{"dictName", stats.dictName},
+                                   {"maxWpm", stats.maxWpm},
+                                   {"avgWpm", stats.avgWpm},
+                                   {"avgAccuracy", stats.avgAccuracy},
+                                   {"sumFinishTime",
+                                    static_cast<int>(stats.sumFinishTime)},
+                                   {"gamesCnt", stats.gamesCnt}};
+                       });
+        result["body"] = resJson;
         return result;
     };
 

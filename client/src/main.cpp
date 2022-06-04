@@ -46,7 +46,6 @@ int main(int argc, char *argv[]) {
     auto registerWindow = new RegisterWindow;
     auto startGameWindow = new StartGameWindow;
     auto waitGameWindow = new WaitGameWindow;
-    auto profileWindow = new ProfileWindow;
 
     controller.registerWindow("LoginWindow", loginWindow);
     controller.registerWindow("SignWindow", signWindow);
@@ -55,7 +54,6 @@ int main(int argc, char *argv[]) {
     controller.registerWindow("WaitGameWindow", waitGameWindow);
 
     controller.registerWindow("MainWindow", mainWindow);
-    controller.registerWindow("ProfileWindow", profileWindow);
     controller.registerWindow("JoinWindow", joinWindow);
     controller.registerWindow("CreateWindow", createWindow);
     // controller.registerWindow("GameWindow", gameWindow);
