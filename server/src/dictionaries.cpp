@@ -55,6 +55,13 @@ FileDictionary::FileDictionary(std::string const &filename) : file(filename) {
 [[nodiscard]] std::size_t FileDictionary::getLinesCount() const {
     return 1;
 }
+[[nodiscard]] std::size_t FileDictionary::getPrefixSize(int pos) const {
+    std::size_t result = 0;
+    for (int ind = 0; ind < pos; ind++) {
+        result += words[ind].size() + 1;
+    }
+    return result;
+}
 
 CorpusDictionary::CorpusDictionary(std::string const &corpus,
                                    bool adapt,
@@ -138,12 +145,19 @@ DLLDictionary::DLLDictionary(std::string const &filename) {
 [[nodiscard]] std::size_t DLLDictionary::getWordCount() const {
     return words.size();
 }
-
 [[nodiscard]] std::vector<std::string> DLLDictionary::getLine(int index) const {
     return words;
 }
 [[nodiscard]] std::size_t DLLDictionary::getLinesCount() const {
     return 1;
+}
+
+[[nodiscard]] std::size_t DLLDictionary::getPrefixSize(int pos) const {
+    std::size_t result = 0;
+    for (int ind = 0; ind < pos; ind++) {
+        result += words[ind].size() + 1;
+    }
+    return result;
 }
 
 void add_corpus_dictionary(std::string const &name,
@@ -164,6 +178,14 @@ void add_corpus_dictionary(std::string const &name,
                       "') ON CONFLICT DO NOTHING;";
 
     db.unanswered_query(sql);
+}
+
+[[nodiscard]] std::size_t CorpusDictionary::getPrefixSize(int pos) const {
+    std::size_t result = 0;
+    for (int ind = 0; ind < pos; ind++) {
+        result += words[ind].size() + 1;
+    }
+    return result;
 }
 
 }  // namespace FastTyping::Logic

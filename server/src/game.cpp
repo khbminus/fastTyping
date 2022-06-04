@@ -55,12 +55,7 @@ json Game::checkUnsafe(int uid) {
     json result;
     std::string rightWord =
         dictionary->getWord(additionalInfo[uid].currentWord);
-    auto &word = additionalInfo[uid].currentBuffer;
-    BOOST_LOG_TRIVIAL(debug) << "Buffer of user " << uid << " is \"";
-    for (auto chr : word) {
-        BOOST_LOG_TRIVIAL(debug) << chr;
-    }
-    BOOST_LOG_TRIVIAL(debug) << "\"";
+    auto &word = additionalInfo[uid].currentBuffers.back();
     auto concatenatedBuffer =
         std::accumulate(word.begin(), word.end(), std::string());
 
@@ -74,6 +69,30 @@ json Game::checkUnsafe(int uid) {
     return result;
 }
 
+std::size_t Game::getCntCorrect(int uid) {
+    std::size_t curr_word = additionalInfo[uid].currentWord;
+    std::size_t cnt = 0;
+    while (!additionalInfo[uid].currentBuffers.empty()) {
+        std::string rightWord =
+            dictionary->getWord(additionalInfo[uid].currentWord--) + ' ';
+        auto &word = additionalInfo[uid].currentBuffers.back();
+
+        auto concatenatedBuffer =
+            std::accumulate(word.begin(), word.end(), std::string());
+        std::size_t pos = 0;
+        while (pos < concatenatedBuffer.size() && pos < rightWord.size()) {
+            if (concatenatedBuffer[pos] == rightWord[pos]) {
+                cnt++;
+            }
+            pos++;
+        }
+        additionalInfo[uid].currentBuffers.pop_back();
+    }
+    additionalInfo[uid].currentBuffers.push_back({});
+    additionalInfo[uid].currentWord = curr_word;
+    return cnt;
+}
+
 json Game::check(int uid) {
     std::unique_lock l{mutex};
     return checkUnsafe(uid);
@@ -82,30 +101,41 @@ json Game::check(int uid) {
 json Game::addNewChar(int uid, const std::string &c) {
     std::unique_lock l{mutex};
     additionalInfo[uid].totalChars++;
-    additionalInfo[uid].currentBuffer.push_back(c);
+    if (additionalInfo[uid].currentBuffers.back().size() !=
+        dictionary->getWord(additionalInfo[uid].currentWord).size() + 1) {
+        additionalInfo[uid].currentBuffers.back().push_back(c);
+    }
     auto checkResult = checkUnsafe(uid);
     if (checkResult["body"]["isFullCorrect"] == true) {
         auto &info = additionalInfo[uid];
-        additionalInfo[uid].correctChars += info.currentBuffer.size();
-        info.currentBuffer.clear();
+        info.correctChars += getCntCorrect(uid);
         info.currentWord++;
         checkResult["body"]["isEnd"] = isEndedUnsafe(uid);
         if (isEndedUnsafe(uid)) {
             userFinished(uid);
         }
         return checkResult;
+    } else if (isSolo && c == " ") {
+        additionalInfo[uid].currentBuffers.push_back({});
+        additionalInfo[uid].currentWord++;
     }
     return checkResult;
 }
 json Game::backspace(int uid) {
     std::unique_lock l{mutex};
-    auto &word = additionalInfo[uid].currentBuffer;
-    additionalInfo[uid].totalChars++;
-    if (word.empty()) {
-        return {{"header", {{"type", "emptyBufferError"}}},
+    auto &info = additionalInfo[uid];
+    info.totalChars++;
+    if (info.currentBuffers.back().empty()) {
+        if (info.currentBuffers.size() == 1) {
+            return {
+                {"header", {{"type", "emptyBufferError"}}},
                 {"body", {{"text", "can't use backspace with empty buffer"}}}};
+        }
+        assert(isSolo);
+        info.currentWord--;
+        info.currentBuffers.pop_back();
     }
-    word.pop_back();
+    info.currentBuffers.back().pop_back();
     return checkUnsafe(uid);
 }
 
@@ -127,13 +157,13 @@ json Game::getStateOfUsers() {
         userStates.back()["id"] = uid;
         userStates.back()["wordsTyped"] = info.currentWord;
         userStates.back()["linesTyped"] = info.lineNumber;
-        int symbolsTyped = info.correctChars;
+        int symbolsTyped = dictionary->getPrefixSize(info.currentWord);
 
         if (dictionary->getWordCount() != info.currentWord) {
             auto word = dictionary->getWord(info.currentWord);
-            auto bufferAsString =
-                std::accumulate(info.currentBuffer.begin(),
-                                info.currentBuffer.end(), std::string());
+            auto bufferAsString = std::accumulate(
+                info.currentBuffers.back().begin(),
+                info.currentBuffers.back().end(), std::string());
             symbolsTyped +=
                 parser->getCorrectPrefixLength(bufferAsString, word);
         }
@@ -159,6 +189,11 @@ void Game::joinUser(int uid) {
     additionalInfo[uid] = {};
 }
 
+void Game::setSolo() {
+    std::unique_lock l{mutex};
+    isSolo = true;
+}
+
 std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
     std::unique_lock l{map_mutex};
     if (auto it = games.find(id); it != games.end()) {
@@ -170,7 +205,7 @@ std::shared_ptr<Game> MapGameStorage::get(int id, json &errors) {
 }
 
 json MapGameStorage::createGame(const json &body, int host_id, bool adapt) {
-    if (body["parserName"] != "simple") {
+    if (body["parserName"] != "simple" && body["parserName"] != "solo") {
         return {{"header", {{"type", "wrongFormatError"}}},
                 {"body", {{"text", "wrong parameters"}}}};
     }
@@ -193,9 +228,17 @@ json MapGameStorage::createGame(const json &body, int host_id, bool adapt) {
             game_id = rnd() % 1'000'00;
         }
     }
-    std::shared_ptr<Game> game = std::make_shared<Game>(
-        std::make_unique<Logic::SimpleParser>(), std::move(dictionary), host_id,
-        dictionary_name, game_id);
+    std::shared_ptr<Game> game;
+    if (body["parserName"] == "simple") {
+        game = std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
+                                      std::move(dictionary), host_id,
+                                      dictionary_name, game_id);
+    } else {
+        game = std::make_shared<Game>(std::make_unique<Logic::SoloParser>(),
+                                      std::move(dictionary), host_id,
+                                      dictionary_name, game_id);
+        game->setSolo();
+    }
     {
         std::unique_lock l{map_mutex};
         games[game->getId()] = game;

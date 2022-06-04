@@ -1,8 +1,6 @@
 #ifndef QUERY_TEMPLATES_H
 #define QUERY_TEMPLATES_H
 
-#include <QChar>
-#include <QList>
 #include <QString>
 
 namespace client::queries {
@@ -13,8 +11,9 @@ QString greeting_query(QString const &name);
 QString sign_in_query(QString const &username, QString const &password);
 QString sign_on_query(QString const &username, QString const &password);
 QString create_game_query(QString const &dict,
-                          bool auto_join = true,
-                          bool adapt = true);
+                          bool auto_join,
+                          bool isSolo,
+                          bool adapt);
 QString start_query();
 QString wait_game_query();
 QString leave_query();

@@ -45,6 +45,7 @@ public:
     json getStateOfUsers();
     json getStatistics(int uid);
     void joinUser(int uid);
+    void setSolo();
 
     std::condition_variable cond_gameStarted;
 
@@ -55,13 +56,14 @@ private:
     std::string gameName;
     int hostId;
     int id = 0;
+    bool isSolo = false;
     std::optional<std::chrono::high_resolution_clock::time_point> gameStartTime;
     std::unique_ptr<FastTyping::Logic::AbstractParser> parser;
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary;
     std::string dictName;
 
     struct AdditionalUserInfo {
-        std::vector<std::string> currentBuffer;
+        std::vector<std::vector<std::string>> currentBuffers = {{}};
         int currentWord = 0;
         int lineNumber = 0;
         // statistics

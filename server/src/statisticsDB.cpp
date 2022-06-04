@@ -9,11 +9,11 @@ CREATE TABLE IF NOT EXISTS STATISTICS (
 ID SERIAL PRIMARY KEY,
 USER_ID INT,
 DICT_NAME TEXT,
-WPM NUMERIC(4, 2),
-RAW_WPM NUMERIC(4, 2),
+WPM NUMERIC(2, 5),
+RAW_WPM NUMERIC(2, 5),
 CORRECT_CHARS INT,
 TOTAL_CHARS INT,
-FINISH_TIME NUMERIC(4, 2),
+FINISH_TIME NUMERIC(2, 5),
 POST_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_DATE
 );
 )sql";
@@ -54,13 +54,15 @@ void StatisticsStorage::addGame(int userId,
 
 double StatisticsStorage::getMaxWpm(int userId) {
     return db.get_column<double>(
-        "SELECT MAX(WPM) AS RESULT FROM STATISTICS WHERE USER_ID = " +
+        "SELECT COALESCE(MAX(WPM), 0) AS RESULT FROM STATISTICS WHERE USER_ID "
+        "= " +
             std::to_string(userId) + ";",
         "RESULT");
 }
 double StatisticsStorage::getAvgWpm(int userId) {
     return db.get_column<double>(
-        "SELECT Avg(WPM) AS RESULT FROM STATISTICS WHERE USER_ID = " +
+        "SELECT COALESCE(Avg(WPM), 0) AS RESULT FROM STATISTICS WHERE USER_ID "
+        "= " +
             std::to_string(userId) + ";",
         "RESULT");
 }
@@ -127,9 +129,11 @@ dictStatistics StatisticsStorage::getUserTotalStatistics(int userId) {
     std::unique_lock l{db.mutex};
     pqxx::work work(db.connect);
     pqxx::result raw_result = work.exec(
-        "SELECT MAX(WPM) AS MAX_WPM, AVG(WPM) AS AVG_WPM, "
-        "AVG(CORRECT_CHARS::NUMERIC / "
-        "TOTAL_CHARS) AS AVG_ACCURACY, SUM(FINISH_TIME) AS SUM_TIME, COUNT(*) "
+        "SELECT COALESCE(MAX(WPM), 0) AS MAX_WPM, COALESCE(AVG(WPM), 0) AS "
+        "AVG_WPM, "
+        "COALESCE(AVG(CORRECT_CHARS::NUMERIC / "
+        "TOTAL_CHARS), 0) AS AVG_ACCURACY, COALESCE(SUM(FINISH_TIME), 0) AS "
+        "SUM_TIME, COUNT(*) "
         "AS GAMES_CNT FROM STATISTICS WHERE USER_ID = " +
         std::to_string(userId) + ";");
     if (raw_result.size() == 0) {

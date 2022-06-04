@@ -18,7 +18,7 @@ class ContextManager {
     QSharedPointer<LocalManager> local_manager;
     QScopedPointer<GameWindow, QScopedPointerDeleteLater> gameWindow;
     QScopedPointer<StatWindow, QScopedPointerDeleteLater> statisticsWindow;
-    void set_context(std::vector<QString> const &words);
+    void set_context(std::vector<QString> const &words, bool isSolo);
 
 public:
     static ContextManager &get_instance() {
@@ -30,8 +30,9 @@ public:
     int get_game_id() const;
     LocalManager *get_local_manager() const;
     WebManager *get_remote_manager() const;
-    void set_context_from_create_query(nlohmann::json const &create_query);
-    void set_context_from_join_query(nlohmann::json const &join_query);
+    void set_context_from_create_query(nlohmann::json const &create_query,
+                                       bool isSolo);
+    //    void set_context_from_join_query(nlohmann::json const &join_query);
     void reset_context();
     void createStatisticsWindow();
 };

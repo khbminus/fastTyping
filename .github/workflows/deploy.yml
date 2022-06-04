@@ -24,7 +24,7 @@ jobs:
             make dictionaries-interface
             echo "built"
             sudo FASTTYPING_DB=fast_typing ./server/dictionaries-interface 
-            cp server/server ../../server
+            cp server/fastytpign_server ../../server
             cd ..
             rm -rf build
             sudo systemctl start ftServer.service

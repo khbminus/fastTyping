@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.14)
 project(fasttyping_client VERSION 1.0 LANGUAGES CXX)
 
 add_compile_options(-O0 -ggdb)
-
 # -*-*- QT CMake start -*-*-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -47,10 +46,12 @@ set(PROJECT_SOURCES
         src/errorHandler.cpp
         src/queryTemplates.cpp
         src/localManager.cpp
+        src/localManagerSolo.cpp
         src/responseHandler.cpp
         src/socketWrapper.cpp
         src/sonicSocket.cpp
         src/webManager.cpp
+        src/webSoloManager.cpp
         src/confirmWindow.cpp
         src/responseParse.cpp
         src/gameContextManager.cpp

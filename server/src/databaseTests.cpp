@@ -103,6 +103,16 @@ TEST_CASE("Statistics") {
     StatisticsStorage flusher;
     flusher.dropStatistics();
     StatisticsStorage storage;
+
+    CHECK(storage.getHistory(2).size() == 0);
+    CHECK(storage.getUserDictStatistics(2).size() == 0);
+    CHECK(storage.getTopDictStatistics("const").size() == 0);
+    CHECK(storage.getUserTotalStatistics(2) ==
+          dictStatistics{2, "all", 0, 0, 0, 0});
+    CHECK(storage.getAvgWpm(2) == 0);
+    CHECK(storage.getMaxWpm(2) == 0);
+    CHECK(storage.getGamesAmount(2) == 0);
+
     storage.addGame(1, "const", 23.5, 25.55555, 10, 16, 30.2);
     storage.addGame(0, "const", 23.5, 25.55555, 10, 16, 30.2);
     storage.addGame(0, "const", 24.5, 25.55555, 10, 16, 28);
