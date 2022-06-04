@@ -53,8 +53,7 @@ jobs:
       - run: cd server && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
 
   server-build:
-    needs: [ cppcheck-server, changes ]
-    if: ${{ needs.changes.outputs.server == 'true' }}
+    needs: [ cppcheck-server ]
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:base
     timeout-minutes: 5
@@ -68,8 +67,7 @@ jobs:
           cd build
           make server
   client-build:
-    needs: [ cppcheck-client, changes ]
-    if: ${{ needs.changes.outputs.client == 'true' }}
+    needs: [ cppcheck-client ]
     runs-on: ubuntu-latest
     container: ghcr.io/khbminus/fasttyping-ci:client
     timeout-minutes: 5
@@ -82,8 +80,9 @@ jobs:
       - run: |
           cd build
           make client
-  deploy:
+  deploy-server:
     needs: [ server-build ]
     if: github.ref == 'refs/heads/master'
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/deploy-server.yml
     secrets: inherit
+
