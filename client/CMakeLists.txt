@@ -96,6 +96,18 @@ set(PROJECT_SOURCES
 
         include/WpmChartModel.h
         src/WpmChartModel.cpp
+
+        include/profileWindow.h
+        src/profileWindow.cpp
+
+        include/profileDataModel.h
+        src/profileDataModel.cpp
+
+        include/leaderboard.h
+        src/leaderboard.cpp
+        src/leaderboard.ui
+        include/leaderboardController.h
+        src/leaderboardController.cpp
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

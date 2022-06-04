@@ -5,5 +5,7 @@
         <file>TextScreen.qml</file>
         <file>GameWindow.qml</file>
         <file>StatWindow.qml</file>
+        <file>ProfileWindow.qml</file>
+        <file>ProfileEntry.qml</file>
     </qresource>
 </RCC>

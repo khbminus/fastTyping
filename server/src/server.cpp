@@ -15,7 +15,8 @@ Server::Server()
       user_storage(new UserStorage),
       dictionaries_storage(new DictionariesStorage),
       mistakes_storage(new MistakesStorage),
-      gameStorage(new MapGameStorage) {
+      gameStorage(new MapGameStorage),
+      statisticsStorage(new StatisticsStorage) {
     boost::locale::generator gen;
     std::locale::global(gen(""));
 
@@ -232,6 +233,89 @@ Server::Server()
         result["header"] = {{"type", "dictionaries"},
                             {"queryType", "getDictionaries"}};
         result["body"] = {{"list", dictionaries_storage->get_dictionaries()}};
+        return result;
+    };
+
+    commonQueriesMap["getProfile"] = [&](const json &body, User &user) -> json {
+        json result = json::object();
+        result["header"] = {{"type", "profileResult"}};
+        auto res = statisticsStorage->getUserTotalStatistics(user.getId());
+        result["body"] = {
+            {"dictName", res.dictName},
+            {"maxWpm", res.maxWpm},
+            {"avgWpm", res.avgWpm},
+            {"avgAccuracy", res.avgAccuracy},
+            {"sumFinishTime", static_cast<int>(res.sumFinishTime)},
+            {"gamesCnt", res.gamesCnt}};
+        return result;
+    };
+    commonQueriesMap["getUserDictionaries"] = [&](const json &body,
+                                                  User &user) -> json {
+        json result = json::object();
+        result["header"] = {{"type", "userDictionaries"}};
+        auto res = statisticsStorage->getUserDictStatistics(user.getId());
+        std::vector<json> resJson(res.size());
+        std::transform(res.begin(), res.end(), resJson.begin(),
+                       [&](const DictStatistics &stats) -> json {
+                           return {{"dictName", stats.dictName},
+                                   {"maxWpm", stats.maxWpm},
+                                   {"avgWpm", stats.avgWpm},
+                                   {"avgAccuracy", stats.avgAccuracy},
+                                   {"sumFinishTime",
+                                    static_cast<int>(stats.sumFinishTime)},
+                                   {"gamesCnt", stats.gamesCnt}};
+                       });
+        result["body"] = resJson;
+        return result;
+    };
+    commonQueriesMap["getUserGames"] = [&](const json &body,
+                                           User &user) -> json {
+        int limit = 10;
+        if (body.contains("limit") && body["limit"].is_number_unsigned()) {
+            limit = body["limit"];
+        }
+
+        json result = json::object();
+        result["header"] = {{"type", "userGames"}};
+        auto res = statisticsStorage->getHistory(user.getId(), limit);
+        std::vector<json> resJson(res.size());
+        std::transform(
+            res.begin(), res.end(), resJson.begin(),
+            [&](const GameStatistics &stats) -> json {
+                return {{"dictName", stats.dictName},
+                        {"wpm", stats.wpm},
+                        {"rawWpm", stats.rawWpm},
+                        {"accuracy", stats.accuracy},
+                        {"finishTime", static_cast<int>(stats.finishTime)}};
+            });
+        result["body"] = resJson;
+        return result;
+    };
+
+    commonQueriesMap["getDictionaryStats"] = [&](const json &body,
+                                                 User &user) -> json {
+        if (!body.contains("dictionaryName") ||
+            !body["dictionaryName"].is_string()) {
+            return {{"header", {{"type", "wrongFormatError"}}},
+                    {"body", {{"text", "can't find dictionary name"}}}};
+        }
+        json result = json::object();
+        result["header"] = {{"type", "dictionaryStats"}};
+        auto res =
+            statisticsStorage->getTopDictStatistics(body["dictionaryName"]);
+        std::vector<json> resJson(res.size());
+        std::transform(res.begin(), res.end(), resJson.begin(),
+                       [&](const DictStatistics &stats) -> json {
+                           return {{"dictName", stats.dictName},
+                                   {"maxWpm", stats.maxWpm},
+                                   {"avgWpm", stats.avgWpm},
+                                   {"avgAccuracy", stats.avgAccuracy},
+                                   {"sumFinishTime",
+                                    static_cast<int>(stats.sumFinishTime)},
+                                   {"gamesCnt", stats.gamesCnt},
+                                   {"userId", stats.userId}};
+                       });
+        result["body"] = resJson;
         return result;
     };
 

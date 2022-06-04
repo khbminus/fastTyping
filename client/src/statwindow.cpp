@@ -29,7 +29,6 @@ StatWindow::StatWindow(GameManager *manager, QWindow *parent)
                  << model->data(model->index(i, 2))
                  << model->data(model->index(i, 3));
     }
-
     setInitialProperties(
         {{"textModel", QVariant::fromValue(&textModel)},
          {"rawWPM", QString::number(stats["body"]["rawWPM"].get<int>())},

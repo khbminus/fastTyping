@@ -7,6 +7,7 @@
 #include "localManager.h"
 #include "loginwindow.h"
 #include "mainwindow.h"
+#include "profileWindow.h"
 #include "registerwindow.h"
 #include "responseHandler.h"
 #include "signwindow.h"

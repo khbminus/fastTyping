@@ -15,30 +15,44 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>200</y>
-      <width>221</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QPushButton" name="CreateButton">
-       <property name="text">
-        <string>Create a new game</string>
+       <property name="geometry">
+           <rect>
+               <x>320</x>
+               <y>200</y>
+               <width>221</width>
+               <height>120</height>
+           </rect>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="JoinButton">
-       <property name="text">
-        <string>Join an existing game</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+       <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+               <widget class="QPushButton" name="CreateButton">
+                   <property name="text">
+                       <string>Create a new game</string>
+                   </property>
+               </widget>
+           </item>
+           <item>
+               <widget class="QPushButton" name="JoinButton">
+                   <property name="text">
+                       <string>Join an existing game</string>
+                   </property>
+               </widget>
+           </item>
+           <item>
+               <widget class="QPushButton" name="ProfileButton">
+                   <property name="text">
+                       <string>Your profile</string>
+                   </property>
+               </widget>
+           </item>
+           <item>
+               <widget class="QPushButton" name="TopButton">
+                   <property name="text">
+                       <string>Leaderboard</string>
+                   </property>
+               </widget>
+           </item>
+       </layout>
    </widget>
    <widget class="QTableView" name="layoutView">
     <property name="geometry">

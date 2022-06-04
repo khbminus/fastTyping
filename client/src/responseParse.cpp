@@ -21,7 +21,11 @@ std::map<std::string, std::string> success_type{
     {"waitGameStart", "GameWaitedSuccessfully"},
     {"getGameStatistics", "GameStatistics"},
     {"register", "success"},
-    {"getStates", "currentState"}};
+    {"getStates", "currentState"},
+    {"getProfile", "profileResult"},
+    {"getUserDictionaries", "userDictionaries"},
+    {"getUserGames", "userGames"},
+    {"getDictionaryStats", "dictionaryStats"}};
 
 std::map<std::string, std::map<std::string, QString>> error_texts{
     {"createGame",
