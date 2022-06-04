@@ -40,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: cppcheck --version
-      - run: cd client && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
+      - run: cd client && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp' ! -iname '*tests*.cpp')
   cppcheck-server:
     needs: [ clang-format, changes ]
     if: ${{ needs.changes.outputs.server == 'true' }}
@@ -50,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: cppcheck --version
-      - run: cd server && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp')
+      - run: cd server && cppcheck --suppressions-list=supressions-list.txt -Iinclude --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unmatchedSuppression --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp' ! -iname '*tests*.cpp')
 
   server-build:
     needs: [ cppcheck-server, changes ]
