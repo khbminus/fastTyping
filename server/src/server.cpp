@@ -221,8 +221,16 @@ Server::Server()
 
     commonQueriesMap["getUserName"] = [&](const json &body,
                                           User &user) -> json {
-        return {{"header", {{"type", "userName"}}},
-                {"body", {{"userName", user.name()}}}};
+        if (!body.contains("userId") || !body["userId"].is_number_unsigned()) {
+            return {{"header", {{"type", "userName"}}},
+                    {"body", {{"userName", user.name()}}}};
+        }
+        if (!user_storage->idExist(body["userId"])) {
+            return {{"header", {{"type", "userNotFound"}}}, {"body", {}}};
+        }
+        return {
+            {"header", {{"type", "userName"}}},
+            {"body", {{"userName", user_storage->getName(body["userId"])}}}};
     };
 
     commonQueriesMap["getGameStatistics"] = [&](const json &body,

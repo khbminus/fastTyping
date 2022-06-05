@@ -57,6 +57,7 @@ struct UserStorage {
                      const std::string &password);  // base password == '0000'
     int getId(const std::string &);                 // or create it
     bool nameExist(const std::string &);
+    bool idExist(int userId);
     void dropUsers();
     UserStorage();
 

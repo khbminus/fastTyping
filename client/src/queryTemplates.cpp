@@ -175,5 +175,11 @@ QString getDictionaryStatsQuery(QString dictionaryName) {
     result["body"] = {{"dictionaryName", dictionaryName.toStdString()}};
     return dump(result);
 }
+QString getUsername(int userId) {
+    json result;
+    result["header"] = {{"type", "getUserName"}};
+    result["body"] = {{"userId", userId}};
+    return dump(result);
+}
 
 }  // namespace client::queries

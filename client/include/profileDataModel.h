@@ -70,10 +70,12 @@ public:
     [[nodiscard]] ProfileEntryData *commonData() const;
     [[nodiscard]] QList<QString> dictionariesNames() const;
     [[nodiscard]] QQmlListProperty<ProfileEntryData> dictionaries();
+    [[nodiscard]] const QString &getName() const;
 
 private:
     ProfileEntryData *mCommonData;
     QList<ProfileEntryData *> mDictionaries;
+    QString username;
 };
 
 #endif  // FASTTYPING_PROFILEDATAMODEL_H

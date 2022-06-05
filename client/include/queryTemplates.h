@@ -29,6 +29,7 @@ QString getProfileQuery();
 QString getUserDictionariesQuery();
 QString getUserGamesQuery(int limit);
 QString getDictionaryStatsQuery(QString dictionaryName);
+QString getUsername(int userId);
 }  // namespace client::queries
 
 #endif

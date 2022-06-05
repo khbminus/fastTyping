@@ -95,6 +95,13 @@ bool UserStorage::nameExist(const std::string &name) {
         "WHERE NAME = '" +
         db.esc(name) + "' LIMIT 1;");
 }
+bool UserStorage::idExist(int userId) {
+    return db.record_exists(
+        "SELECT 1 "
+        "FROM USERS "
+        "WHERE ID = '" +
+        std::to_string(userId) + "' LIMIT 1;");
+}
 void UserStorage::setPassword(int id, const std::string &passw) {
     db.unanswered_query("UPDATE USERS SET PASSWORD = '" + db.esc(passw) +
                         "' WHERE ID = " + std::to_string(id) + ";");
