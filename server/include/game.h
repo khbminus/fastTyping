@@ -65,6 +65,8 @@ private:
 
     struct AdditionalUserInfo {
         std::vector<std::vector<std::string>> currentBuffers = {{}};
+        std::string userName;
+        std::vector<std::string> currentBuffer;
         int currentWord = 0;
         int lineNumber = 0;
         // statistics

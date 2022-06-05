@@ -58,9 +58,20 @@ LeaderboardTableModel::LeaderboardTableModel(QString dictionaryName,
     rows.resize(body.size());
     std::transform(body.begin(), body.end(), rows.begin(),
                    [&](const json &body) -> DictionaryStatistics {
-                       return {body["userId"],        body["maxWpm"],
-                               body["avgWpm"],        body["avgAccuracy"],
-                               body["sumFinishTime"], body["gamesCnt"]};
+                       using client::web::socket;
+                       using client::queries::getUsername;
+                       using nlohmann::json;
+                       auto name = QString::fromStdString(
+                           json::parse(socket()
+                                           .query(getUsername(body["userId"]))
+                                           .toStdString())["body"]["userName"]);
+                       return {body["userId"],
+                               body["maxWpm"],
+                               body["avgWpm"],
+                               body["avgAccuracy"],
+                               body["sumFinishTime"],
+                               body["gamesCnt"],
+                               name};
                    });
     endInsertRows();
 }
@@ -78,7 +89,7 @@ QVariant LeaderboardTableModel::data(const QModelIndex &index, int role) const {
     const auto &entry = rows[index.row()];
     switch (index.column()) {
         case 0:
-            return entry.userId;
+            return entry.name;
         case 1:
             return QString::number(entry.mMaxWpm, 'g', 2);
         case 2:

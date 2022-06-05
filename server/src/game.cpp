@@ -6,6 +6,7 @@
 #include <random>
 #include <ratio>
 #include "constGame.h"
+#include "database.h"
 #include "dictionaryDB.h"
 #include "statisticsDB.h"
 
@@ -155,6 +156,7 @@ json Game::getStateOfUsers() {
     for (const auto &[uid, info] : additionalInfo) {
         userStates.emplace_back();
         userStates.back()["id"] = uid;
+        userStates.back()["userName"] = info.userName;
         userStates.back()["wordsTyped"] = info.currentWord;
         userStates.back()["linesTyped"] = info.lineNumber;
         int symbolsTyped = dictionary->getPrefixSize(info.currentWord);
@@ -186,6 +188,8 @@ json Game::getStatistics(int uid) {
 void Game::joinUser(int uid) {
     std::unique_lock l{mutex};
     additionalInfo[uid] = {};
+    UserStorage db;
+    additionalInfo[uid].userName = db.getName(uid);
 }
 
 void Game::setSolo() {

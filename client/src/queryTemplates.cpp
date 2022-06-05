@@ -56,6 +56,13 @@ QString start_query() {
     return dump(result);
 }
 
+QString get_user_name_query() {
+    json result;
+    result["header"] = {{"type", "getUserName"}};
+    result["body"] = json::object();
+    return dump(result);
+}
+
 QString wait_game_query() {
     json result;
     result["header"] = {{"type", "waitGameStart"}};
@@ -171,6 +178,12 @@ QString getDictionaryStatsQuery(QString dictionaryName) {
     json result;
     result["header"] = {{"type", "getDictionaryStats"}};
     result["body"] = {{"dictionaryName", dictionaryName.toStdString()}};
+    return dump(result);
+}
+QString getUsername(int userId) {
+    json result;
+    result["header"] = {{"type", "getUserName"}};
+    result["body"] = {{"userId", userId}};
     return dump(result);
 }
 

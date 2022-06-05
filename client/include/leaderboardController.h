@@ -10,6 +10,7 @@ struct DictionaryStatistics {
     double mAvgAccuracy;
     int mTimeTyping;
     int mTestsCompleted;
+    QString name;
 };
 
 class LeaderboardTableModel : public QAbstractTableModel {

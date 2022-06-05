@@ -2,6 +2,7 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include "errorHandler.h"
+#include "gameContextManager.h"
 #include "queryTemplates.h"
 #include "responseParse.h"
 #include "sonicSocket.h"
@@ -42,6 +43,8 @@ void RegisterWindow::on_SubmitButton_clicked() {
     json response = json::parse(raw_response.toStdString());
 
     if (ensure_success(response)) {
+        ContextManager::get_instance().set_user_id(
+            response["body"]["id"].get<int>());
         auto &controller = FastTyping::WindowController::getInstance();
         controller.setActiveWindow("MainWindow");
     }

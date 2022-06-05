@@ -1,5 +1,6 @@
 #include "textScreen.h"
 #include <QDebug>
+#include "gameContextManager.h"
 #include "queryTemplates.h"
 #include "responseHandler.h"
 #include "sonicSocket.h"
@@ -11,7 +12,8 @@ TextListModel::TextListModel(const QString &words, QObject *parent)
     for (const auto &x : words) {
         line << new ScreenCharPimpl(x, this);
     }
-    for (int i = 0; i < words.size(); i++) {
+    line << new ScreenCharPimpl(' ', this);
+    for (int i = 0; i <= words.size(); i++) {
         players << new ProgressListModel(this);
     }
     endInsertRows();
@@ -98,7 +100,7 @@ QVariant ProgressListModel::data(const QModelIndex &index, int role) const {
     } else if (role == OPACITY_ROLE) {
         return players[index.row()].getOpacity();
     } else if (role == USERNAME_ROLE) {
-        return QString::number(players[index.row()].getId());
+        return players[index.row()].getName();
     }
     return {};
 }
@@ -126,6 +128,7 @@ void TextListModel::updateState() {
 
 void TextListModel::onUpdated(const nlohmann::json &query) {
     //    qDebug() << QString::fromStdString(query.dump());
+    int playerId = ContextManager::get_instance().get_user_id();
     if (query["header"]["type"] != "currentState") {
         return;
     }
@@ -133,17 +136,19 @@ void TextListModel::onUpdated(const nlohmann::json &query) {
     for (auto *list : players) {
         list->clear();
         for (const auto &player : users) {
-            list->addPlayer(Player(player["id"].get<int>()));
+            list->addPlayer(Player(player["id"].get<int>(),
+                                   QString::fromStdString(player["userName"]),
+                                   playerId == player["id"].get<int>()));
         }
     }
 
     for (const auto &player : users) {
         int pos = player["symbolsTyped"].get<int>();
-        if (pos == players.size())
+        if (pos == players.size()) {
             pos--;
+        }
         if (pos < players.size()) {
-            //            qDebug() << player["id"].get<int>() << "to" << pos;
-            players[pos]->showPlayer(Player(player["id"].get<int>()));
+            players[pos]->showPlayer(Player(player["id"].get<int>(), ""));
         }
     }
     dataChanged(createIndex(0, 0), createIndex(rowCount() - 1, 0),

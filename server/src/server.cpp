@@ -66,6 +66,7 @@ Server::Server()
                 result["body"]["error"] = errors;
             } else {
                 user.setGame(game);
+                game->joinUser(user.getId());
                 result["body"]["joined"] = true;
                 result["body"]["error"] = "";
             }
@@ -218,6 +219,20 @@ Server::Server()
         return user.getGame()->getStateOfUsers();
     };
 
+    commonQueriesMap["getUserName"] = [&](const json &body,
+                                          User &user) -> json {
+        if (!body.contains("userId") || !body["userId"].is_number_unsigned()) {
+            return {{"header", {{"type", "userName"}}},
+                    {"body", {{"userName", user.name()}}}};
+        }
+        if (!user_storage->idExist(body["userId"])) {
+            return {{"header", {{"type", "userNotFound"}}}, {"body", {}}};
+        }
+        return {
+            {"header", {{"type", "userName"}}},
+            {"body", {{"userName", user_storage->getName(body["userId"])}}}};
+    };
+
     commonQueriesMap["getGameStatistics"] = [&](const json &body,
                                                 User &user) -> json {
         if (user.getGame() == nullptr) {
@@ -249,6 +264,7 @@ Server::Server()
             {"gamesCnt", res.gamesCnt}};
         return result;
     };
+
     commonQueriesMap["getUserDictionaries"] = [&](const json &body,
                                                   User &user) -> json {
         json result = json::object();

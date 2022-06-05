@@ -25,7 +25,8 @@ std::map<std::string, std::string> success_type{
     {"getProfile", "profileResult"},
     {"getUserDictionaries", "userDictionaries"},
     {"getUserGames", "userGames"},
-    {"getDictionaryStats", "dictionaryStats"}};
+    {"getDictionaryStats", "dictionaryStats"},
+    {"getUserName", "userName"}};
 
 std::map<std::string, std::map<std::string, QString>> error_texts{
     {"createGame",

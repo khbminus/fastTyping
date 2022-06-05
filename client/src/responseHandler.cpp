@@ -29,7 +29,8 @@ std::map<std::string, ResponseType> header_to_type{
     {"getProfile", ResponseType::blocking},
     {"getUserDictionaries", ResponseType::blocking},
     {"getUserGames", ResponseType::blocking},
-    {"getDictionaryStats", ResponseType::blocking}};
+    {"getDictionaryStats", ResponseType::blocking},
+    {"getUserName", ResponseType::blocking}};
 
 ResponseType APIHandler::type(QString const &line) const {
     json response = json::parse(line.toStdString());

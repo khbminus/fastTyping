@@ -18,6 +18,7 @@ QString ProfileEntryData::getDictionary() const {
 }
 
 ProfileDataModel::ProfileDataModel(QObject *parent) : QObject(parent) {
+    using client::queries::get_user_name_query;
     using client::queries::getProfileQuery;
     using client::queries::getUserDictionariesQuery;
     using client::web::socket;
@@ -30,12 +31,20 @@ ProfileDataModel::ProfileDataModel(QObject *parent) : QObject(parent) {
                    std::back_inserter(mDictionaries), [&](const json &body) {
                        return new ProfileEntryData(body, this);
                    });
+    username = QString::fromStdString(
+        json::parse(socket()
+                        .query(get_user_name_query())
+                        .toStdString())["body"]["userName"]
+            .get<std::string>());
 }
 ProfileEntryData *ProfileDataModel::commonData() const {
     return mCommonData;
 }
 QQmlListProperty<ProfileEntryData> ProfileDataModel::dictionaries() {
     return {this, &mDictionaries};
+}
+const QString &ProfileDataModel::getName() const {
+    return username;
 }
 QList<QString> ProfileDataModel::dictionariesNames() const {
     QList<QString> res;

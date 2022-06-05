@@ -10,7 +10,7 @@ ProfileWindow::ProfileWindow(QWindow *parent)
       dataModel(new ProfileDataModel(this)),
       tableModel(new ProfileTableModel(this)) {
     setInitialProperties(
-        {{"userName", "Абобамейтсер"},
+        {{"userName", dataModel->getName()},
          {"mainInfo", QVariant::fromValue(dataModel->commonData())},
          {"dictsNames", QVariant::fromValue(dataModel->dictionariesNames())},
          {"dictsValues", QVariant::fromValue(dataModel->dictionaries())},

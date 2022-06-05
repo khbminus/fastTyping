@@ -131,18 +131,20 @@ Item {
         font.underline: true
     }
     ListView {
+        id: allGamesList
         anchors.top: allGamesLabel.bottom
         anchors.bottom: returnButton.top
         anchors.topMargin: 5
         anchors.left: root.left
         width: root.width
-        //clip: true
+        clip: true
 
         header: Row {
             spacing:  70
             height: tableDictHeader.height
             width: parent.width
             anchors.left: parent.left
+            z:-1
             Text {
                 id: tableDictHeader
                 width: 150
@@ -189,8 +191,9 @@ Item {
             required property int time
             spacing:  70
             height: tableDictName.height
-            width: parent.width
-            anchors.left: parent.left
+            width: allGamesList.width
+            anchors.left: allGamesList.left
+            z: -2
             Text {
                 width: 150
                 id: tableDictName

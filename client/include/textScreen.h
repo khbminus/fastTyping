@@ -7,6 +7,7 @@
 #include <QQmlEngine>
 #include <QTimer>
 #include <nlohmann/json.hpp>
+#include <utility>
 
 namespace FastTyping::TextScreen {
 Q_NAMESPACE
@@ -35,12 +36,21 @@ private:
 class Player {
 public:
     Player() = default;
-    explicit Player(int userId) : userId(userId) {}
+    explicit Player(int userId, QString name_, bool isPlayer = false)
+        : userId(userId), name(std::move(name_)) {
+        if (isPlayer) {
+            name += " (You)";
+        }
+    }
     [[nodiscard]] QColor getColor() const {
         return COLORS[userId % std::size(COLORS)];
     }
     [[nodiscard]] int getId() const {
         return userId;
+    }
+
+    [[nodiscard]] QString getName() const {
+        return name;
     }
 
     [[nodiscard]] double getOpacity() const {
@@ -59,6 +69,7 @@ private:
         QColor::fromRgb(255, 133, 13), QColor::fromRgb(140, 22, 218),
         QColor::fromRgb(79, 54, 43),   QColor::fromRgb(0, 0, 0)};
     int userId = 0;
+    QString name;
     double opacity = 0;
 };
 

@@ -1,5 +1,6 @@
 #include "signwindow.h"
 #include <nlohmann/json.hpp>
+#include "gameContextManager.h"
 #include "queryTemplates.h"
 #include "responseParse.h"
 #include "sonicSocket.h"
@@ -33,6 +34,8 @@ void SignWindow::on_SubmitButton_clicked() {
     qDebug() << "sign in result" << raw_response;
     json response = json::parse(raw_response.toStdString());
     if (ensure_success(response)) {
+        ContextManager::get_instance().set_user_id(
+            response["body"]["id"].get<int>());
         auto &controller = FastTyping::WindowController::getInstance();
         controller.setActiveWindow("MainWindow");
     }
