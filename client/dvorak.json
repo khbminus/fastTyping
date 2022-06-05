@@ -1,6 +1,6 @@
 {
-  "name": "QWERTY",
-  "description": "A common QWERTY keyboard",
+  "name": "DVORAK",
+  "description": "A common DVORAK keyboard",
   "keys": [
     [
       {
@@ -81,72 +81,6 @@
         "color": "#dbb4ad"
       },
       {
-        "text": "-",
-        "key": 45,
-        "shiftText": "_",
-        "shiftKey": 95,
-        "color": "#dbb4ad"
-      },
-      {
-        "text": "=",
-        "key": 61,
-        "shiftText": "+",
-        "shiftKey": 43,
-        "color": "#dbb4ad"
-      }
-    ],
-    [
-      {
-        "text": "q",
-        "key": 81,
-        "color": "#916953"
-      },
-      {
-        "text": "w",
-        "key": 87,
-        "color": "#cf8e80"
-      },
-      {
-        "text": "e",
-        "key": 69,
-        "color": "#fcb5b5"
-      },
-      {
-        "text": "r",
-        "key": 82,
-        "color": "#fcddf2"
-      },
-      {
-        "text": "t",
-        "key": 84,
-        "color": "#fcddf2"
-      },
-      {
-        "text": "y",
-        "key": 89,
-        "color": "#faf6f6"
-      },
-      {
-        "text": "u",
-        "key": 85,
-        "color": "#faf6f6"
-      },
-      {
-        "text": "i",
-        "key": 73,
-        "color": "#fcddf2"
-      },
-      {
-        "text": "o",
-        "key": 79,
-        "color": "#c492b1"
-      },
-      {
-        "text": "p",
-        "key": 80,
-        "color": "#dbb4ad"
-      },
-      {
         "text": "[",
         "key": 91,
         "shiftText": "{",
@@ -163,29 +97,106 @@
     ],
     [
       {
+        "text": "'",
+        "key": 39,
+        "shiftText": "\"",
+        "shiftKey": 34,
+        "color": "#916953"
+      },
+      {
+        "text": ",",
+        "key": 44,
+        "shiftText": "<",
+        "shiftKey": 60,
+        "color": "#cf8e80"
+      },
+      {
+        "text": ".",
+        "key": 46,
+        "shiftText": ">",
+        "shiftKey": 62,
+        "color": "#fcb5b5"
+      },
+      {
+        "text": "p",
+        "key": 80,
+        "color": "#fcddf2"
+      },
+      {
+        "text": "y",
+        "key": 89,
+        "color": "#fcddf2"
+      },
+      {
+        "text": "f",
+        "key": 70,
+        "color": "#faf6f6"
+      },
+      {
+        "text": "g",
+        "key": 71,
+        "color": "#faf6f6"
+      },
+      {
+        "text": "c",
+        "key": 67,
+        "color": "#fcddf2"
+      },
+      {
+        "text": "r",
+        "key": 82,
+        "color": "#c492b1"
+      },
+      {
+        "text": "l",
+        "key": 76,
+        "color": "#dbb4ad"
+      },
+      {
+        "text": "/",
+        "key": 47,
+        "shiftText": "?",
+        "shiftKey": 63,
+        "color": "#dbb4ad"
+      },
+      {
+        "text": "=",
+        "key": 61,
+        "shiftText": "+",
+        "shiftKey": 43,
+        "color": "#dbb4ad"
+      }
+    ],
+    [
+      {
         "text": "a",
         "key": 65,
         "color": "#916953"
       },
       {
-        "text": "s",
-        "key": 83,
+        "text": "o",
+        "key": 79,
         "color": "#cf8e80"
+      },
+      {
+        "text": "e",
+        "key": 69,
+        "color": "#fcb5b5"
+      },
+      {
+        "text": "u",
+        "key": 85,
+        "color": "#fcddf2"
+      },
+      {
+        "text": "i",
+        "key": 73,
+        "color": "#fcddf2"
       },
       {
         "text": "d",
         "key": 68,
-        "color": "#fcb5b5"
-      },
-      {
-        "text": "f",
-        "key": 70,
-        "color": "#fcddf2"
-      },
-      {
-        "text": "g",
-        "key": 71,
-        "color": "#fcddf2"
+        "color": "#faf6f6"
       },
       {
         "text": "h",
@@ -193,9 +204,45 @@
         "color": "#faf6f6"
       },
       {
+        "text": "t",
+        "key": 84,
+        "color": "#fcddf2"
+      },
+      {
+        "text": "n",
+        "key": 78,
+        "color": "#c492b1"
+      },
+      {
+        "text": "s",
+        "key": 83,
+        "color": "#dbb4ad"
+      },
+      {
+        "text": "-",
+        "key": 45,
+        "shiftText": "_",
+        "shiftKey": 95,
+        "color": "#dbb4ad"
+      }
+    ],
+    [
+      {
+        "text": ";",
+        "key": 59,
+        "shiftKey": 58,
+        "shiftText": ":",
+        "color": "#916953"
+      },
+      {
+        "text": "q",
+        "key": 81,
+        "color": "#cf8e80"
+      },
+      {
         "text": "j",
         "key": 74,
-        "color": "#faf6f6"
+        "color": "#fcb5b5"
       },
       {
         "text": "k",
@@ -203,54 +250,13 @@
         "color": "#fcddf2"
       },
       {
-        "text": "l",
-        "key": 76,
-        "color": "#c492b1"
-      },
-      {
-        "text": ";",
-        "key": 59,
-        "shiftKey": 58,
-        "shiftText": ":",
-        "color": "#dbb4ad"
-      },
-      {
-        "text": "'",
-        "key": 39,
-        "shiftText": "\"",
-        "shiftKey": 34,
-        "color": "#dbb4ad"
-      }
-    ],
-    [
-      {
-        "text": "z",
-        "key": 90,
-        "color": "#916953"
-      },
-      {
         "text": "x",
         "key": 88,
-        "color": "#cf8e80"
-      },
-      {
-        "text": "c",
-        "key": 67,
-        "color": "#fcb5b5"
-      },
-      {
-        "text": "v",
-        "key": 86,
         "color": "#fcddf2"
       },
       {
         "text": "b",
         "key": 66,
-        "color": "#fcddf2"
-      },
-      {
-        "text": "n",
-        "key": 78,
         "color": "#faf6f6"
       },
       {
@@ -259,24 +265,18 @@
         "color": "#faf6f6"
       },
       {
-        "text": ",",
-        "key": 44,
-        "shiftText": "<",
-        "shiftKey": 60,
+        "text": "w",
+        "key": 87,
         "color": "#fcddf2"
       },
       {
-        "text": ".",
-        "key": 46,
-        "shiftText": ">",
-        "shiftKey": 62,
+        "text": "v",
+        "key": 86,
         "color": "#c492b1"
       },
       {
-        "text": "/",
-        "key": 47,
-        "shiftText": "?",
-        "shiftKey": 63,
+        "text": "z",
+        "key": 90,
         "color": "#dbb4ad"
       }
     ]

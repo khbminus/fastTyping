@@ -29,6 +29,8 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
     auto &keyboard = FastTyping::Keyboard::KeyboardModel::getInstance();
     keyboard.addPath("qwerty.json");
+    keyboard.addPath("dvorak.json");
+    keyboard.addPath("colemak.json");
     keyboard.addPath("test.json");
     keyboard.setCurrentLayout(0);
 
