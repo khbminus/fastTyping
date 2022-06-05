@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     keyboard.addPath("qwerty.json");
     keyboard.addPath("dvorak.json");
     keyboard.addPath("colemak.json");
-    keyboard.addPath("test.json");
+    //    keyboard.addPath("test.json");
     keyboard.setCurrentLayout(0);
 
     client::responses::APIHandler &response_handler =
