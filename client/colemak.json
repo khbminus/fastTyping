@@ -1,6 +1,6 @@
 {
-  "name": "QWERTY",
-  "description": "A common QWERTY keyboard",
+  "name": "COLEMAK",
+  "description": "A common COLEMAK keyboard",
   "keys": [
     [
       {
@@ -107,43 +107,45 @@
         "color": "#cf8e80"
       },
       {
-        "text": "e",
-        "key": 69,
+        "text": "f",
+        "key": 70,
         "color": "#fcb5b5"
       },
       {
-        "text": "r",
-        "key": 82,
+        "text": "p",
+        "key": 80,
         "color": "#fcddf2"
       },
       {
-        "text": "t",
-        "key": 84,
+        "text": "g",
+        "key": 71,
         "color": "#fcddf2"
       },
       {
-        "text": "y",
-        "key": 89,
+        "text": "j",
+        "key": 74,
+        "color": "#faf6f6"
+      },
+      {
+        "text": "l",
+        "key": 76,
         "color": "#faf6f6"
       },
       {
         "text": "u",
         "key": 85,
-        "color": "#faf6f6"
-      },
-      {
-        "text": "i",
-        "key": 73,
         "color": "#fcddf2"
       },
       {
-        "text": "o",
-        "key": 79,
+        "text": "y",
+        "key": 89,
         "color": "#c492b1"
       },
       {
-        "text": "p",
-        "key": 80,
+        "text": ";",
+        "key": 59,
+        "shiftKey": 58,
+        "shiftText": ":",
         "color": "#dbb4ad"
       },
       {
@@ -168,23 +170,23 @@
         "color": "#916953"
       },
       {
+        "text": "r",
+        "key": 82,
+        "color": "#cf8e80"
+      },
+      {
         "text": "s",
         "key": 83,
-        "color": "#cf8e80"
+        "color": "#fcb5b5"
+      },
+      {
+        "text": "t",
+        "key": 84,
+        "color": "#fcddf2"
       },
       {
         "text": "d",
         "key": 68,
-        "color": "#fcb5b5"
-      },
-      {
-        "text": "f",
-        "key": 70,
-        "color": "#fcddf2"
-      },
-      {
-        "text": "g",
-        "key": 71,
         "color": "#fcddf2"
       },
       {
@@ -193,25 +195,23 @@
         "color": "#faf6f6"
       },
       {
-        "text": "j",
-        "key": 74,
+        "text": "n",
+        "key": 78,
         "color": "#faf6f6"
       },
       {
-        "text": "k",
-        "key": 75,
+        "text": "e",
+        "key": 69,
         "color": "#fcddf2"
       },
       {
-        "text": "l",
-        "key": 76,
+        "text": "i",
+        "key": 73,
         "color": "#c492b1"
       },
       {
-        "text": ";",
-        "key": 59,
-        "shiftKey": 58,
-        "shiftText": ":",
+        "text": "o",
+        "key": 79,
         "color": "#dbb4ad"
       },
       {
@@ -249,8 +249,8 @@
         "color": "#fcddf2"
       },
       {
-        "text": "n",
-        "key": 78,
+        "text": "k",
+        "key": 75,
         "color": "#faf6f6"
       },
       {
