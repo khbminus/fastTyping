@@ -40,24 +40,27 @@
      <string>return</string>
     </property>
    </widget>
-   <widget class="QSplitter" name="splitter">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
       <x>312</x>
       <y>230</y>
-      <width>125</width>
-      <height>43</height>
+      <width>127</width>
+      <height>58</height>
      </rect>
     </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-    <widget class="QLineEdit" name="lineEdit"/>
-    <widget class="QPushButton" name="JoinButton">
-     <property name="text">
-      <string>Join</string>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLineEdit" name="lineEdit"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="JoinButton">
+       <property name="text">
+        <string>Join</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
  </widget>

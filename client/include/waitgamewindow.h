@@ -15,7 +15,6 @@ public:
     ~WaitGameWindow();
 
 private slots:
-    void on_ReturnButton_clicked();
     void showEvent(QShowEvent *event);
     void gameWaited();
 
