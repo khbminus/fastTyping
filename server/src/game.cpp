@@ -3,6 +3,7 @@
 #include <boost/locale.hpp>
 #include <boost/log/trivial.hpp>
 #include <iostream>
+#include <random>
 #include <ratio>
 #include "constGame.h"
 #include "dictionaryDB.h"
@@ -218,16 +219,23 @@ json MapGameStorage::createGame(const json &body, int host_id, bool adapt) {
 
     std::unique_ptr<FastTyping::Logic::AbstractDictionary> dictionary =
         dictionary_instance(dictionary_name, host_id, adapt);
-
+    int game_id = 30;
+    {
+        std::mt19937 rnd(239);
+        std::unique_lock l{map_mutex};
+        while (games.count(game_id) != 0) {
+            game_id = rnd() % 1'000'00;
+        }
+    }
     std::shared_ptr<Game> game;
     if (body["parserName"] == "simple") {
         game = std::make_shared<Game>(std::make_unique<Logic::SimpleParser>(),
                                       std::move(dictionary), host_id,
-                                      dictionary_name);
+                                      dictionary_name, game_id);
     } else {
         game = std::make_shared<Game>(std::make_unique<Logic::SoloParser>(),
                                       std::move(dictionary), host_id,
-                                      dictionary_name);
+                                      dictionary_name, game_id);
         game->setSolo();
     }
     {
